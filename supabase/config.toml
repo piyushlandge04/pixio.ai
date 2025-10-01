@@ -1,0 +1,4 @@
+project_id = "khdqwqghvctmvckwnjcl"
+
+[functions.generate-flyer]
+verify_jwt = false
