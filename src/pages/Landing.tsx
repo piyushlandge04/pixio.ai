@@ -1,0 +1,196 @@
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Wand2, Sparkles, Zap, Download, Palette, Clock } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+
+const Landing = () => {
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="container max-w-6xl mx-auto text-center">
+          <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <Sparkles className="w-8 h-8 text-primary" />
+          </div>
+          
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100">
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Design Flyers
+            </span>
+            <br />
+            <span className="text-foreground">with AI Magic</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+            Transform your ideas into stunning, professional flyers in seconds. 
+            Just describe what you need, and let AI handle the design.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+            <Link to="/generate">
+              <Button size="lg" className="text-lg px-8 py-6 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <Wand2 className="mr-2 h-5 w-5" />
+                Start Creating
+              </Button>
+            </Link>
+            <Link to="/about">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2">
+                Learn More
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+            Why Choose FlyerAI?
+          </h2>
+          <p className="text-xl text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
+            Powerful features that make flyer design effortless
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-8 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 border-2">
+              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                <Zap className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Lightning Fast</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Generate professional flyers in seconds. No design experience needed, 
+                just describe your vision and watch it come to life.
+              </p>
+            </Card>
+
+            <Card className="p-8 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 border-2">
+              <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
+                <Palette className="w-7 h-7 text-secondary" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">AI-Powered Design</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Advanced AI understands your requirements and creates visually 
+                stunning designs with perfect color schemes and layouts.
+              </p>
+            </Card>
+
+            <Card className="p-8 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 border-2">
+              <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mb-6">
+                <Download className="w-7 h-7 text-accent" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Instant Download</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Get high-quality, print-ready flyers instantly. Download in 
+                multiple formats and use them anywhere you need.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20 px-4">
+        <div className="container max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+            Create in 3 Simple Steps
+          </h2>
+          <p className="text-xl text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
+            From idea to flyer in minutes
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <span className="text-3xl font-bold text-primary-foreground">1</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Describe Your Flyer</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Simply type what you want: event details, style preferences, 
+                colors, and any specific elements you'd like to include.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <span className="text-3xl font-bold text-primary-foreground">2</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-3">AI Creates Magic</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Our advanced AI analyzes your requirements and generates 
+                a stunning, professional flyer tailored to your needs.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <span className="text-3xl font-bold text-primary-foreground">3</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Download & Share</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Love what you see? Download your flyer instantly and 
+                start sharing it with the world. It's that easy!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
+        <div className="container max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to Create Your First Flyer?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Join thousands of users who are already creating amazing flyers with AI. 
+            Start for free today!
+          </p>
+          <Link to="/generate">
+            <Button size="lg" className="text-lg px-10 py-7 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Sparkles className="mr-2 h-5 w-5" />
+              Get Started Now
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-4 border-t border-border">
+        <div className="container max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2 font-bold text-xl">
+              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
+                <Wand2 className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                FlyerAI
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-8">
+              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Home
+              </Link>
+              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                About
+              </Link>
+              <Link to="/generate" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Generate
+              </Link>
+            </div>
+            
+            <p className="text-sm text-muted-foreground">
+              © 2025 FlyerAI. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Landing;
