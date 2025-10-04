@@ -7,11 +7,36 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
-const examplePrompts = [
+const allExamplePrompts = [
+  // Events
   "Summer music festival with vibrant colors and energetic design",
   "Professional business conference with modern minimalist style",
-  "Garage sale with friendly neighborhood feel and bold text",
   "Yoga retreat with calming nature elements and zen aesthetics",
+  "Charity fundraiser gala with elegant gold and black theme",
+  "Tech product launch with futuristic neon gradients",
+  "Food truck festival with colorful illustrations and fun typography",
+  
+  // Sales & Promotions
+  "Garage sale with friendly neighborhood feel and bold text",
+  "Black Friday mega sale with striking red and black design",
+  "Grand opening celebration with confetti and excitement",
+  "Holiday clearance sale with winter theme and snowflakes",
+  
+  // Education & Workshops
+  "Art workshop with creative paint splashes and artistic fonts",
+  "Coding bootcamp with tech-inspired geometric patterns",
+  "Cooking class with appetizing food photography and warm colors",
+  "Photography workshop with camera elements and modern layout",
+  
+  // Health & Wellness
+  "Gym membership promotion with energetic fitness imagery",
+  "Mental health awareness with soothing pastel colors",
+  "Nutrition seminar with fresh vegetables and clean design",
+  
+  // Community & Social
+  "Neighborhood block party with friendly community vibes",
+  "Book club meeting with cozy library aesthetics",
+  "Pet adoption event with cute animal illustrations",
 ];
 
 export const FlyerGenerator = () => {
@@ -19,6 +44,30 @@ export const FlyerGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+
+  // Filter example prompts based on current input
+  const getRelevantPrompts = () => {
+    if (!prompt.trim()) {
+      return allExamplePrompts.slice(0, 4);
+    }
+    
+    const searchTerms = prompt.toLowerCase().split(' ');
+    const scored = allExamplePrompts.map(example => {
+      const exampleLower = example.toLowerCase();
+      const score = searchTerms.reduce((acc, term) => {
+        return acc + (exampleLower.includes(term) ? 1 : 0);
+      }, 0);
+      return { example, score };
+    });
+    
+    return scored
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4)
+      .map(item => item.example);
+  };
+
+  const relevantPrompts = getRelevantPrompts();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -182,21 +231,25 @@ export const FlyerGenerator = () => {
             </Button>
 
             {/* Example Prompts */}
-            <div className="space-y-3">
-              <p className="text-sm font-semibold text-muted-foreground">Try these examples:</p>
-              <div className="space-y-2">
-                {examplePrompts.map((example, index) => (
-                  <button
-                    key={index}
-                    onClick={() => useExamplePrompt(example)}
-                    disabled={isGenerating}
-                    className="w-full text-left text-sm p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-transparent hover:border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {example}
-                  </button>
-                ))}
+            {relevantPrompts.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-muted-foreground">
+                  {prompt.trim() ? "Related suggestions:" : "Try these examples:"}
+                </p>
+                <div className="space-y-2">
+                  {relevantPrompts.map((example, index) => (
+                    <button
+                      key={index}
+                      onClick={() => useExamplePrompt(example)}
+                      disabled={isGenerating}
+                      className="w-full text-left text-sm p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-transparent hover:border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {example}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </Card>
 
           {/* Preview Section */}
