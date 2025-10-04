@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2 } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 const examplePrompts = [
   "Summer music festival with vibrant colors and energetic design",
@@ -17,6 +18,7 @@ export const FlyerGenerator = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -64,6 +66,16 @@ export const FlyerGenerator = () => {
     setPrompt(example);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setUploadedFiles((prev) => [...prev, ...files]);
+    toast.success(`${files.length} file(s) uploaded`);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background py-12 px-4">
       <div className="container max-w-6xl mx-auto">
@@ -95,6 +107,47 @@ export const FlyerGenerator = () => {
                 className="min-h-[180px] text-base resize-none border-2 focus:border-primary transition-colors"
                 disabled={isGenerating}
               />
+            </div>
+
+            {/* File Upload */}
+            <div>
+              <label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
+                <Upload className="w-4 h-4 text-primary" />
+                Upload Files (Optional)
+              </label>
+              <div className="space-y-3">
+                <Input
+                  type="file"
+                  onChange={handleFileUpload}
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx"
+                  className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                  disabled={isGenerating}
+                />
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    {uploadedFiles.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 bg-muted/50 rounded-lg border border-border"
+                      >
+                        <span className="text-sm text-foreground truncate flex-1">
+                          {file.name}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeFile(index)}
+                          disabled={isGenerating}
+                          className="h-8 w-8 shrink-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <Button
