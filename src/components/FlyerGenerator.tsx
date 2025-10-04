@@ -104,7 +104,7 @@ export const FlyerGenerator = () => {
                 placeholder="e.g., Create a modern flyer for a tech startup launch event with blue and purple colors, featuring futuristic graphics..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[180px] text-base resize-none border-2 focus:border-primary transition-colors"
+                className="min-h-[100px] text-base resize-none border-2 focus:border-primary transition-colors"
                 disabled={isGenerating}
               />
             </div>
