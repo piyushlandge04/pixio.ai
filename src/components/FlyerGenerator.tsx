@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2, Upload, X } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -109,44 +109,56 @@ export const FlyerGenerator = () => {
               />
             </div>
 
-            {/* File Upload */}
-            <div>
-              <label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
-                <Upload className="w-4 h-4 text-primary" />
-                Upload Files (Optional)
-              </label>
-              <div className="space-y-3">
+            {/* File Upload with Plus Icon */}
+            <div className="space-y-3">
+              {uploadedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {uploadedFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 pl-3 pr-2 py-2 bg-muted rounded-full border border-border group hover:border-primary transition-colors"
+                    >
+                      <FileImage className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-foreground max-w-[120px] truncate">
+                        {file.name}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeFile(index)}
+                        disabled={isGenerating}
+                        className="h-6 w-6 rounded-full hover:bg-destructive/10"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex items-center gap-3">
                 <Input
+                  id="file-upload"
                   type="file"
                   onChange={handleFileUpload}
                   multiple
                   accept="image/*,.pdf,.doc,.docx"
-                  className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                  className="hidden"
                   disabled={isGenerating}
                 />
-                {uploadedFiles.length > 0 && (
-                  <div className="space-y-2">
-                    {uploadedFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 bg-muted/50 rounded-lg border border-border"
-                      >
-                        <span className="text-sm text-foreground truncate flex-1">
-                          {file.name}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeFile(index)}
-                          disabled={isGenerating}
-                          className="h-8 w-8 shrink-0"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  disabled={isGenerating}
+                  className="h-10 w-10 rounded-full border-2 hover:border-primary hover:bg-primary/5 transition-all"
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Add images or documents
+                </span>
               </div>
             </div>
 
