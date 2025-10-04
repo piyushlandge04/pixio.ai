@@ -8,35 +8,152 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
 const allExamplePrompts = [
-  // Events
+  // Events & Festivals
   "Summer music festival with vibrant colors and energetic design",
   "Professional business conference with modern minimalist style",
   "Yoga retreat with calming nature elements and zen aesthetics",
   "Charity fundraiser gala with elegant gold and black theme",
   "Tech product launch with futuristic neon gradients",
   "Food truck festival with colorful illustrations and fun typography",
+  "Cultural Diwali celebration with traditional Indian patterns and lights",
+  "Lunar New Year festival with red and gold Asian motifs",
+  "Oktoberfest beer festival with Bavarian blue and white checks",
+  "Carnival street party with Brazilian colors and samba vibes",
+  "Christmas market with cozy winter holiday theme",
+  "Halloween costume party with spooky orange and black design",
   
   // Sales & Promotions
   "Garage sale with friendly neighborhood feel and bold text",
   "Black Friday mega sale with striking red and black design",
   "Grand opening celebration with confetti and excitement",
   "Holiday clearance sale with winter theme and snowflakes",
+  "End of season fashion sale with trendy modern layout",
+  "Restaurant happy hour special with appetizing food imagery",
+  "Real estate open house with professional property photos",
+  "Car dealership year-end clearance with sleek automotive design",
+  "Electronics store discount with tech-inspired graphics",
+  "Pharmacy health awareness campaign with medical iconography",
   
   // Education & Workshops
   "Art workshop with creative paint splashes and artistic fonts",
   "Coding bootcamp with tech-inspired geometric patterns",
   "Cooking class with appetizing food photography and warm colors",
   "Photography workshop with camera elements and modern layout",
+  "Language learning course with multicultural flags and books",
+  "Music lessons with musical notes and instrument illustrations",
+  "Dance academy enrollment with dynamic movement and energy",
+  "STEM program for kids with colorful science illustrations",
+  "Professional development seminar with corporate aesthetic",
+  "University open day with academic and campus imagery",
   
   // Health & Wellness
   "Gym membership promotion with energetic fitness imagery",
   "Mental health awareness with soothing pastel colors",
   "Nutrition seminar with fresh vegetables and clean design",
+  "Dental clinic checkup reminder with bright smile imagery",
+  "Spa and wellness center with zen and relaxation vibes",
+  "Blood donation drive with medical red cross symbols",
+  "Vaccination clinic with healthcare professional graphics",
+  "Weight loss program with motivational before-after concept",
   
   // Community & Social
   "Neighborhood block party with friendly community vibes",
   "Book club meeting with cozy library aesthetics",
   "Pet adoption event with cute animal illustrations",
+  "Volunteer recruitment with inspiring community service imagery",
+  "Town hall meeting with civic engagement design",
+  "Sports league registration with athletic dynamic graphics",
+  "Church community gathering with peaceful spiritual elements",
+  "Environmental cleanup campaign with green eco-friendly design",
+  
+  // Entertainment & Arts
+  "Movie premiere screening with cinematic Hollywood style",
+  "Theater play performance with dramatic stage curtain design",
+  "Comedy show night with fun playful typography",
+  "Art gallery exhibition with sophisticated minimalist layout",
+  "Live concert with bold band poster aesthetics",
+  "Stand-up comedy open mic with microphone and spotlight",
+  "Film festival with elegant award ceremony design",
+  "Poetry slam competition with literary artistic elements",
+  
+  // Sports & Recreation
+  "Marathon race registration with energetic running imagery",
+  "Soccer tournament with dynamic sports action graphics",
+  "Basketball camp for youth with vibrant court design",
+  "Swimming pool opening with refreshing water splash theme",
+  "Cycling race event with sleek bicycle illustrations",
+  "Tennis championship with professional court aesthetics",
+  "Skateboarding competition with urban street art style",
+  "Martial arts dojo enrollment with powerful action poses",
+  
+  // Business & Professional
+  "Networking mixer with professional corporate design",
+  "Job fair recruitment with career opportunity graphics",
+  "Startup pitch competition with innovative tech theme",
+  "Leadership summit with executive professional aesthetics",
+  "Trade show exhibition with industry-specific imagery",
+  "Financial planning seminar with money management icons",
+  "Small business expo with entrepreneurial vibrant design",
+  "Legal services consultation with trustworthy professional look",
+  
+  // Food & Dining
+  "Restaurant grand opening with delicious cuisine photography",
+  "Bakery fresh bread daily with warm artisanal design",
+  "Coffee shop loyalty program with cozy cafe aesthetics",
+  "Food delivery service with convenient app-style layout",
+  "Wine tasting event with elegant vineyard imagery",
+  "Pizza place special offer with appetizing Italian theme",
+  "Sushi restaurant promotion with Japanese minimalist design",
+  "BBQ cookout competition with smoky rustic graphics",
+  
+  // Travel & Tourism
+  "Travel agency vacation package with tropical paradise imagery",
+  "Hotel resort special rates with luxury accommodation photos",
+  "City tour guide with landmark illustrations",
+  "Cruise ship voyage with oceanic nautical theme",
+  "Adventure hiking expedition with mountain landscape design",
+  "Cultural heritage tour with historical monument graphics",
+  "Beach resort summer getaway with sunny coastal vibes",
+  "Safari wildlife tour with African animal illustrations",
+  
+  // Religious & Spiritual
+  "Easter service celebration with spring resurrection theme",
+  "Ramadan iftar dinner with Islamic crescent moon design",
+  "Hanukkah festival of lights with menorah candles",
+  "Buddhist meditation retreat with peaceful lotus imagery",
+  "Wedding ceremony invitation with romantic elegant design",
+  "Baptism celebration with gentle dove and water symbols",
+  "Bar Mitzvah celebration with Hebrew cultural elements",
+  
+  // Technology & Innovation
+  "Hackathon coding competition with digital matrix design",
+  "AI conference with futuristic machine learning graphics",
+  "Cybersecurity workshop with lock and shield iconography",
+  "Drone racing championship with high-tech aerial imagery",
+  "Gaming tournament with esports competitive aesthetics",
+  "Virtual reality expo with immersive 3D design",
+  "Robotics competition with mechanical engineering theme",
+  "Blockchain summit with cryptocurrency modern layout",
+  
+  // Fashion & Beauty
+  "Fashion show runway with glamorous haute couture design",
+  "Beauty salon grand opening with elegant cosmetic imagery",
+  "Hair styling competition with creative hairstyle graphics",
+  "Makeup workshop with colorful palette illustrations",
+  "Bridal boutique wedding dress with romantic white lace",
+  "Jewelry store sale with sparkling diamond aesthetics",
+  "Vintage clothing market with retro fashion vibes",
+  "Barber shop classic cuts with masculine grooming design",
+  
+  // Kids & Family
+  "Children's birthday party with playful balloon decorations",
+  "Daycare enrollment with cute cartoon character illustrations",
+  "Family fun day with colorful activity icons",
+  "Summer camp registration with outdoor adventure graphics",
+  "Toddler playgroup with bright educational toy imagery",
+  "School fundraiser with cheerful community support design",
+  "Baby shower celebration with pastel gentle colors",
+  "Storytime library event with whimsical book illustrations",
 ];
 
 export const FlyerGenerator = () => {
