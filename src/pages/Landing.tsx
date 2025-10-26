@@ -92,52 +92,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 px-4">
-        <div className="container max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-            Create in 3 Simple Steps
-          </h2>
-          <p className="text-xl text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
-            From idea to flyer in minutes
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
-                <span className="text-3xl font-bold text-primary-foreground">1</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-3">Describe Your Flyer</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Simply type what you want: event details, style preferences, 
-                colors, and any specific elements you'd like to include.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
-                <span className="text-3xl font-bold text-primary-foreground">2</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-3">AI Creates Magic</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Our advanced AI analyzes your requirements and generates 
-                a stunning, professional flyer tailored to your needs.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
-                <span className="text-3xl font-bold text-primary-foreground">3</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-3">Download & Share</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Love what you see? Download your flyer instantly and 
-                start sharing it with the world. It's that easy!
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
