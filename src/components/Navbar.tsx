@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Wand2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Navbar = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ export const Navbar = () => {
           >
             About
           </Link>
+          <ThemeToggle />
           <Link to="/generate">
             <Button size="sm" className="shadow-glow">
               Get Started
