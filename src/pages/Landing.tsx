@@ -93,25 +93,6 @@ const Landing = () => {
       </section>
 
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
-        <div className="container max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Create Your First Flyer?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of users who are already creating amazing flyers with AI. 
-            Start for free today!
-          </p>
-          <Link to="/generate">
-            <Button size="lg" className="text-lg px-10 py-7 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <Sparkles className="mr-2 h-5 w-5" />
-              Get Started Now
-            </Button>
-          </Link>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-border">
         <div className="container max-w-6xl mx-auto">
