@@ -29,7 +29,7 @@ const Landing = () => {
             Just describe what you need, and let AI handle the design.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             <Link to="/generate">
               <Button size="lg" className="px-6 py-5 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95">
                 <Wand2 className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
@@ -41,39 +41,6 @@ const Landing = () => {
                 Learn More
               </Button>
             </Link>
-          </div>
-          
-          {/* Quick Features Preview */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
-            <Card className="p-6 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 hover:scale-105 border-2">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3 mx-auto transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">Lightning Fast</h3>
-              <p className="text-sm text-muted-foreground">
-                Generate flyers in seconds
-              </p>
-            </Card>
-
-            <Card className="p-6 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 hover:scale-105 border-2">
-              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-3 mx-auto transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                <Palette className="w-6 h-6 text-secondary" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">AI-Powered</h3>
-              <p className="text-sm text-muted-foreground">
-                Advanced design algorithms
-              </p>
-            </Card>
-
-            <Card className="p-6 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 hover:scale-105 border-2">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-3 mx-auto transition-transform duration-300 hover:rotate-12 hover:scale-110">
-                <Download className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">Instant Download</h3>
-              <p className="text-sm text-muted-foreground">
-                High-quality, print-ready
-              </p>
-            </Card>
           </div>
         </div>
       </section>
