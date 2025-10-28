@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wand2, Sparkles, Zap, Download, Palette, Clock } from "lucide-react";
+import { Sparkles, Zap, Download, Palette } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import logo from "@/assets/logo.jpg";
 
 const Landing = () => {
   return (
@@ -32,7 +33,7 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             <Link to="/generate">
               <Button size="lg" className="text-lg px-8 py-6 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95">
-                <Wand2 className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
+                <Sparkles className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
                 Start Creating
               </Button>
             </Link>
@@ -98,9 +99,7 @@ const Landing = () => {
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2 font-bold text-xl hover:scale-105 transition-transform duration-300">
-              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg transition-transform duration-300 hover:rotate-12">
-                <Wand2 className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img src={logo} alt="FlyerAI Logo" className="w-10 h-10 object-contain" />
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                 FlyerAI
               </span>
