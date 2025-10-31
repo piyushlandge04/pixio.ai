@@ -179,6 +179,12 @@ export const FlyerGenerator = () => {
     location: "Event Location",
     description: "Add your event description here"
   });
+  const [promptDetails, setPromptDetails] = useState({
+    eventType: "",
+    colors: "",
+    vibe: "",
+    keyElements: ""
+  });
 
   // Filter example prompts based on current input
   const getRelevantPrompts = () => {
@@ -205,8 +211,17 @@ export const FlyerGenerator = () => {
   const relevantPrompts = getRelevantPrompts();
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
-      toast.error("Please enter a prompt");
+    // Build comprehensive prompt from structured fields
+    const structuredPrompt = `
+      Event Type: ${promptDetails.eventType || 'event'}
+      ${promptDetails.colors ? `Color Scheme: ${promptDetails.colors}` : ''}
+      ${promptDetails.vibe ? `Vibe/Mood: ${promptDetails.vibe}` : ''}
+      ${promptDetails.keyElements ? `Key Elements: ${promptDetails.keyElements}` : ''}
+      ${prompt ? `Additional Details: ${prompt}` : ''}
+    `.trim();
+
+    if (!promptDetails.eventType && !prompt.trim()) {
+      toast.error("Please describe your flyer or select event type");
       return;
     }
 
@@ -215,7 +230,7 @@ export const FlyerGenerator = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-flyer', {
-        body: { prompt, style: selectedStyle }
+        body: { prompt: structuredPrompt, style: selectedStyle }
       });
 
       if (error) throw error;
@@ -341,18 +356,91 @@ export const FlyerGenerator = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
           <Card className="p-6 space-y-6 shadow-card border-2 animate-in fade-in slide-in-from-left duration-700">
-            <div>
-              <label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                Describe Your Flyer
-              </label>
-              <Textarea
-                placeholder="e.g., Create a modern flyer for a tech startup launch event with blue and purple colors, featuring futuristic graphics..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[100px] text-base resize-none border-2 focus:border-primary transition-colors"
-                disabled={isGenerating}
-              />
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Design Your Flyer</h3>
+              </div>
+              
+              {/* Structured Input Fields */}
+              <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Event Type <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    placeholder="e.g., Summer Music Festival, Business Conference, Yoga Retreat"
+                    value={promptDetails.eventType}
+                    onChange={(e) => setPromptDetails({ ...promptDetails, eventType: e.target.value })}
+                    className="border-2 focus:border-primary"
+                    disabled={isGenerating}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Color Scheme
+                  </label>
+                  <Input
+                    placeholder="e.g., Vibrant blues and purples, Warm autumn tones, Black and gold"
+                    value={promptDetails.colors}
+                    onChange={(e) => setPromptDetails({ ...promptDetails, colors: e.target.value })}
+                    className="border-2 focus:border-primary"
+                    disabled={isGenerating}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Vibe/Mood
+                  </label>
+                  <Input
+                    placeholder="e.g., Energetic and fun, Professional and elegant, Calm and peaceful"
+                    value={promptDetails.vibe}
+                    onChange={(e) => setPromptDetails({ ...promptDetails, vibe: e.target.value })}
+                    className="border-2 focus:border-primary"
+                    disabled={isGenerating}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Key Visual Elements
+                  </label>
+                  <Input
+                    placeholder="e.g., Musical instruments, City skyline, Nature imagery, Abstract patterns"
+                    value={promptDetails.keyElements}
+                    onChange={(e) => setPromptDetails({ ...promptDetails, keyElements: e.target.value })}
+                    className="border-2 focus:border-primary"
+                    disabled={isGenerating}
+                  />
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Additional Details (Optional)
+                </label>
+                <Textarea
+                  placeholder="Any other specific requirements or creative ideas..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="min-h-[80px] text-base resize-none border-2 focus:border-primary transition-colors"
+                  disabled={isGenerating}
+                />
+              </div>
+
+              {/* Tips */}
+              <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/20">
+                <p className="font-semibold mb-1">💡 Pro Tips:</p>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>Be specific about the event type and target audience</li>
+                  <li>Mention preferred color schemes for better results</li>
+                  <li>Describe the mood or emotion you want to convey</li>
+                  <li>Include any specific visual elements or imagery needed</li>
+                </ul>
+              </div>
             </div>
 
             {/* Style Selection */}
