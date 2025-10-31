@@ -569,13 +569,13 @@ export const FlyerGenerator = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-foreground">Preview</h3>
-                {generatedImage && (
+                {generatedImage && !isEditMode && (
                   <Button
-                    onClick={() => setIsEditMode(!isEditMode)}
+                    onClick={() => setIsEditMode(true)}
                     variant="outline"
                     size="sm"
                   >
-                    {isEditMode ? "View Only" : "Edit Text"}
+                    Edit Text
                   </Button>
                 )}
               </div>
@@ -594,7 +594,7 @@ export const FlyerGenerator = () => {
                       className="w-full h-full object-contain"
                     />
                     {isEditMode && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 px-4 space-y-4">
+                      <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 px-4 space-y-4 overflow-y-auto">
                         <input
                           type="text"
                           value={editableText.headline}
@@ -629,6 +629,13 @@ export const FlyerGenerator = () => {
                           className="text-base text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-2 w-full max-w-md h-24 resize-none focus:outline-none focus:border-primary"
                           placeholder="Description"
                         />
+                        <Button
+                          onClick={() => setIsEditMode(false)}
+                          size="lg"
+                          className="mt-4 shadow-glow"
+                        >
+                          Done Editing
+                        </Button>
                       </div>
                     )}
                   </>
