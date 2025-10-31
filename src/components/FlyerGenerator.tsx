@@ -156,11 +156,21 @@ const allExamplePrompts = [
   "Storytime library event with whimsical book illustrations",
 ];
 
+const flyerStyles = [
+  { id: 'modern', name: 'Modern', description: 'Clean & contemporary', icon: '✨' },
+  { id: 'vibrant', name: 'Vibrant', description: 'Bold & energetic', icon: '🎨' },
+  { id: 'elegant', name: 'Elegant', description: 'Sophisticated & refined', icon: '👑' },
+  { id: 'creative', name: 'Creative', description: 'Artistic & unique', icon: '🎭' },
+  { id: 'minimal', name: 'Minimal', description: 'Simple & clean', icon: '⚡' },
+  { id: 'bold', name: 'Bold', description: 'Powerful & striking', icon: '💥' },
+];
+
 export const FlyerGenerator = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [selectedStyle, setSelectedStyle] = useState('modern');
 
   // Filter example prompts based on current input
   const getRelevantPrompts = () => {
@@ -197,7 +207,7 @@ export const FlyerGenerator = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-flyer', {
-        body: { prompt }
+        body: { prompt, style: selectedStyle }
       });
 
       if (error) throw error;
@@ -273,6 +283,33 @@ export const FlyerGenerator = () => {
                 className="min-h-[100px] text-base resize-none border-2 focus:border-primary transition-colors"
                 disabled={isGenerating}
               />
+            </div>
+
+            {/* Style Selection */}
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-foreground mb-3 block">
+                Choose a Style
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {flyerStyles.map((style) => (
+                  <button
+                    key={style.id}
+                    onClick={() => setSelectedStyle(style.id)}
+                    disabled={isGenerating}
+                    className={`p-3 rounded-lg border-2 transition-all text-left ${
+                      selectedStyle === style.id
+                        ? 'border-primary bg-primary/10 shadow-glow'
+                        : 'border-border hover:border-primary/50 bg-background'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{style.icon}</span>
+                      <span className="font-semibold text-sm">{style.name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{style.description}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* File Upload with Plus Icon */}
