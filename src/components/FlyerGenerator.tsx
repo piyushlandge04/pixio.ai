@@ -171,6 +171,14 @@ export const FlyerGenerator = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [selectedStyle, setSelectedStyle] = useState('modern');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editableText, setEditableText] = useState({
+    headline: "Your Event Title",
+    date: "January 1, 2025",
+    time: "7:00 PM",
+    location: "Event Location",
+    description: "Add your event description here"
+  });
 
   // Filter example prompts based on current input
   const getRelevantPrompts = () => {
@@ -226,16 +234,78 @@ export const FlyerGenerator = () => {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!generatedImage) return;
     
-    const link = document.createElement('a');
-    link.href = generatedImage;
-    link.download = `flyer-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("Flyer downloaded!");
+    if (isEditMode) {
+      // Download with text overlays
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        // Add text overlays
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.font = 'bold 48px Arial';
+        ctx.textAlign = 'center';
+        
+        // Headline
+        ctx.strokeText(editableText.headline, canvas.width / 2, 100);
+        ctx.fillText(editableText.headline, canvas.width / 2, 100);
+        
+        ctx.font = '32px Arial';
+        // Date & Time
+        ctx.strokeText(`${editableText.date} | ${editableText.time}`, canvas.width / 2, 160);
+        ctx.fillText(`${editableText.date} | ${editableText.time}`, canvas.width / 2, 160);
+        
+        // Location
+        ctx.strokeText(editableText.location, canvas.width / 2, 200);
+        ctx.fillText(editableText.location, canvas.width / 2, 200);
+        
+        ctx.font = '24px Arial';
+        // Description
+        const words = editableText.description.split(' ');
+        let line = '';
+        let y = 250;
+        words.forEach((word) => {
+          const testLine = line + word + ' ';
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > canvas.width - 100 && line !== '') {
+            ctx.strokeText(line, canvas.width / 2, y);
+            ctx.fillText(line, canvas.width / 2, y);
+            line = word + ' ';
+            y += 35;
+          } else {
+            line = testLine;
+          }
+        });
+        ctx.strokeText(line, canvas.width / 2, y);
+        ctx.fillText(line, canvas.width / 2, y);
+        
+        const link = document.createElement('a');
+        link.download = `flyer-${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+        toast.success("Edited flyer downloaded!");
+      };
+      img.src = generatedImage;
+    } else {
+      const link = document.createElement('a');
+      link.href = generatedImage;
+      link.download = `flyer-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Flyer downloaded!");
+    }
   };
 
   const useExamplePrompt = (example: string) => {
@@ -409,20 +479,71 @@ export const FlyerGenerator = () => {
           {/* Preview Section */}
           <Card className="p-6 shadow-card border-2 animate-in fade-in slide-in-from-right duration-700">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Preview</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-foreground">Preview</h3>
+                {generatedImage && (
+                  <Button
+                    onClick={() => setIsEditMode(!isEditMode)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isEditMode ? "View Only" : "Edit Text"}
+                  </Button>
+                )}
+              </div>
               
-              <div className="aspect-[3/4] bg-muted/30 rounded-lg border-2 border-dashed border-border overflow-hidden flex items-center justify-center">
+              <div className="aspect-[3/4] bg-muted/30 rounded-lg border-2 border-dashed border-border overflow-hidden flex items-center justify-center relative">
                 {isGenerating ? (
                   <div className="text-center space-y-4">
                     <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
                     <p className="text-muted-foreground font-medium">Creating your flyer...</p>
                   </div>
                 ) : generatedImage ? (
-                  <img
-                    src={generatedImage}
-                    alt="Generated flyer"
-                    className="w-full h-full object-contain"
-                  />
+                  <>
+                    <img
+                      src={generatedImage}
+                      alt="Generated flyer"
+                      className="w-full h-full object-contain"
+                    />
+                    {isEditMode && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 px-4 space-y-4">
+                        <input
+                          type="text"
+                          value={editableText.headline}
+                          onChange={(e) => setEditableText({ ...editableText, headline: e.target.value })}
+                          className="text-2xl font-bold text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-2 w-full max-w-md focus:outline-none focus:border-primary"
+                          placeholder="Event Title"
+                        />
+                        <input
+                          type="text"
+                          value={editableText.date}
+                          onChange={(e) => setEditableText({ ...editableText, date: e.target.value })}
+                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
+                          placeholder="Date"
+                        />
+                        <input
+                          type="text"
+                          value={editableText.time}
+                          onChange={(e) => setEditableText({ ...editableText, time: e.target.value })}
+                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
+                          placeholder="Time"
+                        />
+                        <input
+                          type="text"
+                          value={editableText.location}
+                          onChange={(e) => setEditableText({ ...editableText, location: e.target.value })}
+                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
+                          placeholder="Location"
+                        />
+                        <textarea
+                          value={editableText.description}
+                          onChange={(e) => setEditableText({ ...editableText, description: e.target.value })}
+                          className="text-base text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-2 w-full max-w-md h-24 resize-none focus:outline-none focus:border-primary"
+                          placeholder="Description"
+                        />
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-center space-y-3 p-8">
                     <Sparkles className="w-12 h-12 text-muted-foreground/40 mx-auto" />
@@ -441,7 +562,7 @@ export const FlyerGenerator = () => {
                   className="w-full font-semibold"
                 >
                   <Download className="mr-2 h-5 w-5" />
-                  Download Flyer
+                  {isEditMode ? "Download with Edits" : "Download Flyer"}
                 </Button>
               )}
             </div>
