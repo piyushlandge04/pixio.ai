@@ -49,7 +49,7 @@ const Landing = () => {
       <section className="py-20 px-4 bg-muted/30">
         <div className="container max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-            Why Choose FlyerAI?
+            Why Choose PIYUSH.AI?
           </h2>
           <p className="text-xl text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
             Powerful features that make flyer design effortless
@@ -102,7 +102,7 @@ const Landing = () => {
                 <Wand2 className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                FlyerAI
+                PIYUSH.AI
               </span>
             </div>
             
@@ -119,7 +119,7 @@ const Landing = () => {
             </div>
             
             <p className="text-sm text-muted-foreground">
-              © 2025 FlyerAI. All rights reserved.
+              © 2025 PIYUSH.AI. All rights reserved.
             </p>
           </div>
         </div>
