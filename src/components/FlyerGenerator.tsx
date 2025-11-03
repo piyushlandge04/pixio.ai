@@ -594,48 +594,82 @@ export const FlyerGenerator = () => {
                       className="w-full h-full object-contain"
                     />
                     {isEditMode && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 px-4 space-y-4 overflow-y-auto">
-                        <input
-                          type="text"
-                          value={editableText.headline}
-                          onChange={(e) => setEditableText({ ...editableText, headline: e.target.value })}
-                          className="text-2xl font-bold text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-2 w-full max-w-md focus:outline-none focus:border-primary"
-                          placeholder="Event Title"
-                        />
-                        <input
-                          type="text"
-                          value={editableText.date}
-                          onChange={(e) => setEditableText({ ...editableText, date: e.target.value })}
-                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
-                          placeholder="Date"
-                        />
-                        <input
-                          type="text"
-                          value={editableText.time}
-                          onChange={(e) => setEditableText({ ...editableText, time: e.target.value })}
-                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
-                          placeholder="Time"
-                        />
-                        <input
-                          type="text"
-                          value={editableText.location}
-                          onChange={(e) => setEditableText({ ...editableText, location: e.target.value })}
-                          className="text-lg text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-1 w-full max-w-md focus:outline-none focus:border-primary"
-                          placeholder="Location"
-                        />
-                        <textarea
-                          value={editableText.description}
-                          onChange={(e) => setEditableText({ ...editableText, description: e.target.value })}
-                          className="text-base text-white text-center bg-black/50 border-2 border-white/50 rounded px-4 py-2 w-full max-w-md h-24 resize-none focus:outline-none focus:border-primary"
-                          placeholder="Description"
-                        />
-                        <Button
-                          onClick={() => setIsEditMode(false)}
-                          size="lg"
-                          className="mt-4 shadow-glow"
-                        >
-                          Done Editing
-                        </Button>
+                      <div className="absolute inset-0 bg-black/20">
+                        <div className="absolute top-8 left-0 right-0 px-4 space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                              Headline
+                            </label>
+                            <input
+                              type="text"
+                              value={editableText.headline}
+                              onChange={(e) => setEditableText({ ...editableText, headline: e.target.value })}
+                              className="w-full text-xl font-bold text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              placeholder="Event Title"
+                            />
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                              <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded block">
+                                Date
+                              </label>
+                              <input
+                                type="text"
+                                value={editableText.date}
+                                onChange={(e) => setEditableText({ ...editableText, date: e.target.value })}
+                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                                placeholder="Date"
+                              />
+                            </div>
+                            
+                            <div className="space-y-1">
+                              <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded block">
+                                Time
+                              </label>
+                              <input
+                                type="text"
+                                value={editableText.time}
+                                onChange={(e) => setEditableText({ ...editableText, time: e.target.value })}
+                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                                placeholder="Time"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                              Location
+                            </label>
+                            <input
+                              type="text"
+                              value={editableText.location}
+                              onChange={(e) => setEditableText({ ...editableText, location: e.target.value })}
+                              className="w-full text-base text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              placeholder="Location"
+                            />
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                              Description
+                            </label>
+                            <textarea
+                              value={editableText.description}
+                              onChange={(e) => setEditableText({ ...editableText, description: e.target.value })}
+                              className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 h-20 resize-none focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              placeholder="Description"
+                            />
+                          </div>
+                          
+                          <Button
+                            onClick={() => setIsEditMode(false)}
+                            size="lg"
+                            className="w-full mt-2 shadow-glow bg-primary hover:bg-primary/90"
+                          >
+                            Done Editing
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </>
