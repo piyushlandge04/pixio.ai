@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage, Image as ImageIcon, Move, Maximize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+
+interface LogoOverlay {
+  id: string;
+  file: File;
+  url: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 const allExamplePrompts = [
   // Events & Festivals
@@ -172,6 +182,10 @@ export const FlyerGenerator = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [selectedStyle, setSelectedStyle] = useState('modern');
   const [isEditMode, setIsEditMode] = useState(false);
+  const [logoOverlays, setLogoOverlays] = useState<LogoOverlay[]>([]);
+  const [selectedLogo, setSelectedLogo] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [editableText, setEditableText] = useState({
     headline: "Your Event Title",
     date: "January 1, 2025",
@@ -252,41 +266,37 @@ export const FlyerGenerator = () => {
   const handleDownload = async () => {
     if (!generatedImage) return;
     
-    if (isEditMode) {
-      // Download with text overlays
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = async () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
       
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        // Add text overlays
+      // Add text overlays if in edit mode
+      if (isEditMode) {
         ctx.fillStyle = 'white';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
         ctx.font = 'bold 48px Arial';
         ctx.textAlign = 'center';
         
-        // Headline
         ctx.strokeText(editableText.headline, canvas.width / 2, 100);
         ctx.fillText(editableText.headline, canvas.width / 2, 100);
         
         ctx.font = '32px Arial';
-        // Date & Time
         ctx.strokeText(`${editableText.date} | ${editableText.time}`, canvas.width / 2, 160);
         ctx.fillText(`${editableText.date} | ${editableText.time}`, canvas.width / 2, 160);
         
-        // Location
         ctx.strokeText(editableText.location, canvas.width / 2, 200);
         ctx.fillText(editableText.location, canvas.width / 2, 200);
         
         ctx.font = '24px Arial';
-        // Description
         const words = editableText.description.split(' ');
         let line = '';
         let y = 250;
@@ -304,23 +314,33 @@ export const FlyerGenerator = () => {
         });
         ctx.strokeText(line, canvas.width / 2, y);
         ctx.fillText(line, canvas.width / 2, y);
-        
-        const link = document.createElement('a');
-        link.download = `flyer-${Date.now()}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
-        toast.success("Edited flyer downloaded!");
-      };
-      img.src = generatedImage;
-    } else {
+      }
+      
+      // Add logo overlays
+      for (const logo of logoOverlays) {
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        await new Promise((resolve) => {
+          logoImg.onload = () => {
+            const x = (logo.x / 100) * canvas.width;
+            const y = (logo.y / 100) * canvas.height;
+            const width = (logo.width / 100) * canvas.width;
+            const height = (logo.height / 100) * canvas.height;
+            ctx.drawImage(logoImg, x, y, width, height);
+            resolve(true);
+          };
+          logoImg.src = logo.url;
+        });
+      }
+      
       const link = document.createElement('a');
-      link.href = generatedImage;
       link.download = `flyer-${Date.now()}.png`;
-      document.body.appendChild(link);
+      link.href = canvas.toDataURL();
       link.click();
-      document.body.removeChild(link);
-      toast.success("Flyer downloaded!");
-    }
+      toast.success("Flyer downloaded with logos!");
+    };
+    
+    img.src = generatedImage;
   };
 
   const useExamplePrompt = (example: string) => {
@@ -329,12 +349,93 @@ export const FlyerGenerator = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setUploadedFiles((prev) => [...prev, ...files]);
-    toast.success(`${files.length} file(s) uploaded`);
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+      toast.error("Please upload image files only");
+      return;
+    }
+
+    setUploadedFiles((prev) => [...prev, ...imageFiles]);
+    toast.success(`${imageFiles.length} logo(s) uploaded`);
   };
 
   const removeFile = (index: number) => {
+    const file = uploadedFiles[index];
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+    
+    // Remove from overlays if it's there
+    setLogoOverlays((prev) => prev.filter((logo) => logo.file !== file));
+  };
+
+  const addLogoToFlyer = (file: File) => {
+    if (!generatedImage) {
+      toast.error("Generate a flyer first before adding logos");
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const newLogo: LogoOverlay = {
+      id: `logo-${Date.now()}`,
+      file,
+      url,
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 100,
+    };
+
+    setLogoOverlays((prev) => [...prev, newLogo]);
+    toast.success("Logo added to flyer! Drag to reposition, resize handles to scale.");
+  };
+
+  const removeLogo = (id: string) => {
+    const logo = logoOverlays.find((l) => l.id === id);
+    if (logo) {
+      URL.revokeObjectURL(logo.url);
+    }
+    setLogoOverlays((prev) => prev.filter((l) => l.id !== id));
+    setSelectedLogo(null);
+  };
+
+  const handleLogoMouseDown = (e: React.MouseEvent, logoId: string) => {
+    e.stopPropagation();
+    setSelectedLogo(logoId);
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !selectedLogo || !containerRef.current) return;
+
+    const container = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - container.left) / container.width) * 100;
+    const y = ((e.clientY - container.top) / container.height) * 100;
+
+    setLogoOverlays((prev) =>
+      prev.map((logo) =>
+        logo.id === selectedLogo
+          ? { ...logo, x: Math.max(0, Math.min(100 - logo.width / 10, x)) , y: Math.max(0, Math.min(100 - logo.height / 10, y)) }
+          : logo
+      )
+    );
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const resizeLogo = (logoId: string, delta: number) => {
+    setLogoOverlays((prev) =>
+      prev.map((logo) =>
+        logo.id === logoId
+          ? {
+              ...logo,
+              width: Math.max(50, Math.min(300, logo.width + delta)),
+              height: Math.max(50, Math.min(300, logo.height + delta)),
+            }
+          : logo
+      )
+    );
   };
 
   return (
@@ -470,30 +571,56 @@ export const FlyerGenerator = () => {
               </div>
             </div>
 
-            {/* File Upload with Plus Icon */}
-            <div className="space-y-3">
+            {/* Logo Upload Section */}
+            <div className="space-y-3 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border-2 border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <ImageIcon className="h-5 w-5 text-primary" />
+                <h4 className="text-sm font-semibold text-foreground">Company Logo</h4>
+              </div>
+              
               {uploadedFiles.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {uploadedFiles.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 pl-3 pr-2 py-2 bg-muted rounded-full border border-border group hover:border-primary transition-colors"
-                    >
-                      <FileImage className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-foreground max-w-[120px] truncate">
-                        {file.name}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeFile(index)}
-                        disabled={isGenerating}
-                        className="h-6 w-6 rounded-full hover:bg-destructive/10"
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">Uploaded logos:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {uploadedFiles.map((file, index) => (
+                      <div
+                        key={index}
+                        className="relative group rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-all bg-background"
                       >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={file.name}
+                          className="w-full h-20 object-contain p-2"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          {generatedImage && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => addLogoToFlyer(file)}
+                              className="text-xs h-7"
+                            >
+                              <Plus className="h-3 w-3 mr-1" />
+                              Add to Flyer
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => removeFile(index)}
+                            className="text-xs h-7"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-2 py-1">
+                          <span className="text-xs text-white truncate block">
+                            {file.name}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               
@@ -503,29 +630,30 @@ export const FlyerGenerator = () => {
                   type="file"
                   onChange={handleFileUpload}
                   multiple
-                  accept="image/*,.pdf,.doc,.docx"
+                  accept="image/*"
                   className="hidden"
                   disabled={isGenerating}
                 />
                 <Button
                   type="button"
-                  variant="outline"
-                  size="icon"
+                  variant="default"
                   onClick={() => document.getElementById('file-upload')?.click()}
                   disabled={isGenerating}
-                  className="h-10 w-10 rounded-full border-2 hover:border-primary hover:bg-primary/5 transition-all"
+                  className="w-full gap-2 shadow-md hover:shadow-lg transition-all"
                 >
-                  <Plus className="h-5 w-5" />
+                  <ImageIcon className="h-4 w-4" />
+                  Upload Logo Image
                 </Button>
-                <span className="text-sm text-muted-foreground">
-                  Add images or documents
-                </span>
               </div>
+              
+              <p className="text-xs text-muted-foreground text-center">
+                Add your logo after generating the flyer
+              </p>
             </div>
 
             <Button
               onClick={handleGenerate}
-              disabled={isGenerating || !prompt.trim()}
+              disabled={isGenerating || (!promptDetails.eventType && !prompt.trim())}
               size="lg"
               className="w-full text-lg font-semibold shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
             >
@@ -580,7 +708,13 @@ export const FlyerGenerator = () => {
                 )}
               </div>
               
-              <div className="aspect-[3/4] bg-muted/30 rounded-lg border-2 border-dashed border-border overflow-hidden flex items-center justify-center relative">
+              <div 
+                ref={containerRef}
+                className="aspect-[3/4] bg-muted/30 rounded-lg border-2 border-dashed border-border overflow-hidden flex items-center justify-center relative"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
                 {isGenerating ? (
                   <div className="text-center space-y-4">
                     <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
@@ -593,6 +727,70 @@ export const FlyerGenerator = () => {
                       alt="Generated flyer"
                       className="w-full h-full object-contain"
                     />
+                    
+                    {/* Logo Overlays */}
+                    {logoOverlays.map((logo) => (
+                      <div
+                        key={logo.id}
+                        className={`absolute cursor-move group ${
+                          selectedLogo === logo.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        style={{
+                          left: `${logo.x}%`,
+                          top: `${logo.y}%`,
+                          width: `${logo.width}px`,
+                          height: `${logo.height}px`,
+                        }}
+                        onMouseDown={(e) => handleLogoMouseDown(e, logo.id)}
+                      >
+                        <img
+                          src={logo.url}
+                          alt="Logo overlay"
+                          className="w-full h-full object-contain pointer-events-none"
+                        />
+                        {selectedLogo === logo.id && (
+                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 rounded-lg px-3 py-1.5 flex items-center gap-2 whitespace-nowrap">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                resizeLogo(logo.id, -10);
+                              }}
+                              className="h-6 w-6 p-0 text-white hover:text-primary"
+                            >
+                              <Maximize2 className="h-3 w-3 rotate-180" />
+                            </Button>
+                            <span className="text-xs text-white">
+                              <Move className="h-3 w-3" />
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                resizeLogo(logo.id, 10);
+                              }}
+                              className="h-6 w-6 p-0 text-white hover:text-primary"
+                            >
+                              <Maximize2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeLogo(logo.id);
+                              }}
+                              className="h-6 w-6 p-0 text-white hover:text-destructive"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    
                     {isEditMode && (
                       <div className="absolute inset-0 bg-black/20">
                         <div className="absolute top-8 left-0 right-0 px-4 space-y-3">
@@ -691,7 +889,11 @@ export const FlyerGenerator = () => {
                   className="w-full font-semibold"
                 >
                   <Download className="mr-2 h-5 w-5" />
-                  {isEditMode ? "Download with Edits" : "Download Flyer"}
+                  {logoOverlays.length > 0 
+                    ? "Download with Logos" 
+                    : isEditMode 
+                    ? "Download with Edits" 
+                    : "Download Flyer"}
                 </Button>
               )}
             </div>
