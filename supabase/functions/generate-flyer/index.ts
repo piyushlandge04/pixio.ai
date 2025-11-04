@@ -31,34 +31,20 @@ serve(async (req) => {
       );
     }
 
-    // Style-specific enhancements
+    // Concise style directions for faster generation
     const styleGuides: Record<string, string> = {
-      modern: 'ultra-modern design with clean lines, minimalist aesthetic, bold sans-serif typography, geometric shapes, striking color gradients, and contemporary visual hierarchy',
-      vibrant: 'highly vibrant and energetic design with bold saturated colors, dynamic compositions, playful typography, exciting visual elements, high contrast, and attention-grabbing graphics',
-      elegant: 'sophisticated elegant design with refined color palette, classic serif fonts, luxurious feel, subtle textures, balanced white space, and timeless professional aesthetics',
-      creative: 'highly creative artistic design with unique illustrations, hand-drawn elements, experimental typography, unconventional layouts, artistic flair, and innovative visual concepts',
-      minimal: 'ultra-minimalist design with maximum white space, simple clean typography, limited color palette (2-3 colors max), focused messaging, and zen-like simplicity',
-      bold: 'bold impactful design with large dramatic typography, strong contrasts, powerful imagery, commanding presence, eye-catching headlines, and memorable visual impact'
+      modern: 'clean, contemporary design with bold typography',
+      vibrant: 'energetic design with bold colors and dynamic composition',
+      elegant: 'sophisticated design with refined colors and classic fonts',
+      creative: 'artistic design with unique illustrations and experimental layout',
+      minimal: 'minimalist design with white space and simple typography',
+      bold: 'impactful design with large typography and strong contrasts'
     };
 
     const styleGuide = styleGuides[style] || styleGuides.modern;
 
-    // Enhanced prompt for creative flyer generation
-    const enhancedPrompt = `Create a stunning, professional flyer design with these specifications: ${prompt}.
-
-STYLE DIRECTION: ${styleGuide}
-
-DESIGN REQUIREMENTS:
-- Format: Vertical/portrait orientation (ideal for printing and digital sharing)
-- Layout: Well-balanced composition with clear visual hierarchy
-- Typography: Professional font choices that match the style and enhance readability
-- Color scheme: Carefully selected colors that evoke the right emotion and brand identity
-- Graphics: Include relevant high-quality imagery, illustrations, or icons that complement the theme
-- White space: Strategic use of negative space for better visual flow
-- Focal points: Clear emphasis on key information (headlines, dates, CTAs)
-- Print-ready: High resolution, suitable for both digital display and physical printing
-
-Make it visually stunning, memorable, and effective at communicating its message!`;
+    // Streamlined prompt for faster generation
+    const enhancedPrompt = `Create a professional ${styleGuide} flyer: ${prompt}. Vertical orientation, clear hierarchy, high quality.`;
 
     console.log('Calling Lovable AI with enhanced prompt');
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
