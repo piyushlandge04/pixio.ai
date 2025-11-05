@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -169,7 +169,6 @@ export const FlyerGenerator = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [selectedStyle, setSelectedStyle] = useState('modern');
   const [isEditMode, setIsEditMode] = useState(false);
   const [editableText, setEditableText] = useState({
@@ -327,15 +326,6 @@ export const FlyerGenerator = () => {
     setPrompt(example);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setUploadedFiles((prev) => [...prev, ...files]);
-    toast.success(`${files.length} file(s) uploaded`);
-  };
-
-  const removeFile = (index: number) => {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background py-12 px-4">
@@ -470,58 +460,6 @@ export const FlyerGenerator = () => {
               </div>
             </div>
 
-            {/* File Upload with Plus Icon */}
-            <div className="space-y-3">
-              {uploadedFiles.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {uploadedFiles.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 pl-3 pr-2 py-2 bg-muted rounded-full border border-border group hover:border-primary transition-colors"
-                    >
-                      <FileImage className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-foreground max-w-[120px] truncate">
-                        {file.name}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeFile(index)}
-                        disabled={isGenerating}
-                        className="h-6 w-6 rounded-full hover:bg-destructive/10"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="flex items-center gap-3">
-                <Input
-                  id="file-upload"
-                  type="file"
-                  onChange={handleFileUpload}
-                  multiple
-                  accept="image/*,.pdf,.doc,.docx"
-                  className="hidden"
-                  disabled={isGenerating}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  disabled={isGenerating}
-                  className="h-10 w-10 rounded-full border-2 hover:border-primary hover:bg-primary/5 transition-all"
-                >
-                  <Plus className="h-5 w-5" />
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  Add images or documents
-                </span>
-              </div>
-            </div>
 
             <Button
               onClick={handleGenerate}
