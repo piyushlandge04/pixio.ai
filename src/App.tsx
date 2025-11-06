@@ -9,6 +9,7 @@ import Generate from "./pages/Generate";
 import Auth from "./pages/Auth";
 import History from "./pages/History";
 import AdminDashboard from "./pages/AdminDashboard";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/generate" element={<Generate />} />
           <Route path="/history" element={<History />} />
           <Route path="/admin" element={<AdminDashboard />} />
