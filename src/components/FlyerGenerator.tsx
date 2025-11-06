@@ -239,6 +239,13 @@ export const FlyerGenerator = () => {
       return;
     }
 
+    // Check if user is logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error("Please login to generate flyers");
+      return;
+    }
+
     setIsGenerating(true);
     setGeneratedImage(null);
 
@@ -251,6 +258,21 @@ export const FlyerGenerator = () => {
 
       if (data?.imageUrl) {
         setGeneratedImage(data.imageUrl);
+        
+        // Save to history
+        const { error: historyError } = await supabase
+          .from("flyer_history")
+          .insert({
+            user_id: session.user.id,
+            prompt: structuredPrompt,
+            style: selectedStyle,
+            image_url: data.imageUrl,
+          });
+
+        if (historyError) {
+          console.error("Error saving to history:", historyError);
+        }
+
         toast.success("Flyer generated successfully!");
       } else {
         throw new Error("No image returned");
