@@ -179,7 +179,6 @@ export const FlyerGenerator = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [selectedStyle, setSelectedStyle] = useState('modern');
   const [isEditMode, setIsEditMode] = useState(false);
   const [logoOverlays, setLogoOverlays] = useState<LogoOverlay[]>([]);
@@ -369,48 +368,6 @@ export const FlyerGenerator = () => {
     setPrompt(example);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
-    if (imageFiles.length === 0) {
-      toast.error("Please upload image files only");
-      return;
-    }
-
-    setUploadedFiles((prev) => [...prev, ...imageFiles]);
-    toast.success(`${imageFiles.length} logo(s) uploaded`);
-  };
-
-  const removeFile = (index: number) => {
-    const file = uploadedFiles[index];
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
-    
-    // Remove from overlays if it's there
-    setLogoOverlays((prev) => prev.filter((logo) => logo.file !== file));
-  };
-
-  const addLogoToFlyer = (file: File) => {
-    if (!generatedImage) {
-      toast.error("Generate a flyer first before adding logos");
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    const newLogo: LogoOverlay = {
-      id: `logo-${Date.now()}`,
-      file,
-      url,
-      x: 50,
-      y: 50,
-      width: 100,
-      height: 100,
-    };
-
-    setLogoOverlays((prev) => [...prev, newLogo]);
-    toast.success("Logo added to flyer! Drag to reposition, resize handles to scale.");
-  };
-
   const removeLogo = (id: string) => {
     const logo = logoOverlays.find((l) => l.id === id);
     if (logo) {
@@ -591,86 +548,6 @@ export const FlyerGenerator = () => {
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Logo Upload Section */}
-            <div className="space-y-3 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border-2 border-primary/20">
-              <div className="flex items-center gap-2 mb-2">
-                <ImageIcon className="h-5 w-5 text-primary" />
-                <h4 className="text-sm font-semibold text-foreground">Company Logo</h4>
-              </div>
-              
-              {uploadedFiles.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">Uploaded logos:</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {uploadedFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="relative group rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-all bg-background"
-                      >
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={file.name}
-                          className="w-full h-20 object-contain p-2"
-                        />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          {generatedImage && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => addLogoToFlyer(file)}
-                              className="text-xs h-7"
-                            >
-                              <Plus className="h-3 w-3 mr-1" />
-                              Add to Flyer
-                            </Button>
-                          )}
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => removeFile(index)}
-                            className="text-xs h-7"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-2 py-1">
-                          <span className="text-xs text-white truncate block">
-                            {file.name}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-3">
-                <Input
-                  id="file-upload"
-                  type="file"
-                  onChange={handleFileUpload}
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  disabled={isGenerating}
-                />
-                <Button
-                  type="button"
-                  variant="default"
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  disabled={isGenerating}
-                  className="w-full gap-2 shadow-md hover:shadow-lg transition-all"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  Upload Logo Image
-                </Button>
-              </div>
-              
-              <p className="text-xs text-muted-foreground text-center">
-                Add your logo after generating the flyer
-              </p>
             </div>
 
             <Button
