@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Wand2, LogOut, History as HistoryIcon, Shield } from "lucide-react";
+import { Wand2, LogOut, History as HistoryIcon, Shield, User } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -104,6 +104,15 @@ export const Navbar = () => {
               >
                 <HistoryIcon className="w-4 h-4" />
                 History
+              </Link>
+              <Link
+                to="/profile"
+                className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                  isActive("/profile") ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                <User className="w-4 h-4" />
+                Profile
               </Link>
               {isAdmin && (
                 <Link
