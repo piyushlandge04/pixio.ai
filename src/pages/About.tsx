@@ -4,18 +4,26 @@ import { Sparkles, Target, Users, Rocket } from "lucide-react";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Animated Background Grid */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
+      
+      {/* Animated Glowing Orbs */}
+      <div className="fixed top-20 left-20 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float"></div>
+      <div className="fixed bottom-20 right-20 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-neon-pink/5 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
+      
       <Navbar />
       
-      <div className="pt-32 pb-20 px-4">
+      <div className="relative pt-32 pb-20 px-4">
         <div className="container max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-6">
-              <Sparkles className="w-8 h-8 text-primary" />
+            <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-6 border-2 border-neon-cyan/30 animate-glow-pulse">
+              <Sparkles className="w-8 h-8 text-neon-cyan animate-neon-glow" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
                 About PIYUSH.AI
               </span>
             </h1>
@@ -25,10 +33,10 @@ const About = () => {
           </div>
 
           {/* Mission Section */}
-          <Card className="p-8 md:p-12 mb-12 border-2 shadow-card animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100">
+          <Card className="p-8 md:p-12 mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100">
             <div className="flex items-start gap-6 mb-6">
-              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Target className="w-7 h-7 text-primary" />
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-cyan/30">
+                <Target className="w-7 h-7 text-neon-cyan" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
@@ -47,10 +55,10 @@ const About = () => {
           </Card>
 
           {/* Story Section */}
-          <Card className="p-8 md:p-12 mb-12 border-2 shadow-card animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+          <Card className="p-8 md:p-12 mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 hover:border-neon-purple hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
             <div className="flex items-start gap-6 mb-6">
-              <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Rocket className="w-7 h-7 text-secondary" />
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-purple/30">
+                <Rocket className="w-7 h-7 text-neon-purple" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold mb-4">Our Story</h2>
@@ -71,10 +79,10 @@ const About = () => {
           </Card>
 
           {/* Values Section */}
-          <Card className="p-8 md:p-12 mb-12 border-2 shadow-card animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+          <Card className="p-8 md:p-12 mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-[0_0_30px_-5px_hsl(var(--neon-pink)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             <div className="flex items-start gap-6">
-              <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Users className="w-7 h-7 text-accent" />
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-pink/20 to-neon-cyan/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-pink/30">
+                <Users className="w-7 h-7 text-neon-pink" />
               </div>
               <div>
                 <h2 className="text-3xl font-bold mb-6">Our Values</h2>
@@ -113,7 +121,7 @@ const About = () => {
           </Card>
 
           {/* Technology Section */}
-          <Card className="p-8 md:p-12 border-2 shadow-card bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
+          <Card className="p-8 md:p-12 bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 bg-gradient-to-br from-neon-cyan/5 via-neon-purple/5 to-neon-pink/5 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
             <h2 className="text-3xl font-bold mb-4">Powered by Advanced AI</h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-4">
               PIYUSH.AI uses state-of-the-art artificial intelligence models trained on 

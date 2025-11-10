@@ -58,13 +58,13 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-neon-cyan/20 shadow-[0_4px_20px_-4px_hsl(var(--neon-cyan)/0.1)]">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-          <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
-            <Wand2 className="w-5 h-5 text-primary-foreground" />
+        <Link to="/" className="flex items-center gap-2 font-bold text-xl group">
+          <div className="p-2 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-lg border border-neon-cyan/30 transition-all duration-300 group-hover:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] group-hover:scale-110">
+            <Wand2 className="w-5 h-5 text-neon-cyan" />
           </div>
-          <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
             PIYUSH.AI
           </span>
         </Link>
@@ -72,16 +72,16 @@ export const Navbar = () => {
         <div className="flex items-center gap-6">
           <Link
             to="/"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              isActive("/") ? "text-foreground" : "text-muted-foreground"
+            className={`text-sm font-medium transition-all hover:text-neon-cyan hover:scale-110 ${
+              isActive("/") ? "text-neon-cyan" : "text-muted-foreground"
             }`}
           >
             Home
           </Link>
           <Link
             to="/about"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              isActive("/about") ? "text-foreground" : "text-muted-foreground"
+            className={`text-sm font-medium transition-all hover:text-neon-cyan hover:scale-110 ${
+              isActive("/about") ? "text-neon-cyan" : "text-muted-foreground"
             }`}
           >
             About
@@ -90,16 +90,16 @@ export const Navbar = () => {
             <>
               <Link
                 to="/generate"
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  isActive("/generate") ? "text-foreground" : "text-muted-foreground"
+                className={`text-sm font-medium transition-all hover:text-neon-purple hover:scale-110 ${
+                  isActive("/generate") ? "text-neon-purple" : "text-muted-foreground"
                 }`}
               >
                 Generate
               </Link>
               <Link
                 to="/history"
-                className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
-                  isActive("/history") ? "text-foreground" : "text-muted-foreground"
+                className={`text-sm font-medium transition-all hover:text-neon-purple hover:scale-110 flex items-center gap-1 ${
+                  isActive("/history") ? "text-neon-purple" : "text-muted-foreground"
                 }`}
               >
                 <HistoryIcon className="w-4 h-4" />
@@ -107,8 +107,8 @@ export const Navbar = () => {
               </Link>
               <Link
                 to="/profile"
-                className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
-                  isActive("/profile") ? "text-foreground" : "text-muted-foreground"
+                className={`text-sm font-medium transition-all hover:text-neon-purple hover:scale-110 flex items-center gap-1 ${
+                  isActive("/profile") ? "text-neon-purple" : "text-muted-foreground"
                 }`}
               >
                 <User className="w-4 h-4" />
@@ -117,8 +117,8 @@ export const Navbar = () => {
               {isAdmin && (
                 <Link
                   to="/admin"
-                  className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
-                    isActive("/admin") ? "text-foreground" : "text-muted-foreground"
+                  className={`text-sm font-medium transition-all hover:text-neon-pink hover:scale-110 flex items-center gap-1 ${
+                    isActive("/admin") ? "text-neon-pink" : "text-muted-foreground"
                   }`}
                 >
                   <Shield className="w-4 h-4" />
@@ -126,7 +126,7 @@ export const Navbar = () => {
                 </Link>
               )}
               <ThemeToggle />
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="hover:bg-neon-purple/10 hover:text-neon-purple">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
@@ -135,7 +135,7 @@ export const Navbar = () => {
             <>
               <ThemeToggle />
               <Link to="/auth">
-                <Button size="sm" className="shadow-glow">
+                <Button size="sm" className="bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50">
                   Login
                 </Button>
               </Link>

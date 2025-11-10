@@ -177,10 +177,17 @@ const Profile = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Animated Background Grid */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
+      
+      {/* Animated Glowing Orbs */}
+      <div className="fixed top-20 right-20 w-80 h-80 bg-neon-cyan/10 rounded-full blur-[120px] animate-float"></div>
+      <div className="fixed bottom-20 left-20 w-96 h-96 bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
+      
       <Navbar />
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
+      <main className="relative container mx-auto px-4 py-8 max-w-2xl">
+        <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.3)]">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="relative group">
@@ -207,11 +214,11 @@ const Profile = () => {
                 />
               </div>
             </div>
-            <CardTitle className="text-2xl">{form.watch("full_name") || "User Profile"}</CardTitle>
+            <CardTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">{form.watch("full_name") || "User Profile"}</CardTitle>
             <CardDescription>Manage your account information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-neon-cyan/10 to-neon-purple/10 rounded-lg border border-neon-cyan/30">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">Account Type:</span>
                 <Badge variant={accountType === "pro" ? "default" : accountType === "premium" ? "secondary" : "outline"} className="capitalize">
@@ -254,7 +261,7 @@ const Profile = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={updating}>
+                <Button type="submit" className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50" disabled={updating}>
                   {updating ? "Updating..." : "Update Profile"}
                 </Button>
               </form>
@@ -262,7 +269,7 @@ const Profile = () => {
           </CardContent>
         </Card>
       </main>
-    </>
+    </div>
   );
 };
 
