@@ -418,14 +418,14 @@ export const FlyerGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="container max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
-            <Wand2 className="w-8 h-8 text-primary" />
+        <div className="text-center mb-12 animate-slide-in-up">
+          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-4 border border-neon-cyan/30 animate-glow-pulse">
+            <Wand2 className="w-8 h-8 text-neon-cyan animate-neon-glow" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
             AI Flyer Generator
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -435,63 +435,63 @@ export const FlyerGenerator = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
-          <Card className="p-6 space-y-6 shadow-card border-2 animate-in fade-in slide-in-from-left duration-700">
+          <Card className="p-6 space-y-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-purple)/0.4)] transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Design Your Flyer</h3>
+                <Sparkles className="w-5 h-5 text-neon-cyan animate-neon-glow" />
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Design Your Flyer</h3>
               </div>
               
               {/* Structured Input Fields */}
-              <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border">
+              <div className="space-y-4 p-4 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-lg border border-neon-cyan/30">
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Event Type <span className="text-destructive">*</span>
+                  <label className="text-sm font-medium text-neon-cyan mb-2 block">
+                    Event Type <span className="text-neon-pink">*</span>
                   </label>
                   <Input
                     placeholder="e.g., Summer Music Festival, Business Conference, Yoga Retreat"
                     value={promptDetails.eventType}
                     onChange={(e) => setPromptDetails({ ...promptDetails, eventType: e.target.value })}
-                    className="border-2 focus:border-primary"
+                    className="border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
+                  <label className="text-sm font-medium text-neon-purple mb-2 block">
                     Color Scheme
                   </label>
                   <Input
                     placeholder="e.g., Vibrant blues and purples, Warm autumn tones, Black and gold"
                     value={promptDetails.colors}
                     onChange={(e) => setPromptDetails({ ...promptDetails, colors: e.target.value })}
-                    className="border-2 focus:border-primary"
+                    className="border-2 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] bg-background/50 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
+                  <label className="text-sm font-medium text-neon-pink mb-2 block">
                     Vibe/Mood
                   </label>
                   <Input
                     placeholder="e.g., Energetic and fun, Professional and elegant, Calm and peaceful"
                     value={promptDetails.vibe}
                     onChange={(e) => setPromptDetails({ ...promptDetails, vibe: e.target.value })}
-                    className="border-2 focus:border-primary"
+                    className="border-2 border-neon-pink/30 focus:border-neon-pink focus:ring-neon-pink/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-pink)/0.5)] bg-background/50 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
+                  <label className="text-sm font-medium text-neon-blue mb-2 block">
                     Key Visual Elements
                   </label>
                   <Input
                     placeholder="e.g., Musical instruments, City skyline, Nature imagery, Abstract patterns"
                     value={promptDetails.keyElements}
                     onChange={(e) => setPromptDetails({ ...promptDetails, keyElements: e.target.value })}
-                    className="border-2 focus:border-primary"
+                    className="border-2 border-neon-blue/30 focus:border-neon-blue focus:ring-neon-blue/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-blue)/0.5)] bg-background/50 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
@@ -499,22 +499,22 @@ export const FlyerGenerator = () => {
 
               {/* Additional Details */}
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">
+                <label className="text-sm font-medium text-neon-cyan mb-2 block">
                   Additional Details (Optional)
                 </label>
                 <Textarea
                   placeholder="Any other specific requirements or creative ideas..."
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[80px] text-base resize-none border-2 focus:border-primary transition-colors"
+                  className="min-h-[80px] text-base resize-none border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300"
                   disabled={isGenerating}
                 />
               </div>
 
               {/* Tips */}
-              <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/20">
-                <p className="font-semibold mb-1">💡 Pro Tips:</p>
-                <ul className="space-y-1 list-disc list-inside">
+              <div className="text-xs text-foreground bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 p-3 rounded-lg border border-neon-purple/30">
+                <p className="font-semibold mb-1 text-neon-purple">💡 Pro Tips:</p>
+                <ul className="space-y-1 list-disc list-inside text-muted-foreground">
                   <li>Be specific about the event type and target audience</li>
                   <li>Mention preferred color schemes for better results</li>
                   <li>Describe the mood or emotion you want to convey</li>
@@ -525,7 +525,7 @@ export const FlyerGenerator = () => {
 
             {/* Style Selection */}
             <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground mb-3 block">
+              <label className="text-sm font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent mb-3 block">
                 Choose a Style
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -534,10 +534,10 @@ export const FlyerGenerator = () => {
                     key={style.id}
                     onClick={() => setSelectedStyle(style.id)}
                     disabled={isGenerating}
-                    className={`p-3 rounded-lg border-2 transition-all text-left ${
+                    className={`p-3 rounded-lg border-2 transition-all text-left hover:scale-105 ${
                       selectedStyle === style.id
-                        ? 'border-primary bg-primary/10 shadow-glow'
-                        : 'border-border hover:border-primary/50 bg-background'
+                        ? 'border-neon-cyan bg-neon-cyan/10 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)]'
+                        : 'border-border/50 hover:border-neon-purple/50 hover:bg-neon-purple/5 bg-background/50'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     <div className="flex items-center gap-2 mb-1">
@@ -554,7 +554,7 @@ export const FlyerGenerator = () => {
               onClick={handleGenerate}
               disabled={isGenerating || (!promptDetails.eventType && !prompt.trim())}
               size="lg"
-              className="w-full text-lg font-semibold shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+              className="w-full text-lg font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50 hover:shadow-[0_0_40px_-5px_hsl(var(--neon-purple)/0.7)] transition-all duration-300 hover:scale-[1.02]"
             >
               {isGenerating ? (
                 <>
@@ -563,7 +563,7 @@ export const FlyerGenerator = () => {
                 </>
               ) : (
                 <>
-                  <Wand2 className="mr-2 h-5 w-5" />
+                  <Wand2 className="mr-2 h-5 w-5 animate-neon-glow" />
                   Generate Flyer
                 </>
               )}
@@ -572,7 +572,7 @@ export const FlyerGenerator = () => {
             {/* Example Prompts */}
             {relevantPrompts.length > 0 && (
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground">
+                <p className="text-sm font-semibold text-neon-purple">
                   {prompt.trim() ? "Related suggestions:" : "Try these examples:"}
                 </p>
                 <div className="space-y-2">
@@ -581,7 +581,7 @@ export const FlyerGenerator = () => {
                       key={index}
                       onClick={() => useExamplePrompt(example)}
                       disabled={isGenerating}
-                      className="w-full text-left text-sm p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-transparent hover:border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full text-left text-sm p-3 rounded-lg bg-neon-purple/10 hover:bg-neon-purple/20 transition-all border border-neon-purple/30 hover:border-neon-purple/50 hover:shadow-[0_0_15px_-5px_hsl(var(--neon-purple)/0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {example}
                     </button>
@@ -592,15 +592,19 @@ export const FlyerGenerator = () => {
           </Card>
 
           {/* Preview Section */}
-          <Card className="p-6 shadow-card border-2 animate-in fade-in slide-in-from-right duration-700">
+          <Card className="p-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-purple)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-cyan)/0.4)] transition-all duration-300" style={{ animationDelay: "150ms" }}>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-foreground">Preview</h3>
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-neon-purple animate-neon-glow" />
+                  Preview
+                </h3>
                 {generatedImage && !isEditMode && (
                   <Button
                     onClick={() => setIsEditMode(true)}
                     variant="outline"
                     size="sm"
+                    className="border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:shadow-[0_0_15px_-5px_hsl(var(--neon-purple)/0.5)] transition-all duration-300"
                   >
                     Edit Text
                   </Button>
@@ -609,14 +613,14 @@ export const FlyerGenerator = () => {
               
               <div 
                 ref={containerRef}
-                className="aspect-[3/4] bg-muted/30 rounded-lg border-2 border-dashed border-border overflow-hidden flex items-center justify-center relative"
+                className="aspect-[3/4] bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-lg border-2 border-dashed border-neon-cyan/30 overflow-hidden flex items-center justify-center relative hover:border-neon-purple/50 transition-all duration-300"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
                 {isGenerating ? (
                   <div className="text-center space-y-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+                    <Loader2 className="w-12 h-12 animate-spin text-neon-cyan mx-auto animate-neon-glow" />
                     <p className="text-muted-foreground font-medium">Creating your flyer...</p>
                   </div>
                 ) : generatedImage ? (
@@ -656,7 +660,7 @@ export const FlyerGenerator = () => {
                                 e.stopPropagation();
                                 resizeLogo(logo.id, -10);
                               }}
-                              className="h-6 w-6 p-0 text-white hover:text-primary"
+                              className="h-6 w-6 p-0 text-white hover:text-neon-cyan"
                             >
                               <Maximize2 className="h-3 w-3 rotate-180" />
                             </Button>
@@ -670,7 +674,7 @@ export const FlyerGenerator = () => {
                                 e.stopPropagation();
                                 resizeLogo(logo.id, 10);
                               }}
-                              className="h-6 w-6 p-0 text-white hover:text-primary"
+                              className="h-6 w-6 p-0 text-white hover:text-neon-cyan"
                             >
                               <Maximize2 className="h-3 w-3" />
                             </Button>
@@ -701,7 +705,7 @@ export const FlyerGenerator = () => {
                               type="text"
                               value={editableText.headline}
                               onChange={(e) => setEditableText({ ...editableText, headline: e.target.value })}
-                              className="w-full text-xl font-bold text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              className="w-full text-xl font-bold text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
                               placeholder="Event Title"
                             />
                           </div>
@@ -715,7 +719,7 @@ export const FlyerGenerator = () => {
                                 type="text"
                                 value={editableText.date}
                                 onChange={(e) => setEditableText({ ...editableText, date: e.target.value })}
-                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
                                 placeholder="Date"
                               />
                             </div>
@@ -728,7 +732,7 @@ export const FlyerGenerator = () => {
                                 type="text"
                                 value={editableText.time}
                                 onChange={(e) => setEditableText({ ...editableText, time: e.target.value })}
-                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
                                 placeholder="Time"
                               />
                             </div>
@@ -742,7 +746,7 @@ export const FlyerGenerator = () => {
                               type="text"
                               value={editableText.location}
                               onChange={(e) => setEditableText({ ...editableText, location: e.target.value })}
-                              className="w-full text-base text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-1.5 focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              className="w-full text-base text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
                               placeholder="Location"
                             />
                           </div>
@@ -754,7 +758,7 @@ export const FlyerGenerator = () => {
                             <textarea
                               value={editableText.description}
                               onChange={(e) => setEditableText({ ...editableText, description: e.target.value })}
-                              className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 h-20 resize-none focus:outline-none focus:border-primary focus:bg-black/80 transition-all"
+                              className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 h-20 resize-none focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
                               placeholder="Description"
                             />
                           </div>
@@ -762,7 +766,7 @@ export const FlyerGenerator = () => {
                           <Button
                             onClick={() => setIsEditMode(false)}
                             size="lg"
-                            className="w-full mt-2 shadow-glow bg-primary hover:bg-primary/90"
+                            className="w-full mt-2 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50 transition-all duration-300"
                           >
                             Done Editing
                           </Button>
@@ -772,7 +776,7 @@ export const FlyerGenerator = () => {
                   </>
                 ) : (
                   <div className="text-center space-y-3 p-8">
-                    <Sparkles className="w-12 h-12 text-muted-foreground/40 mx-auto" />
+                    <Sparkles className="w-12 h-12 text-neon-cyan/40 mx-auto animate-float" />
                     <p className="text-muted-foreground">
                       Your flyer will appear here
                     </p>
@@ -785,7 +789,7 @@ export const FlyerGenerator = () => {
                   onClick={handleDownload}
                   variant="secondary"
                   size="lg"
-                  className="w-full font-semibold"
+                  className="w-full font-semibold bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] border border-neon-purple/50 hover:shadow-[0_0_30px_-5px_hsl(var(--neon-pink)/0.6)] transition-all duration-300"
                 >
                   <Download className="mr-2 h-5 w-5" />
                   {logoOverlays.length > 0 
