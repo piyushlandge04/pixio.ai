@@ -250,7 +250,10 @@ export const FlyerGenerator = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-flyer', {
-        body: { prompt: structuredPrompt, style: selectedStyle }
+        body: { prompt: structuredPrompt, style: selectedStyle },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`
+        }
       });
 
       if (error) throw error;
