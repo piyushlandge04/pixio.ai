@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 interface FlyerHistoryItem {
   id: string;
@@ -15,41 +17,53 @@ interface FlyerHistoryItem {
   created_at: string;
 }
 
+const ITEMS_PER_PAGE = 12;
+
 const History = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [history, setHistory] = useState<FlyerHistoryItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    checkAuthAndFetchHistory();
+    checkAuth();
   }, []);
 
-  const checkAuthAndFetchHistory = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error("Please login to view your history");
-        navigate("/auth");
-        return;
-      }
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast.error("Please login to view your history");
+      navigate("/auth");
+      return;
+    }
+    
+    setSession(session);
+  };
 
-      const { data, error } = await supabase
+  const { data: history, isLoading } = useQuery({
+    queryKey: ['flyer-history', session?.user?.id, page],
+    queryFn: async () => {
+      if (!session) return { data: [], count: 0 };
+      
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
+      const { data, error, count } = await supabase
         .from("flyer_history")
-        .select("*")
+        .select("*", { count: 'exact' })
         .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
 
-      setHistory(data || []);
-    } catch (error) {
-      console.error("Error fetching history:", error);
-      toast.error("Failed to load history");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return { data: data || [], count: count || 0 };
+    },
+    enabled: !!session,
+    staleTime: 30000, // Cache for 30 seconds
+  });
+
+  const totalPages = Math.ceil((history?.count || 0) / ITEMS_PER_PAGE);
 
   if (isLoading) {
     return (
@@ -74,11 +88,11 @@ const History = () => {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">Your Flyer History</h1>
             <p className="text-muted-foreground">
-              {history.length} flyer{history.length !== 1 ? "s" : ""} generated
+              {history?.count || 0} flyer{history?.count !== 1 ? "s" : ""} generated
             </p>
           </div>
 
-          {history.length === 0 ? (
+          {!history?.data?.length ? (
             <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30">
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground mb-4">No flyers generated yet</p>
@@ -88,8 +102,9 @@ const History = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {history.map((item) => (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {history.data.map((item) => (
                 <Card key={item.id} className="overflow-hidden bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 hover:-translate-y-2">
                   <div className="aspect-[3/4] bg-muted relative">
                     <img
@@ -110,6 +125,31 @@ const History = () => {
                 </Card>
               ))}
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <Button
+                  variant="outline"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="border-neon-cyan/30 hover:border-neon-cyan"
+                >
+                  Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="border-neon-cyan/30 hover:border-neon-cyan"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
           )}
         </div>
       </div>
