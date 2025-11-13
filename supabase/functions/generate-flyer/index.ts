@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { HfInference } from 'https://esm.sh/@huggingface/inference@2.3.2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,15 +57,32 @@ serve(async (req) => {
     const enhancedPrompt = `Create a professional ${styleGuide} flyer: ${prompt}. Vertical orientation, clear hierarchy, high quality.`;
 
     console.log('Calling Hugging Face with enhanced prompt');
-    const hf = new HfInference(HUGGING_FACE_ACCESS_TOKEN);
+    
+    const hfResponse = await fetch(
+      'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${HUGGING_FACE_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          inputs: enhancedPrompt,
+        }),
+      }
+    );
 
-    const image = await hf.textToImage({
-      inputs: enhancedPrompt,
-      model: 'black-forest-labs/FLUX.1-schnell',
-    });
+    if (!hfResponse.ok) {
+      const errorText = await hfResponse.text();
+      console.error('Hugging Face API error:', hfResponse.status, errorText);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate image with Hugging Face' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Convert the blob to a base64 string
-    const arrayBuffer = await image.arrayBuffer();
+    const imageBlob = await hfResponse.blob();
+    const arrayBuffer = await imageBlob.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     const imageUrl = `data:image/png;base64,${base64}`;
     
