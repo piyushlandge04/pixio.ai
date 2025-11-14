@@ -22,28 +22,17 @@ const ITEMS_PER_PAGE = 12;
 const History = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [session, setSession] = useState<any>(null);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      toast.error("Please login to view your history");
-      navigate("/auth");
-      return;
-    }
-    
-    setSession(session);
-  };
 
   const { data: history, isLoading } = useQuery({
-    queryKey: ['flyer-history', session?.user?.id, page],
+    queryKey: ['flyer-history', page],
     queryFn: async () => {
-      if (!session) return { data: [], count: 0 };
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Please login to view your history");
+        navigate("/auth");
+        throw new Error("Not authenticated");
+      }
       
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
@@ -59,8 +48,8 @@ const History = () => {
 
       return { data: data || [], count: count || 0 };
     },
-    enabled: !!session,
-    staleTime: 30000, // Cache for 30 seconds
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
   });
 
   const totalPages = Math.ceil((history?.count || 0) / ITEMS_PER_PAGE);
