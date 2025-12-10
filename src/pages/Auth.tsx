@@ -21,7 +21,22 @@ const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
 });
 
-const phoneSchema = z.string().regex(/^\+[1-9]\d{1,14}$/, "Enter phone with country code (e.g., +1234567890)");
+const phoneSchema = z.string().regex(/^\d{6,14}$/, "Enter a valid phone number (6-14 digits)");
+
+const countryCodes = [
+  { code: "+1", country: "US/CA", flag: "🇺🇸" },
+  { code: "+44", country: "UK", flag: "🇬🇧" },
+  { code: "+91", country: "IN", flag: "🇮🇳" },
+  { code: "+61", country: "AU", flag: "🇦🇺" },
+  { code: "+49", country: "DE", flag: "🇩🇪" },
+  { code: "+33", country: "FR", flag: "🇫🇷" },
+  { code: "+81", country: "JP", flag: "🇯🇵" },
+  { code: "+86", country: "CN", flag: "🇨🇳" },
+  { code: "+55", country: "BR", flag: "🇧🇷" },
+  { code: "+971", country: "UAE", flag: "🇦🇪" },
+  { code: "+65", country: "SG", flag: "🇸🇬" },
+  { code: "+27", country: "ZA", flag: "🇿🇦" },
+];
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -33,6 +48,7 @@ const Auth = () => {
   const [resetEmail, setResetEmail] = useState("");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [otpCode, setOtpCode] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false);
@@ -177,6 +193,8 @@ const Auth = () => {
     }
   };
 
+  const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+
   const handlePhoneOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -185,7 +203,7 @@ const Auth = () => {
       setIsPhoneLoading(true);
 
       const { error } = await supabase.auth.signInWithOtp({
-        phone: phoneNumber,
+        phone: fullPhoneNumber,
       });
 
       if (error) {
@@ -217,7 +235,7 @@ const Auth = () => {
       setIsPhoneLoading(true);
 
       const { error } = await supabase.auth.verifyOtp({
-        phone: phoneNumber,
+        phone: fullPhoneNumber,
         token: otpCode,
         type: 'sms',
       });
@@ -361,15 +379,28 @@ const Auth = () => {
                         <form onSubmit={handlePhoneOtp} className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="phone">Phone Number</Label>
-                            <Input
-                              id="phone"
-                              type="tel"
-                              placeholder="+1234567890"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                              className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300"
-                              required
-                            />
+                            <div className="flex gap-2">
+                              <select
+                                value={countryCode}
+                                onChange={(e) => setCountryCode(e.target.value)}
+                                className="w-28 h-10 px-2 rounded-md bg-background/50 border border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 text-sm"
+                              >
+                                {countryCodes.map((c) => (
+                                  <option key={c.code} value={c.code}>
+                                    {c.flag} {c.code}
+                                  </option>
+                                ))}
+                              </select>
+                              <Input
+                                id="phone"
+                                type="tel"
+                                placeholder="1234567890"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                                className="flex-1 bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300"
+                                required
+                              />
+                            </div>
                           </div>
                           <Button 
                             type="submit" 
