@@ -3,22 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Wand2, Sparkles, Zap, Download, Palette, Clock } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-
 const Landing = () => {
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+  return <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
       {/* Animated Background Grid */}
       <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
       
       {/* Animated Glowing Orbs */}
       <div className="fixed top-20 left-20 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float"></div>
-      <div className="fixed bottom-20 right-20 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-pink/5 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
+      <div className="fixed bottom-20 right-20 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{
+      animationDelay: "2s"
+    }}></div>
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-pink/5 rounded-full blur-[100px] animate-float" style={{
+      animationDelay: "4s"
+    }}></div>
       
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4">
+      <section className="relative pt-32 pb-20 px-4 py-[150px]">
         <div className="container max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 border-2 border-neon-cyan/30 animate-glow-pulse">
             <Sparkles className="w-8 h-8 text-neon-cyan animate-neon-glow" />
@@ -102,7 +104,7 @@ const Landing = () => {
 
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-border animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <footer className="border-t animate-in fade-in slide-in-from-bottom-4 duration-1000 px-0 py-[20px] border-accent">
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2 font-bold text-xl hover:scale-105 transition-transform duration-300">
@@ -132,8 +134,6 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
