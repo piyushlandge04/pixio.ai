@@ -37,18 +37,18 @@ const Landing = () => {
             Just describe what you need, and let AI handle the design.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-            <Link to="/generate">
-              <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_50px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 hover:scale-110 active:scale-95 border border-neon-cyan/50">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+            <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_50px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 hover:scale-110 active:scale-95 border border-neon-cyan/50">
+              <Link to="/generate">
                 <Wand2 className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
                 Start Creating
-              </Button>
-            </Link>
-            <Link to="/about">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2 border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:scale-105 transition-all duration-300 active:scale-95 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)]">
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2 border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:scale-105 transition-all duration-300 active:scale-95 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)]">
+              <Link to="/about">
                 Learn More
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
