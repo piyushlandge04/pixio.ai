@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Wand2 } from "lucide-react";
+import { Wand2, Phone, Chrome } from "lucide-react";
 import { z } from "zod";
+import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -20,13 +21,21 @@ const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
 });
 
+const phoneSchema = z.string().regex(/^\+[1-9]\d{1,14}$/, "Enter phone with country code (e.g., +1234567890)");
+
 const Auth = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isPhoneLoading, setIsPhoneLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ email: "", password: "", fullName: "" });
   const [resetEmail, setResetEmail] = useState("");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -148,6 +157,85 @@ const Auth = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      setIsGoogleLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/generate`,
+        },
+      });
+
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred with Google login");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handlePhoneOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      phoneSchema.parse(phoneNumber);
+      setIsPhoneLoading(true);
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: phoneNumber,
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      setIsOtpSent(true);
+      toast.success("OTP sent to your phone!");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error("An error occurred");
+      }
+    } finally {
+      setIsPhoneLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      if (otpCode.length !== 6) {
+        toast.error("Please enter a valid 6-digit OTP");
+        return;
+      }
+      setIsPhoneLoading(true);
+
+      const { error } = await supabase.auth.verifyOtp({
+        phone: phoneNumber,
+        token: otpCode,
+        type: 'sms',
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      toast.success("Phone verified successfully!");
+      setIsPhoneDialogOpen(false);
+    } catch (error) {
+      toast.error("An error occurred during verification");
+    } finally {
+      setIsPhoneLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 p-4">
       {/* Animated Background Grid */}
@@ -222,6 +310,111 @@ const Auth = () => {
                 >
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
+
+                <div className="relative my-4">
+                  <Separator className="bg-border/50" />
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+                    OR
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    className="flex-1 border-neon-cyan/30 hover:border-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300"
+                    onClick={handleGoogleLogin}
+                    disabled={isGoogleLoading}
+                  >
+                    <Chrome className="w-4 h-4 mr-2" />
+                    {isGoogleLoading ? "..." : "Google"}
+                  </Button>
+                  <Dialog open={isPhoneDialogOpen} onOpenChange={(open) => {
+                    setIsPhoneDialogOpen(open);
+                    if (!open) {
+                      setIsOtpSent(false);
+                      setOtpCode("");
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        className="flex-1 border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/10 transition-all duration-300"
+                      >
+                        <Phone className="w-4 h-4 mr-2" />
+                        Phone
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-card/95 backdrop-blur-md border-2 border-neon-purple/30">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
+                          {isOtpSent ? "Verify OTP" : "Phone Login"}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {isOtpSent 
+                            ? "Enter the 6-digit code sent to your phone" 
+                            : "Enter your phone number with country code"}
+                        </DialogDescription>
+                      </DialogHeader>
+                      {!isOtpSent ? (
+                        <form onSubmit={handlePhoneOtp} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <Input
+                              id="phone"
+                              type="tel"
+                              placeholder="+1234567890"
+                              value={phoneNumber}
+                              onChange={(e) => setPhoneNumber(e.target.value)}
+                              className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300"
+                              required
+                            />
+                          </div>
+                          <Button 
+                            type="submit" 
+                            className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] border border-neon-purple/50" 
+                            disabled={isPhoneLoading}
+                          >
+                            {isPhoneLoading ? "Sending..." : "Send OTP"}
+                          </Button>
+                        </form>
+                      ) : (
+                        <form onSubmit={handleVerifyOtp} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="otp">OTP Code</Label>
+                            <Input
+                              id="otp"
+                              type="text"
+                              placeholder="123456"
+                              maxLength={6}
+                              value={otpCode}
+                              onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                              className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 text-center text-2xl tracking-widest"
+                              required
+                            />
+                          </div>
+                          <Button 
+                            type="submit" 
+                            className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50" 
+                            disabled={isPhoneLoading}
+                          >
+                            {isPhoneLoading ? "Verifying..." : "Verify & Login"}
+                          </Button>
+                          <Button 
+                            type="button"
+                            variant="link" 
+                            className="w-full text-muted-foreground hover:text-neon-cyan"
+                            onClick={() => setIsOtpSent(false)}
+                          >
+                            Change phone number
+                          </Button>
+                        </form>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
                 <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
                   <DialogTrigger asChild>
                     <Button type="button" variant="link" className="w-full text-neon-cyan hover:text-neon-purple transition-colors">
@@ -301,11 +494,40 @@ const Auth = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.8)] transition-all duration-300 border border-neon-purple/50" 
+                  className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.8)] transition-all duration-300 border border-neon-purple/50 mb-4" 
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
+
+                <div className="relative my-4">
+                  <Separator className="bg-border/50" />
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+                    OR
+                  </span>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    className="flex-1 border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/10 transition-all duration-300"
+                    onClick={handleGoogleLogin}
+                    disabled={isGoogleLoading}
+                  >
+                    <Chrome className="w-4 h-4 mr-2" />
+                    {isGoogleLoading ? "..." : "Google"}
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    className="flex-1 border-neon-pink/30 hover:border-neon-pink hover:bg-neon-pink/10 transition-all duration-300"
+                    onClick={() => setIsPhoneDialogOpen(true)}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Phone
+                  </Button>
+                </div>
               </form>
             </TabsContent>
           </Tabs>
