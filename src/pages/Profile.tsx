@@ -13,12 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Calendar, User, Mail, Shield, Sparkles, Check } from "lucide-react";
+import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone } from "lucide-react";
 import { format } from "date-fns";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email(),
+  email: z.string().email().optional().or(z.literal("")),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -32,6 +32,8 @@ const Profile = () => {
   const [accountType, setAccountType] = useState<string>("free");
   const [joinedDate, setJoinedDate] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [userPhone, setUserPhone] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
@@ -54,6 +56,10 @@ const Profile = () => {
       return;
     }
 
+    // Get auth user info for phone/email
+    setUserPhone(session.user.phone || null);
+    setUserEmail(session.user.email || null);
+
     await fetchProfile(session.user.id);
   };
 
@@ -63,7 +69,7 @@ const Profile = () => {
         .from("profiles")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -144,6 +150,7 @@ const Profile = () => {
         .from("profiles")
         .update({
           full_name: values.full_name,
+          email: values.email || null,
         })
         .eq("user_id", session.user.id);
 
@@ -178,6 +185,14 @@ const Profile = () => {
       default:
         return "bg-muted text-muted-foreground";
     }
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    // Format phone for display
+    if (phone.startsWith('+')) {
+      return phone;
+    }
+    return phone;
   };
 
   if (loading) {
@@ -333,6 +348,22 @@ const Profile = () => {
                   )}
                 />
 
+                {/* Phone Number (read-only, if user has one) */}
+                {userPhone && (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-neon-green" />
+                      Phone Number
+                      <span className="text-xs text-muted-foreground ml-auto">(Verified)</span>
+                    </FormLabel>
+                    <Input 
+                      value={formatPhoneNumber(userPhone)}
+                      disabled 
+                      className="h-12 bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed" 
+                    />
+                  </FormItem>
+                )}
+
                 <FormField
                   control={form.control}
                   name="email"
@@ -341,13 +372,23 @@ const Profile = () => {
                       <FormLabel className="text-sm font-medium flex items-center gap-2">
                         <Mail className="h-4 w-4 text-neon-purple" />
                         Email Address
-                        <span className="text-xs text-muted-foreground ml-auto">(Cannot be changed)</span>
+                        {userEmail ? (
+                          <span className="text-xs text-muted-foreground ml-auto">(Verified)</span>
+                        ) : (
+                          <span className="text-xs text-neon-cyan ml-auto">(Optional)</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 
-                          disabled 
-                          className="h-12 bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed" 
+                          type="email"
+                          placeholder={userEmail ? "" : "Add your email for account recovery"}
+                          disabled={!!userEmail}
+                          className={`h-12 transition-all duration-300 ${
+                            userEmail 
+                              ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
+                              : "bg-background/50 border-border/50 focus:border-neon-purple/50 focus:ring-neon-purple/20 placeholder:text-muted-foreground/50"
+                          }`}
                         />
                       </FormControl>
                       <FormMessage />
