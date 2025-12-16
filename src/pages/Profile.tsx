@@ -201,7 +201,7 @@ const Profile = () => {
         <Navbar />
         <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
           <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-          <main className="relative container mx-auto px-4 py-8 max-w-2xl">
+          <main className="relative container mx-auto px-4 pt-16 pb-8 max-w-2xl">
             <Card className="bg-card/80 backdrop-blur-sm border-2 border-border/50">
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
@@ -235,7 +235,7 @@ const Profile = () => {
       <div className="fixed bottom-20 left-20 w-96 h-96 bg-neon-purple/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: "2s" }}></div>
       
       <Navbar />
-      <main className="relative container mx-auto px-4 py-8 max-w-2xl">
+      <main className="relative container mx-auto px-4 pt-16 pb-8 max-w-2xl">
         {/* Profile Card */}
         <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 shadow-[0_0_40px_-10px_hsl(var(--neon-purple)/0.4)] transition-all duration-500 hover:shadow-[0_0_60px_-10px_hsl(var(--neon-purple)/0.5)] animate-slide-in-up">
           <CardHeader className="text-center pb-2">
