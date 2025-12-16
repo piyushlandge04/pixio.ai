@@ -8,10 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Wand2, Phone, Chrome } from "lucide-react";
+import { Wand2, Phone, Chrome, Mail, ShieldCheck } from "lucide-react";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
 
+const emailVerificationSchema = z.string().email("Please enter a valid email address");
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -52,7 +53,10 @@ const Auth = () => {
   const [otpCode, setOtpCode] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false);
-
+  const [isEmailVerificationOpen, setIsEmailVerificationOpen] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [pendingPhoneUser, setPendingPhoneUser] = useState<string | null>(null);
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -234,7 +238,7 @@ const Auth = () => {
       }
       setIsPhoneLoading(true);
 
-      const { error } = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         phone: fullPhoneNumber,
         token: otpCode,
         type: 'sms',
@@ -245,13 +249,69 @@ const Auth = () => {
         return;
       }
 
-      toast.success("Phone verified successfully!");
-      setIsPhoneDialogOpen(false);
+      // Check if the user has an email
+      if (data.user && !data.user.email) {
+        setPendingPhoneUser(data.user.id);
+        setIsPhoneDialogOpen(false);
+        setIsEmailVerificationOpen(true);
+        toast.success("Phone verified! Please add your email for account security.");
+      } else {
+        toast.success("Phone verified successfully!");
+        setIsPhoneDialogOpen(false);
+      }
     } catch (error) {
       toast.error("An error occurred during verification");
     } finally {
       setIsPhoneLoading(false);
     }
+  };
+
+  const handleEmailVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      emailVerificationSchema.parse(verificationEmail);
+      setIsEmailLoading(true);
+
+      // Update the user with email - this sends a verification email automatically
+      const { error } = await supabase.auth.updateUser({
+        email: verificationEmail,
+      });
+
+      if (error) {
+        if (error.message.includes("already been registered")) {
+          toast.error("This email is already associated with another account");
+        } else {
+          toast.error(error.message);
+        }
+        return;
+      }
+
+      // Update the profile with the email
+      if (pendingPhoneUser) {
+        await supabase.from('profiles').update({ email: verificationEmail }).eq('user_id', pendingPhoneUser);
+      }
+
+      toast.success("Verification email sent! Please check your inbox to verify your email address.");
+      setIsEmailVerificationOpen(false);
+      setVerificationEmail("");
+      setPendingPhoneUser(null);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error("An error occurred");
+      }
+    } finally {
+      setIsEmailLoading(false);
+    }
+  };
+
+  const handleSkipEmailVerification = () => {
+    setIsEmailVerificationOpen(false);
+    setVerificationEmail("");
+    setPendingPhoneUser(null);
+    toast.info("You can add your email later in your profile settings.");
   };
 
   return (
@@ -564,6 +624,64 @@ const Auth = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Email Verification Dialog for Phone Users */}
+      <Dialog open={isEmailVerificationOpen} onOpenChange={(open) => {
+        if (!open) handleSkipEmailVerification();
+      }}>
+        <DialogContent className="bg-card/95 backdrop-blur-md border-2 border-neon-cyan/30 max-w-md">
+          <DialogHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl border border-neon-cyan/30">
+                <ShieldCheck className="w-8 h-8 text-neon-cyan" />
+              </div>
+            </div>
+            <DialogTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
+              Secure Your Account
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              Add your email address for account recovery, notifications, and enhanced security.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEmailVerification} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="verification-email" className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-neon-cyan" />
+                Email Address
+              </Label>
+              <Input
+                id="verification-email"
+                type="email"
+                placeholder="you@example.com"
+                value={verificationEmail}
+                onChange={(e) => setVerificationEmail(e.target.value)}
+                className="bg-background/50 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-cyan)/0.5)]"
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 border border-neon-cyan/50" 
+                disabled={isEmailLoading}
+              >
+                {isEmailLoading ? "Sending verification..." : "Verify Email"}
+              </Button>
+              <Button 
+                type="button"
+                variant="ghost" 
+                className="w-full text-muted-foreground hover:text-foreground"
+                onClick={handleSkipEmailVerification}
+              >
+                Skip for now
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              A verification link will be sent to your email address
+            </p>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
