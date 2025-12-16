@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone } from "lucide-react";
+import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone, Image, Clock, CheckCircle2, AlertCircle, LogOut } from "lucide-react";
 import { format } from "date-fns";
 
 const profileSchema = z.object({
@@ -34,6 +34,8 @@ const Profile = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [flyerCount, setFlyerCount] = useState(0);
+  const [lastActivity, setLastActivity] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
@@ -56,11 +58,13 @@ const Profile = () => {
       return;
     }
 
-    // Get auth user info for phone/email
     setUserPhone(session.user.phone || null);
     setUserEmail(session.user.email || null);
 
-    await fetchProfile(session.user.id);
+    await Promise.all([
+      fetchProfile(session.user.id),
+      fetchFlyerStats(session.user.id),
+    ]);
   };
 
   const fetchProfile = async (userId: string) => {
@@ -87,6 +91,26 @@ const Profile = () => {
       toast.error("Failed to load profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFlyerStats = async (userId: string) => {
+    try {
+      const { data, error, count } = await supabase
+        .from("flyer_history")
+        .select("created_at", { count: "exact" })
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      setFlyerCount(count || 0);
+      if (data && data.length > 0) {
+        setLastActivity(data[0].created_at);
+      }
+    } catch (error) {
+      console.error("Error fetching flyer stats:", error);
     }
   };
 
@@ -167,6 +191,12 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+    toast.success("Logged out successfully");
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -188,7 +218,6 @@ const Profile = () => {
   };
 
   const formatPhoneNumber = (phone: string) => {
-    // Format phone for display
     if (phone.startsWith('+')) {
       return phone;
     }
@@ -242,7 +271,6 @@ const Profile = () => {
             {/* Avatar Section */}
             <div className="flex justify-center mb-6">
               <div className="relative group">
-                {/* Glowing ring around avatar */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
                 <Avatar className="h-28 w-28 relative border-4 border-background">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt="Profile picture" className="object-cover" />}
@@ -272,7 +300,6 @@ const Profile = () => {
               </div>
             </div>
             
-            {/* Name with gradient */}
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent animate-glow-pulse">
               {form.watch("full_name") || "Your Profile"}
             </CardTitle>
@@ -282,16 +309,16 @@ const Profile = () => {
           </CardHeader>
           
           <CardContent className="space-y-6 pt-4">
-            {/* Stats Bar */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="group p-4 bg-gradient-to-br from-neon-cyan/5 to-neon-cyan/10 rounded-xl border border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.3)]">
-                <div className="flex items-center gap-3">
+            {/* Stats Grid - 4 columns */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="group p-3 bg-gradient-to-br from-neon-cyan/5 to-neon-cyan/10 rounded-xl border border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300">
+                <div className="flex flex-col items-center text-center gap-2">
                   <div className="p-2 bg-neon-cyan/10 rounded-lg group-hover:bg-neon-cyan/20 transition-colors">
                     <Shield className="h-5 w-5 text-neon-cyan" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Account Type</p>
-                    <Badge className={`mt-1 capitalize ${getAccountBadgeStyles()}`}>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Account</p>
+                    <Badge className={`mt-1 capitalize text-xs ${getAccountBadgeStyles()}`}>
                       {accountType === "pro" && <Sparkles className="h-3 w-3 mr-1" />}
                       {accountType}
                     </Badge>
@@ -299,17 +326,73 @@ const Profile = () => {
                 </div>
               </div>
               
-              <div className="group p-4 bg-gradient-to-br from-neon-purple/5 to-neon-purple/10 rounded-xl border border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.3)]">
-                <div className="flex items-center gap-3">
+              <div className="group p-3 bg-gradient-to-br from-neon-purple/5 to-neon-purple/10 rounded-xl border border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300">
+                <div className="flex flex-col items-center text-center gap-2">
                   <div className="p-2 bg-neon-purple/10 rounded-lg group-hover:bg-neon-purple/20 transition-colors">
-                    <Calendar className="h-5 w-5 text-neon-purple" />
+                    <Image className="h-5 w-5 text-neon-purple" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Member Since</p>
-                    <p className="text-sm font-medium mt-1">
-                      {joinedDate ? format(new Date(joinedDate), "MMM dd, yyyy") : "N/A"}
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Flyers</p>
+                    <p className="text-lg font-bold text-foreground">{flyerCount}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group p-3 bg-gradient-to-br from-neon-pink/5 to-neon-pink/10 rounded-xl border border-neon-pink/20 hover:border-neon-pink/40 transition-all duration-300">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="p-2 bg-neon-pink/10 rounded-lg group-hover:bg-neon-pink/20 transition-colors">
+                    <Calendar className="h-5 w-5 text-neon-pink" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Joined</p>
+                    <p className="text-xs font-medium">
+                      {joinedDate ? format(new Date(joinedDate), "MMM yyyy") : "N/A"}
                     </p>
                   </div>
+                </div>
+              </div>
+
+              <div className="group p-3 bg-gradient-to-br from-neon-green/5 to-neon-green/10 rounded-xl border border-neon-green/20 hover:border-neon-green/40 transition-all duration-300">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="p-2 bg-neon-green/10 rounded-lg group-hover:bg-neon-green/20 transition-colors">
+                    <Clock className="h-5 w-5 text-neon-green" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Last Active</p>
+                    <p className="text-xs font-medium">
+                      {lastActivity ? format(new Date(lastActivity), "MMM dd") : "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Security Status */}
+            <div className="p-4 bg-gradient-to-r from-background to-muted/30 rounded-xl border border-border/50">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                <Shield className="h-4 w-4 text-neon-cyan" />
+                Account Security
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2">
+                  {userEmail ? (
+                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <span className={`text-sm ${userEmail ? "text-foreground" : "text-muted-foreground"}`}>
+                    Email {userEmail ? "Verified" : "Not Set"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {userPhone ? (
+                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <span className={`text-sm ${userPhone ? "text-foreground" : "text-muted-foreground"}`}>
+                    Phone {userPhone ? "Verified" : "Not Set"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -354,7 +437,10 @@ const Profile = () => {
                     <FormLabel className="text-sm font-medium flex items-center gap-2">
                       <Phone className="h-4 w-4 text-neon-green" />
                       Phone Number
-                      <span className="text-xs text-muted-foreground ml-auto">(Verified)</span>
+                      <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Verified
+                      </Badge>
                     </FormLabel>
                     <Input 
                       value={formatPhoneNumber(userPhone)}
@@ -373,7 +459,10 @@ const Profile = () => {
                         <Mail className="h-4 w-4 text-neon-purple" />
                         Email Address
                         {userEmail ? (
-                          <span className="text-xs text-muted-foreground ml-auto">(Verified)</span>
+                          <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
+                            Verified
+                          </Badge>
                         ) : (
                           <span className="text-xs text-neon-cyan ml-auto">(Optional)</span>
                         )}
@@ -417,6 +506,18 @@ const Profile = () => {
                 </Button>
               </form>
             </Form>
+
+            {/* Logout Button */}
+            <div className="pt-4 border-t border-border/30">
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+                className="w-full h-12 text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </main>
