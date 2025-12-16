@@ -46,7 +46,7 @@ export type Database = {
           account_type: string | null
           avatar_url: string | null
           created_at: string
-          email: string
+          email: string | null
           full_name: string | null
           id: string
           updated_at: string
@@ -56,7 +56,7 @@ export type Database = {
           account_type?: string | null
           avatar_url?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           full_name?: string | null
           id?: string
           updated_at?: string
@@ -66,7 +66,7 @@ export type Database = {
           account_type?: string | null
           avatar_url?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           updated_at?: string
