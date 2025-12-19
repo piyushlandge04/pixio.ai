@@ -1,32 +1,29 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wand2, Sparkles, Zap, Download, Palette, Clock } from "lucide-react";
+import { Wand2, Sparkles, Zap, Download, Palette } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+
 const Landing = () => {
-  return <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-background">
+      {/* Simplified Background - reduced opacity and removed heavy gradients */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10 pointer-events-none"></div>
       
-      {/* Animated Glowing Orbs */}
-      <div className="fixed top-20 left-20 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float"></div>
-      <div className="fixed bottom-20 right-20 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{
-      animationDelay: "2s"
-    }}></div>
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-pink/5 rounded-full blur-[100px] animate-float" style={{
-      animationDelay: "4s"
-    }}></div>
+      {/* Simplified Orbs - reduced blur for better performance */}
+      <div className="fixed top-20 left-20 w-64 h-64 bg-neon-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed bottom-20 right-20 w-72 h-72 bg-neon-purple/5 rounded-full blur-3xl pointer-events-none"></div>
       
       <Navbar />
       
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 py-[150px]">
         <div className="container max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 border-2 border-neon-cyan/30 animate-glow-pulse">
-            <Sparkles className="w-8 h-8 text-neon-cyan animate-neon-glow" />
+          <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-6 border-2 border-neon-cyan/30">
+            <Sparkles className="w-8 h-8 text-neon-cyan" />
           </div>
           
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
             <span className="bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
               Design Flyers
             </span>
@@ -34,19 +31,19 @@ const Landing = () => {
             <span className="text-foreground">with AI Magic</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10">
             Transform your ideas into stunning, professional flyers in seconds. 
             Just describe what you need, and let AI handle the design.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-            <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_50px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 hover:scale-110 active:scale-95 border border-neon-cyan/50">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 border border-neon-cyan/50">
               <Link to="/generate">
-                <Wand2 className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
+                <Wand2 className="mr-2 h-5 w-5" />
                 Start Creating
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2 border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:scale-105 transition-all duration-300 active:scale-95 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)]">
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-2 border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:scale-105 transition-all duration-200 active:scale-95">
               <Link to="/about">
                 Learn More
               </Link>
@@ -56,7 +53,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-20 px-4 bg-muted/10 backdrop-blur-sm">
+      <section className="relative py-20 px-4 bg-muted/5">
         <div className="container max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
             Why Choose PIYUSH.AI?
@@ -66,8 +63,8 @@ const Landing = () => {
           </p>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
-              <div className="w-14 h-14 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl flex items-center justify-center mb-6 border border-neon-cyan/30 transition-all duration-300 hover:rotate-12 hover:scale-110 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)]">
+            <Card className="p-8 bg-card/80 border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl flex items-center justify-center mb-6 border border-neon-cyan/30">
                 <Zap className="w-7 h-7 text-neon-cyan" />
               </div>
               <h3 className="text-2xl font-bold mb-3">Lightning Fast</h3>
@@ -77,8 +74,8 @@ const Landing = () => {
               </p>
             </Card>
 
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-neon-purple/30 hover:border-neon-purple hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.5)] transition-all duration-300 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
-              <div className="w-14 h-14 bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 rounded-xl flex items-center justify-center mb-6 border border-neon-purple/30 transition-all duration-300 hover:rotate-12 hover:scale-110 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)]">
+            <Card className="p-8 bg-card/80 border-2 border-neon-purple/30 hover:border-neon-purple hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 rounded-xl flex items-center justify-center mb-6 border border-neon-purple/30">
                 <Palette className="w-7 h-7 text-neon-purple" />
               </div>
               <h3 className="text-2xl font-bold mb-3">AI-Powered Design</h3>
@@ -88,8 +85,8 @@ const Landing = () => {
               </p>
             </Card>
 
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-[0_0_30px_-5px_hsl(var(--neon-pink)/0.5)] transition-all duration-300 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
-              <div className="w-14 h-14 bg-gradient-to-br from-neon-pink/20 to-neon-cyan/20 rounded-xl flex items-center justify-center mb-6 border border-neon-pink/30 transition-all duration-300 hover:rotate-12 hover:scale-110 hover:shadow-[0_0_20px_-5px_hsl(var(--neon-pink)/0.6)]">
+            <Card className="p-8 bg-card/80 border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-neon-pink/20 to-neon-cyan/20 rounded-xl flex items-center justify-center mb-6 border border-neon-pink/30">
                 <Download className="w-7 h-7 text-neon-pink" />
               </div>
               <h3 className="text-2xl font-bold mb-3">Instant Download</h3>
@@ -102,13 +99,12 @@ const Landing = () => {
         </div>
       </section>
 
-
       {/* Footer */}
-      <footer className="border-t animate-in fade-in slide-in-from-bottom-4 duration-1000 px-0 py-[20px] border-accent">
+      <footer className="border-t px-0 py-[20px] border-accent">
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2 font-bold text-xl hover:scale-105 transition-transform duration-300">
-              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg transition-transform duration-300 hover:rotate-12">
+            <div className="flex items-center gap-2 font-bold text-xl">
+              <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-lg">
                 <Wand2 className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
@@ -117,13 +113,13 @@ const Landing = () => {
             </div>
             
             <div className="flex items-center gap-8">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 hover:scale-110">
+              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 Home
               </Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 hover:scale-110">
+              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 About
               </Link>
-              <Link to="/generate" className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300 hover:scale-110">
+              <Link to="/generate" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 Generate
               </Link>
             </div>
@@ -134,6 +130,8 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;
