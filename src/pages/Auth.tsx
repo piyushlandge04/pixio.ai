@@ -8,11 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Wand2, Phone, Chrome, Mail, ShieldCheck } from "lucide-react";
+import { Wand2 } from "lucide-react";
 import { z } from "zod";
-import { Separator } from "@/components/ui/separator";
 
-const emailVerificationSchema = z.string().email("Please enter a valid email address");
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -22,41 +20,13 @@ const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
 });
 
-const phoneSchema = z.string().regex(/^\d{6,14}$/, "Enter a valid phone number (6-14 digits)");
-
-const countryCodes = [
-  { code: "+1", country: "US/CA", flag: "🇺🇸" },
-  { code: "+44", country: "UK", flag: "🇬🇧" },
-  { code: "+91", country: "IN", flag: "🇮🇳" },
-  { code: "+61", country: "AU", flag: "🇦🇺" },
-  { code: "+49", country: "DE", flag: "🇩🇪" },
-  { code: "+33", country: "FR", flag: "🇫🇷" },
-  { code: "+81", country: "JP", flag: "🇯🇵" },
-  { code: "+86", country: "CN", flag: "🇨🇳" },
-  { code: "+55", country: "BR", flag: "🇧🇷" },
-  { code: "+971", country: "UAE", flag: "🇦🇪" },
-  { code: "+65", country: "SG", flag: "🇸🇬" },
-  { code: "+27", country: "ZA", flag: "🇿🇦" },
-];
-
 const Auth = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isPhoneLoading, setIsPhoneLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ email: "", password: "", fullName: "" });
   const [resetEmail, setResetEmail] = useState("");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("+91");
-  const [otpCode, setOtpCode] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false);
-  const [isEmailVerificationOpen, setIsEmailVerificationOpen] = useState(false);
-  const [verificationEmail, setVerificationEmail] = useState("");
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const [pendingPhoneUser, setPendingPhoneUser] = useState<string | null>(null);
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -177,142 +147,6 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      setIsGoogleLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/generate`,
-        },
-      });
-
-      if (error) {
-        toast.error(error.message);
-      }
-    } catch (error) {
-      toast.error("An error occurred with Google login");
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
-  const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-
-  const handlePhoneOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      phoneSchema.parse(phoneNumber);
-      setIsPhoneLoading(true);
-
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: fullPhoneNumber,
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      setIsOtpSent(true);
-      toast.success("OTP sent to your phone!");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast.error(error.errors[0].message);
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setIsPhoneLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      if (otpCode.length !== 6) {
-        toast.error("Please enter a valid 6-digit OTP");
-        return;
-      }
-      setIsPhoneLoading(true);
-
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: fullPhoneNumber,
-        token: otpCode,
-        type: 'sms',
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      // Check if the user has an email
-      if (data.user && !data.user.email) {
-        setPendingPhoneUser(data.user.id);
-        setIsPhoneDialogOpen(false);
-        setIsEmailVerificationOpen(true);
-        toast.success("Phone verified! Please add your email for account security.");
-      } else {
-        toast.success("Phone verified successfully!");
-        setIsPhoneDialogOpen(false);
-      }
-    } catch (error) {
-      toast.error("An error occurred during verification");
-    } finally {
-      setIsPhoneLoading(false);
-    }
-  };
-
-  const handleEmailVerification = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      emailVerificationSchema.parse(verificationEmail);
-      setIsEmailLoading(true);
-
-      // Update the user with email - this sends a verification email automatically
-      const { error } = await supabase.auth.updateUser({
-        email: verificationEmail,
-      });
-
-      if (error) {
-        if (error.message.includes("already been registered")) {
-          toast.error("This email is already associated with another account");
-        } else {
-          toast.error(error.message);
-        }
-        return;
-      }
-
-      // Update the profile with the email
-      if (pendingPhoneUser) {
-        await supabase.from('profiles').update({ email: verificationEmail }).eq('user_id', pendingPhoneUser);
-      }
-
-      toast.success("Verification email sent! Please check your inbox to verify your email address.");
-      setIsEmailVerificationOpen(false);
-      setVerificationEmail("");
-      setPendingPhoneUser(null);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        toast.error(error.errors[0].message);
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setIsEmailLoading(false);
-    }
-  };
-
-  const handleSkipEmailVerification = () => {
-    setIsEmailVerificationOpen(false);
-    setVerificationEmail("");
-    setPendingPhoneUser(null);
-    toast.info("You can add your email later in your profile settings.");
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 p-4">
@@ -388,123 +222,6 @@ const Auth = () => {
                 >
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
-
-                <div className="relative my-4">
-                  <Separator className="bg-border/50" />
-                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-                    OR
-                  </span>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    className="flex-1 border-neon-cyan/30 hover:border-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300"
-                    onClick={handleGoogleLogin}
-                    disabled={isGoogleLoading}
-                  >
-                    <Chrome className="w-4 h-4 mr-2" />
-                    {isGoogleLoading ? "..." : "Google"}
-                  </Button>
-                  <Dialog open={isPhoneDialogOpen} onOpenChange={(open) => {
-                    setIsPhoneDialogOpen(open);
-                    if (!open) {
-                      setIsOtpSent(false);
-                      setOtpCode("");
-                    }
-                  }}>
-                    <DialogTrigger asChild>
-                      <Button 
-                        type="button"
-                        variant="outline"
-                        className="flex-1 border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/10 transition-all duration-300"
-                      >
-                        <Phone className="w-4 h-4 mr-2" />
-                        Phone
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-card/95 backdrop-blur-md border-2 border-neon-purple/30">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
-                          {isOtpSent ? "Verify OTP" : "Phone Login"}
-                        </DialogTitle>
-                        <DialogDescription>
-                          {isOtpSent 
-                            ? "Enter the 6-digit code sent to your phone" 
-                            : "Enter your phone number with country code"}
-                        </DialogDescription>
-                      </DialogHeader>
-                      {!isOtpSent ? (
-                        <form onSubmit={handlePhoneOtp} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number</Label>
-                            <div className="flex gap-2">
-                              <select
-                                value={countryCode}
-                                onChange={(e) => setCountryCode(e.target.value)}
-                                className="w-28 h-10 px-2 rounded-md bg-background/50 border border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 text-sm"
-                              >
-                                {countryCodes.map((c) => (
-                                  <option key={c.code} value={c.code}>
-                                    {c.flag} {c.code}
-                                  </option>
-                                ))}
-                              </select>
-                              <Input
-                                id="phone"
-                                type="tel"
-                                placeholder="1234567890"
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                                className="flex-1 bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300"
-                                required
-                              />
-                            </div>
-                          </div>
-                          <Button 
-                            type="submit" 
-                            className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] border border-neon-purple/50" 
-                            disabled={isPhoneLoading}
-                          >
-                            {isPhoneLoading ? "Sending..." : "Send OTP"}
-                          </Button>
-                        </form>
-                      ) : (
-                        <form onSubmit={handleVerifyOtp} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="otp">OTP Code</Label>
-                            <Input
-                              id="otp"
-                              type="text"
-                              placeholder="123456"
-                              maxLength={6}
-                              value={otpCode}
-                              onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                              className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 text-center text-2xl tracking-widest"
-                              required
-                            />
-                          </div>
-                          <Button 
-                            type="submit" 
-                            className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50" 
-                            disabled={isPhoneLoading}
-                          >
-                            {isPhoneLoading ? "Verifying..." : "Verify & Login"}
-                          </Button>
-                          <Button 
-                            type="button"
-                            variant="link" 
-                            className="w-full text-muted-foreground hover:text-neon-cyan"
-                            onClick={() => setIsOtpSent(false)}
-                          >
-                            Change phone number
-                          </Button>
-                        </form>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                </div>
 
                 <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
                   <DialogTrigger asChild>
@@ -585,103 +302,16 @@ const Auth = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.8)] transition-all duration-300 border border-neon-purple/50 mb-4" 
+                  className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.8)] transition-all duration-300 border border-neon-purple/50" 
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
-
-                <div className="relative my-4">
-                  <Separator className="bg-border/50" />
-                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-                    OR
-                  </span>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    className="flex-1 border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/10 transition-all duration-300"
-                    onClick={handleGoogleLogin}
-                    disabled={isGoogleLoading}
-                  >
-                    <Chrome className="w-4 h-4 mr-2" />
-                    {isGoogleLoading ? "..." : "Google"}
-                  </Button>
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    className="flex-1 border-neon-pink/30 hover:border-neon-pink hover:bg-neon-pink/10 transition-all duration-300"
-                    onClick={() => setIsPhoneDialogOpen(true)}
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Phone
-                  </Button>
-                </div>
               </form>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-
-      {/* Email Verification Dialog for Phone Users */}
-      <Dialog open={isEmailVerificationOpen} onOpenChange={(open) => {
-        if (!open) handleSkipEmailVerification();
-      }}>
-        <DialogContent className="bg-card/95 backdrop-blur-md border-2 border-neon-cyan/30 max-w-md">
-          <DialogHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl border border-neon-cyan/30">
-                <ShieldCheck className="w-8 h-8 text-neon-cyan" />
-              </div>
-            </div>
-            <DialogTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
-              Secure Your Account
-            </DialogTitle>
-            <DialogDescription className="text-base">
-              Add your email address for account recovery, notifications, and enhanced security.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleEmailVerification} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="verification-email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-neon-cyan" />
-                Email Address
-              </Label>
-              <Input
-                id="verification-email"
-                type="email"
-                placeholder="you@example.com"
-                value={verificationEmail}
-                onChange={(e) => setVerificationEmail(e.target.value)}
-                className="bg-background/50 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-cyan)/0.5)]"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 border border-neon-cyan/50" 
-                disabled={isEmailLoading}
-              >
-                {isEmailLoading ? "Sending verification..." : "Verify Email"}
-              </Button>
-              <Button 
-                type="button"
-                variant="ghost" 
-                className="w-full text-muted-foreground hover:text-foreground"
-                onClick={handleSkipEmailVerification}
-              >
-                Skip for now
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground text-center">
-              A verification link will be sent to your email address
-            </p>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
