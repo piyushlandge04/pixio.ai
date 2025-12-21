@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { PageTransition } from "./components/PageTransition";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
 
 // Lazy load all route components for code splitting
@@ -54,6 +55,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <SpeedInsights />
       <BrowserRouter>
         <AnimatedRoutes />
       </BrowserRouter>
