@@ -158,17 +158,17 @@ const Auth = () => {
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-neon-pink/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
       
-      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/80 border-2 border-border/50 animate-slide-in-up shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)]">
-        <CardHeader className="text-center space-y-4 pb-8">
+      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/80 border-2 border-border/50 animate-slide-in-up shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] mx-4">
+        <CardHeader className="text-center space-y-3 sm:space-y-4 pb-6 sm:pb-8">
           <div className="flex justify-center mb-2">
-            <div className="p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-2xl border-2 border-neon-cyan/30 animate-glow-pulse">
-              <Wand2 className="w-10 h-10 text-neon-cyan animate-neon-glow" />
+            <div className="p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-2xl border-2 border-neon-cyan/30 animate-glow-pulse">
+              <Wand2 className="w-8 h-8 sm:w-10 sm:h-10 text-neon-cyan animate-neon-glow" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
+          <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
             Welcome to PIYUSH.AI
           </CardTitle>
-          <CardDescription className="text-base">
+          <CardDescription className="text-sm sm:text-base">
             Sign in to create amazing flyers with AI-powered magic ✨
           </CardDescription>
         </CardHeader>

@@ -421,24 +421,24 @@ export const FlyerGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen py-6 sm:py-12 px-4">
       <div className="container max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12 animate-slide-in-up">
-          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-4 border border-neon-cyan/30 animate-glow-pulse">
-            <Wand2 className="w-8 h-8 text-neon-cyan animate-neon-glow" />
+        <div className="text-center mb-8 sm:mb-12 animate-slide-in-up">
+          <div className="inline-flex items-center justify-center p-2 sm:p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-3 sm:mb-4 border border-neon-cyan/30 animate-glow-pulse">
+            <Wand2 className="w-6 h-6 sm:w-8 sm:h-8 text-neon-cyan animate-neon-glow" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
             AI Flyer Generator
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
             Transform your ideas into stunning flyers with the power of AI. Just describe what you need!
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Input Section */}
-          <Card className="p-6 space-y-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-purple)/0.4)] transition-all duration-300">
+          <Card className="p-4 sm:p-6 space-y-4 sm:space-y-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-purple)/0.4)] transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="w-5 h-5 text-neon-cyan animate-neon-glow" />
@@ -531,7 +531,7 @@ export const FlyerGenerator = () => {
               <label className="text-sm font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent mb-3 block">
                 Choose a Style
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
                 {flyerStyles.map((style) => (
                   <button
                     key={style.id}
@@ -595,7 +595,7 @@ export const FlyerGenerator = () => {
           </Card>
 
           {/* Preview Section */}
-          <Card className="p-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-purple)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-cyan)/0.4)] transition-all duration-300" style={{ animationDelay: "150ms" }}>
+          <Card className="p-4 sm:p-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-purple)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-cyan)/0.4)] transition-all duration-300" style={{ animationDelay: "150ms" }}>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent flex items-center gap-2">

@@ -72,11 +72,11 @@ const History = () => {
       <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
       
       <Navbar />
-      <div className="relative pt-20 px-4 pb-12">
+      <div className="relative pt-20 px-4 pb-8 sm:pb-12">
         <div className="container max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">Your Flyer History</h1>
-            <p className="text-muted-foreground">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">Your Flyer History</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               {history?.count || 0} flyer{history?.count !== 1 ? "s" : ""} generated
             </p>
           </div>
@@ -92,7 +92,7 @@ const History = () => {
             </Card>
           ) : (
             <>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {history.data.map((item) => (
                 <Card key={item.id} className="overflow-hidden bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 hover:-translate-y-2">
                   <div className="aspect-[3/4] bg-muted relative">
@@ -102,14 +102,14 @@ const History = () => {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">{item.style}</Badge>
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <Badge variant="secondary" className="text-xs">{item.style}</Badge>
                       <span className="text-xs text-muted-foreground">
                         {new Date(item.created_at).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-sm line-clamp-2">{item.prompt}</p>
+                    <p className="text-xs sm:text-sm line-clamp-2">{item.prompt}</p>
                   </CardContent>
                 </Card>
               ))}
