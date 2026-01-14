@@ -1,11 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage, Image as ImageIcon, Move, Maximize2 } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage, Image as ImageIcon, Move, Maximize2, Lightbulb } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { debounce } from "@/lib/utils";
 
 interface LogoOverlay {
   id: string;
@@ -198,6 +199,40 @@ export const FlyerGenerator = () => {
     vibe: "",
     keyElements: ""
   });
+  const [smartSuggestions, setSmartSuggestions] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+  // Fetch AI-powered smart suggestions
+  const fetchSmartSuggestions = useCallback(
+    debounce(async (eventType: string) => {
+      if (!eventType || eventType.length < 3) {
+        setSmartSuggestions([]);
+        return;
+      }
+
+      setIsLoadingSuggestions(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data, error } = await supabase.functions.invoke('generate-flyer', {
+          body: { prompt: eventType, action: 'suggest' },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
+
+        if (!error && data?.suggestions) {
+          setSmartSuggestions(data.suggestions);
+        }
+      } catch (err) {
+        console.error('Error fetching suggestions:', err);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
+    }, 800),
+    []
+  );
 
   // Filter example prompts based on current input
   const getRelevantPrompts = () => {
@@ -447,18 +482,47 @@ export const FlyerGenerator = () => {
               
               {/* Structured Input Fields */}
               <div className="space-y-4 p-4 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-lg border border-neon-cyan/30">
-                <div>
+              <div>
                   <label className="text-sm font-medium text-neon-cyan mb-2 block">
                     Event Type <span className="text-neon-pink">*</span>
                   </label>
                   <Input
                     placeholder="e.g., Summer Music Festival, Business Conference, Yoga Retreat"
                     value={promptDetails.eventType}
-                    onChange={(e) => setPromptDetails({ ...promptDetails, eventType: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPromptDetails({ ...promptDetails, eventType: value });
+                      fetchSmartSuggestions(value);
+                    }}
                     className="border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
+
+                {/* AI Smart Suggestions */}
+                {(smartSuggestions.length > 0 || isLoadingSuggestions) && (
+                  <div className="space-y-2 p-3 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 rounded-lg border border-neon-purple/40">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-neon-purple" />
+                      <span className="text-sm font-semibold text-neon-purple">AI Smart Suggestions</span>
+                      {isLoadingSuggestions && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
+                    </div>
+                    {smartSuggestions.length > 0 && (
+                      <div className="grid gap-2">
+                        {smartSuggestions.map((suggestion, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setPrompt(suggestion)}
+                            disabled={isGenerating}
+                            className="text-left text-xs p-2 rounded bg-background/50 hover:bg-neon-purple/20 border border-neon-purple/20 hover:border-neon-purple/50 transition-all disabled:opacity-50"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div>
                   <label className="text-sm font-medium text-neon-purple mb-2 block">
