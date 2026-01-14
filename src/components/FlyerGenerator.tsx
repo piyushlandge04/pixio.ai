@@ -456,35 +456,48 @@ export const FlyerGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen py-6 sm:py-12 px-4">
-      <div className="container max-w-6xl mx-auto">
+    <div className="min-h-screen py-6 sm:py-12 px-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-neon-purple/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-neon-cyan/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-40 right-1/4 w-72 h-72 bg-neon-pink/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
+      <div className="container max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 animate-slide-in-up">
-          <div className="inline-flex items-center justify-center p-2 sm:p-3 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-3 sm:mb-4 border border-neon-cyan/30 animate-glow-pulse">
-            <Wand2 className="w-6 h-6 sm:w-8 sm:h-8 text-neon-cyan animate-neon-glow" />
+        <div className="text-center mb-8 sm:mb-12 animate-fade-in">
+          <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20 rounded-2xl mb-4 sm:mb-6 border border-neon-cyan/30 animate-pulse-glow">
+            <Wand2 className="w-8 h-8 sm:w-10 sm:h-10 text-neon-cyan" />
           </div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent animate-gradient-text bg-[length:200%_auto]">
             AI Flyer Generator
           </h1>
-          <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
-            Transform your ideas into stunning flyers with the power of AI. Just describe what you need!
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2 leading-relaxed">
+            Transform your ideas into stunning professional flyers with AI magic
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Input Section */}
-          <Card className="p-4 sm:p-6 space-y-4 sm:space-y-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-purple)/0.4)] transition-all duration-300">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-5 h-5 text-neon-cyan animate-neon-glow" />
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Design Your Flyer</h3>
+          <Card className="p-5 sm:p-8 space-y-5 sm:space-y-6 glass-strong rounded-2xl shadow-2xl animate-fade-in border-neon-cyan/20 hover:border-neon-purple/40 transition-all duration-500">
+            <div className="space-y-5">
+              <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20">
+                  <Sparkles className="w-5 h-5 text-neon-cyan" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Design Your Flyer</h3>
+                  <p className="text-xs text-muted-foreground">Fill in the details below</p>
+                </div>
               </div>
               
               {/* Structured Input Fields */}
-              <div className="space-y-4 p-4 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-lg border border-neon-cyan/30">
-              <div>
-                  <label className="text-sm font-medium text-neon-cyan mb-2 block">
-                    Event Type <span className="text-neon-pink">*</span>
+              <div className="space-y-4 p-4 sm:p-5 rounded-xl bg-gradient-to-br from-neon-cyan/5 via-transparent to-neon-purple/5 border border-border/50">
+                <div>
+                  <label className="text-sm font-medium text-neon-cyan mb-2 block flex items-center gap-2">
+                    <span>Event Type</span>
+                    <span className="text-neon-pink text-xs">*required</span>
                   </label>
                   <Input
                     placeholder="e.g., Summer Music Festival, Business Conference, Yoga Retreat"
@@ -494,18 +507,20 @@ export const FlyerGenerator = () => {
                       setPromptDetails({ ...promptDetails, eventType: value });
                       fetchSmartSuggestions(value);
                     }}
-                    className="border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300"
+                    className="h-11 border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
                     disabled={isGenerating}
                   />
                 </div>
 
                 {/* AI Smart Suggestions */}
                 {(smartSuggestions.length > 0 || isLoadingSuggestions) && (
-                  <div className="space-y-2 p-3 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 rounded-lg border border-neon-purple/40">
+                  <div className="space-y-3 p-4 bg-gradient-to-br from-neon-purple/10 via-neon-pink/5 to-transparent rounded-xl border border-neon-purple/30 animate-fade-in">
                     <div className="flex items-center gap-2">
-                      <Lightbulb className="w-4 h-4 text-neon-purple" />
-                      <span className="text-sm font-semibold text-neon-purple">AI Smart Suggestions</span>
-                      {isLoadingSuggestions && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
+                      <div className="p-1.5 rounded-lg bg-neon-purple/20">
+                        <Lightbulb className="w-4 h-4 text-neon-purple" />
+                      </div>
+                      <span className="text-sm font-bold text-neon-purple">AI Smart Suggestions</span>
+                      {isLoadingSuggestions && <Loader2 className="w-3 h-3 animate-spin text-neon-purple ml-auto" />}
                     </div>
                     {smartSuggestions.length > 0 && (
                       <div className="grid gap-2">
@@ -514,7 +529,7 @@ export const FlyerGenerator = () => {
                             key={index}
                             onClick={() => setPrompt(suggestion)}
                             disabled={isGenerating}
-                            className="text-left text-xs p-2 rounded bg-background/50 hover:bg-neon-purple/20 border border-neon-purple/20 hover:border-neon-purple/50 transition-all disabled:opacity-50"
+                            className="text-left text-xs p-3 rounded-lg bg-background/50 hover:bg-neon-purple/20 border border-neon-purple/20 hover:border-neon-purple/50 transition-all disabled:opacity-50 hover:scale-[1.01]"
                           >
                             {suggestion}
                           </button>
@@ -524,30 +539,32 @@ export const FlyerGenerator = () => {
                   </div>
                 )}
 
-                <div>
-                  <label className="text-sm font-medium text-neon-purple mb-2 block">
-                    Color Scheme
-                  </label>
-                  <Input
-                    placeholder="e.g., Vibrant blues and purples, Warm autumn tones, Black and gold"
-                    value={promptDetails.colors}
-                    onChange={(e) => setPromptDetails({ ...promptDetails, colors: e.target.value })}
-                    className="border-2 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] bg-background/50 transition-all duration-300"
-                    disabled={isGenerating}
-                  />
-                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-neon-purple mb-2 block">
+                      Color Scheme
+                    </label>
+                    <Input
+                      placeholder="Blues and purples, Black and gold..."
+                      value={promptDetails.colors}
+                      onChange={(e) => setPromptDetails({ ...promptDetails, colors: e.target.value })}
+                      className="h-11 border-2 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                      disabled={isGenerating}
+                    />
+                  </div>
 
-                <div>
-                  <label className="text-sm font-medium text-neon-pink mb-2 block">
-                    Vibe/Mood
-                  </label>
-                  <Input
-                    placeholder="e.g., Energetic and fun, Professional and elegant, Calm and peaceful"
-                    value={promptDetails.vibe}
-                    onChange={(e) => setPromptDetails({ ...promptDetails, vibe: e.target.value })}
-                    className="border-2 border-neon-pink/30 focus:border-neon-pink focus:ring-neon-pink/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-pink)/0.5)] bg-background/50 transition-all duration-300"
-                    disabled={isGenerating}
-                  />
+                  <div>
+                    <label className="text-sm font-medium text-neon-pink mb-2 block">
+                      Vibe/Mood
+                    </label>
+                    <Input
+                      placeholder="Energetic, Professional, Calm..."
+                      value={promptDetails.vibe}
+                      onChange={(e) => setPromptDetails({ ...promptDetails, vibe: e.target.value })}
+                      className="h-11 border-2 border-neon-pink/30 focus:border-neon-pink focus:ring-neon-pink/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-pink)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                      disabled={isGenerating}
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -555,10 +572,10 @@ export const FlyerGenerator = () => {
                     Key Visual Elements
                   </label>
                   <Input
-                    placeholder="e.g., Musical instruments, City skyline, Nature imagery, Abstract patterns"
+                    placeholder="e.g., Musical instruments, City skyline, Nature imagery"
                     value={promptDetails.keyElements}
                     onChange={(e) => setPromptDetails({ ...promptDetails, keyElements: e.target.value })}
-                    className="border-2 border-neon-blue/30 focus:border-neon-blue focus:ring-neon-blue/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-blue)/0.5)] bg-background/50 transition-all duration-300"
+                    className="h-11 border-2 border-neon-blue/30 focus:border-neon-blue focus:ring-neon-blue/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-blue)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
                     disabled={isGenerating}
                   />
                 </div>
@@ -566,50 +583,41 @@ export const FlyerGenerator = () => {
 
               {/* Additional Details */}
               <div>
-                <label className="text-sm font-medium text-neon-cyan mb-2 block">
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Additional Details (Optional)
                 </label>
                 <Textarea
                   placeholder="Any other specific requirements or creative ideas..."
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[80px] text-base resize-none border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300"
+                  className="min-h-[80px] text-base resize-none border-2 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
                   disabled={isGenerating}
                 />
-              </div>
-
-              {/* Tips */}
-              <div className="text-xs text-foreground bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 p-3 rounded-lg border border-neon-purple/30">
-                <p className="font-semibold mb-1 text-neon-purple">💡 Pro Tips:</p>
-                <ul className="space-y-1 list-disc list-inside text-muted-foreground">
-                  <li>Be specific about the event type and target audience</li>
-                  <li>Mention preferred color schemes for better results</li>
-                  <li>Describe the mood or emotion you want to convey</li>
-                  <li>Include any specific visual elements or imagery needed</li>
-                </ul>
               </div>
             </div>
 
             {/* Style Selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent mb-3 block">
-                Choose a Style
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-bold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">
+                  Choose a Style
+                </label>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {flyerStyles.map((style) => (
                   <button
                     key={style.id}
                     onClick={() => setSelectedStyle(style.id)}
                     disabled={isGenerating}
-                    className={`p-3 rounded-lg border-2 transition-all text-left hover:scale-105 ${
+                    className={`p-4 rounded-xl border-2 transition-all text-left hover:scale-[1.02] group ${
                       selectedStyle === style.id
-                        ? 'border-neon-cyan bg-neon-cyan/10 shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)]'
-                        : 'border-border/50 hover:border-neon-purple/50 hover:bg-neon-purple/5 bg-background/50'
+                        ? 'border-neon-cyan bg-gradient-to-br from-neon-cyan/15 to-neon-purple/10 shadow-[0_0_25px_-5px_hsl(var(--neon-cyan)/0.6)]'
+                        : 'border-border/50 hover:border-neon-purple/50 hover:bg-neon-purple/5 bg-background/30'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xl">{style.icon}</span>
-                      <span className="font-semibold text-sm">{style.name}</span>
+                      <span className="text-2xl group-hover:scale-110 transition-transform">{style.icon}</span>
+                      <span className="font-bold text-sm">{style.name}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">{style.description}</span>
                   </button>
@@ -621,7 +629,7 @@ export const FlyerGenerator = () => {
               onClick={handleGenerate}
               disabled={isGenerating || (!promptDetails.eventType && !prompt.trim())}
               size="lg"
-              className="w-full text-lg font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50 hover:shadow-[0_0_40px_-5px_hsl(var(--neon-purple)/0.7)] transition-all duration-300 hover:scale-[1.02]"
+              className="w-full h-14 text-lg font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink hover:opacity-90 shadow-[0_0_40px_-5px_hsl(var(--neon-cyan)/0.5)] border-0 rounded-xl hover:shadow-[0_0_50px_-5px_hsl(var(--neon-purple)/0.7)] transition-all duration-300 hover:scale-[1.02] animate-pulse-glow"
             >
               {isGenerating ? (
                 <>
@@ -630,25 +638,25 @@ export const FlyerGenerator = () => {
                 </>
               ) : (
                 <>
-                  <Wand2 className="mr-2 h-5 w-5 animate-neon-glow" />
+                  <Wand2 className="mr-2 h-5 w-5" />
                   Generate Flyer
                 </>
               )}
             </Button>
 
-            {/* Example Prompts */}
-            {relevantPrompts.length > 0 && (
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-neon-purple">
-                  {prompt.trim() ? "Related suggestions:" : "Try these examples:"}
+            {/* Example Prompts - Collapsible */}
+            {relevantPrompts.length > 0 && !smartSuggestions.length && (
+              <div className="space-y-3 pt-2">
+                <p className="text-sm font-semibold text-muted-foreground">
+                  {prompt.trim() ? "💡 Related ideas:" : "✨ Try these examples:"}
                 </p>
-                <div className="space-y-2">
-                  {relevantPrompts.map((example, index) => (
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {relevantPrompts.slice(0, 4).map((example, index) => (
                     <button
                       key={index}
                       onClick={() => useExamplePrompt(example)}
                       disabled={isGenerating}
-                      className="w-full text-left text-sm p-3 rounded-lg bg-neon-purple/10 hover:bg-neon-purple/20 transition-all border border-neon-purple/30 hover:border-neon-purple/50 hover:shadow-[0_0_15px_-5px_hsl(var(--neon-purple)/0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-left text-xs p-3 rounded-xl bg-muted/30 hover:bg-neon-purple/10 transition-all border border-border/30 hover:border-neon-purple/40 disabled:opacity-50 line-clamp-2"
                     >
                       {example}
                     </button>
@@ -659,19 +667,24 @@ export const FlyerGenerator = () => {
           </Card>
 
           {/* Preview Section */}
-          <Card className="p-4 sm:p-6 backdrop-blur-sm bg-card/80 border-2 border-border/50 shadow-[0_0_50px_-12px_hsl(var(--neon-purple)/0.3)] animate-slide-in-up hover:shadow-[0_0_60px_-12px_hsl(var(--neon-cyan)/0.4)] transition-all duration-300" style={{ animationDelay: "150ms" }}>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5 text-neon-purple animate-neon-glow" />
-                  Preview
-                </h3>
+          <Card className="p-5 sm:p-8 glass-strong rounded-2xl shadow-2xl animate-fade-in border-neon-purple/20 hover:border-neon-cyan/40 transition-all duration-500 sticky top-6" style={{ animationDelay: "100ms" }}>
+            <div className="space-y-5">
+              <div className="flex items-center justify-between pb-4 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-neon-purple/20 to-neon-pink/20">
+                    <ImageIcon className="w-5 h-5 text-neon-purple" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">Preview</h3>
+                    <p className="text-xs text-muted-foreground">Your flyer will appear here</p>
+                  </div>
+                </div>
                 {generatedImage && !isEditMode && (
                   <Button
                     onClick={() => setIsEditMode(true)}
                     variant="outline"
                     size="sm"
-                    className="border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple hover:shadow-[0_0_15px_-5px_hsl(var(--neon-purple)/0.5)] transition-all duration-300"
+                    className="border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple rounded-xl"
                   >
                     Edit Text
                   </Button>
@@ -680,15 +693,21 @@ export const FlyerGenerator = () => {
               
               <div 
                 ref={containerRef}
-                className="aspect-[3/4] bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-lg border-2 border-dashed border-neon-cyan/30 overflow-hidden flex items-center justify-center relative hover:border-neon-purple/50 transition-all duration-300"
+                className="aspect-[3/4] bg-gradient-to-br from-neon-cyan/5 via-background to-neon-purple/5 rounded-xl border-2 border-dashed border-border/50 overflow-hidden flex items-center justify-center relative hover:border-neon-purple/40 transition-all duration-300"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
                 {isGenerating ? (
-                  <div className="text-center space-y-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-neon-cyan mx-auto animate-neon-glow" />
-                    <p className="text-muted-foreground font-medium">Creating your flyer...</p>
+                  <div className="text-center space-y-6 animate-fade-in">
+                    <div className="relative">
+                      <div className="w-20 h-20 rounded-full border-4 border-neon-cyan/30 border-t-neon-cyan animate-spin mx-auto" />
+                      <Wand2 className="w-8 h-8 text-neon-purple absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    </div>
+                    <div>
+                      <p className="text-foreground font-bold text-lg">Creating your flyer...</p>
+                      <p className="text-muted-foreground text-sm">This may take 30-60 seconds</p>
+                    </div>
                   </div>
                 ) : generatedImage ? (
                   <>
@@ -842,11 +861,14 @@ export const FlyerGenerator = () => {
                     )}
                   </>
                 ) : (
-                  <div className="text-center space-y-3 p-8">
-                    <Sparkles className="w-12 h-12 text-neon-cyan/40 mx-auto animate-float" />
-                    <p className="text-muted-foreground">
-                      Your flyer will appear here
-                    </p>
+                  <div className="text-center space-y-4 p-8 animate-fade-in">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-cyan/10 to-neon-purple/10 flex items-center justify-center mx-auto border border-neon-cyan/20">
+                      <Sparkles className="w-10 h-10 text-neon-cyan/50 animate-float" />
+                    </div>
+                    <div>
+                      <p className="text-foreground font-medium">No flyer yet</p>
+                      <p className="text-muted-foreground text-sm">Fill in the details and click Generate</p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -854,9 +876,8 @@ export const FlyerGenerator = () => {
               {generatedImage && (
                 <Button
                   onClick={handleDownload}
-                  variant="secondary"
                   size="lg"
-                  className="w-full font-semibold bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] border border-neon-purple/50 hover:shadow-[0_0_30px_-5px_hsl(var(--neon-pink)/0.6)] transition-all duration-300"
+                  className="w-full h-12 font-bold bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.5)] rounded-xl transition-all duration-300 hover:scale-[1.02]"
                 >
                   <Download className="mr-2 h-5 w-5" />
                   {logoOverlays.length > 0 
