@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone, Image, Clock, CheckCircle2, AlertCircle, LogOut } from "lucide-react";
+import { Camera, Calendar, User, Shield, Sparkles, Image, Clock, CheckCircle2, AlertCircle, LogOut } from "lucide-react";
 import { format } from "date-fns";
 
 const profileSchema = z.object({
@@ -22,6 +22,28 @@ const profileSchema = z.object({
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
+
+// Memoized stat card
+const StatCard = memo(({ icon: Icon, label, value, colorClass }: {
+  icon: React.ElementType;
+  label: string;
+  value: React.ReactNode;
+  colorClass: string;
+}) => (
+  <div className={`p-3 bg-muted/50 rounded-xl border ${colorClass}`}>
+    <div className="flex flex-col items-center text-center gap-2">
+      <div className="p-2 bg-background rounded-lg">
+        <Icon className="h-5 w-5 text-primary" />
+      </div>
+      <div>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</p>
+        {value}
+      </div>
+    </div>
+  </div>
+));
+
+StatCard.displayName = "StatCard";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -209,29 +231,21 @@ const Profile = () => {
   const getAccountBadgeStyles = () => {
     switch (accountType) {
       case "pro":
-        return "bg-gradient-to-r from-neon-cyan to-neon-purple text-white border-0";
+        return "bg-primary text-primary-foreground";
       case "premium":
-        return "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0";
+        return "bg-accent text-accent-foreground";
       default:
         return "bg-muted text-muted-foreground";
     }
-  };
-
-  const formatPhoneNumber = (phone: string) => {
-    if (phone.startsWith('+')) {
-      return phone;
-    }
-    return phone;
   };
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-          <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-          <main className="relative container mx-auto px-4 pt-24 pb-8 max-w-2xl">
-            <Card className="bg-card/80 backdrop-blur-sm border-2 border-border/50">
+        <div className="min-h-screen bg-background">
+          <main className="container mx-auto px-4 pt-24 pb-8 max-w-2xl">
+            <Card className="bg-card border">
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
                   <Skeleton className="h-28 w-28 rounded-full" />
@@ -255,26 +269,18 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-      
-      {/* Animated Glowing Orbs */}
-      <div className="fixed top-20 right-20 w-80 h-80 bg-neon-cyan/10 rounded-full blur-[120px] animate-float pointer-events-none"></div>
-      <div className="fixed bottom-20 left-20 w-96 h-96 bg-neon-purple/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: "2s" }}></div>
-      
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="relative container mx-auto px-4 pt-24 pb-8 max-w-2xl">
+      <main className="container mx-auto px-4 pt-24 pb-8 max-w-2xl">
         {/* Profile Card */}
-        <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 shadow-[0_0_40px_-10px_hsl(var(--neon-purple)/0.4)] transition-all duration-500 hover:shadow-[0_0_60px_-10px_hsl(var(--neon-purple)/0.5)] animate-slide-in-up">
+        <Card className="bg-card border">
           <CardHeader className="text-center pb-2">
             {/* Avatar Section */}
             <div className="flex justify-center mb-6">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Avatar className="h-28 w-28 relative border-4 border-background">
+                <Avatar className="h-28 w-28 border-4 border-background shadow-lg">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt="Profile picture" className="object-cover" />}
-                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 text-foreground">
+                  <AvatarFallback className="text-3xl font-bold bg-muted text-foreground">
                     {form.watch("full_name") ? getInitials(form.watch("full_name")) : <User className="h-10 w-10" />}
                   </AvatarFallback>
                 </Avatar>
@@ -282,7 +288,7 @@ const Profile = () => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer scale-95 group-hover:scale-100"
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                 >
                   {uploading ? (
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
@@ -300,83 +306,66 @@ const Profile = () => {
               </div>
             </div>
             
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent animate-glow-pulse">
+            <CardTitle className="text-3xl font-bold">
               {form.watch("full_name") || "Your Profile"}
             </CardTitle>
-            <CardDescription className="text-muted-foreground/80 mt-2">
+            <CardDescription className="mt-2">
               Manage your account settings and preferences
             </CardDescription>
           </CardHeader>
           
           <CardContent className="space-y-6 pt-4">
-            {/* Stats Grid - 4 columns */}
+            {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="group p-3 bg-gradient-to-br from-neon-cyan/5 to-neon-cyan/10 rounded-xl border border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-cyan/10 rounded-lg group-hover:bg-neon-cyan/20 transition-colors">
-                    <Shield className="h-5 w-5 text-neon-cyan" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Account</p>
-                    <Badge className={`mt-1 capitalize text-xs ${getAccountBadgeStyles()}`}>
-                      {accountType === "pro" && <Sparkles className="h-3 w-3 mr-1" />}
-                      {accountType}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="group p-3 bg-gradient-to-br from-neon-purple/5 to-neon-purple/10 rounded-xl border border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-purple/10 rounded-lg group-hover:bg-neon-purple/20 transition-colors">
-                    <Image className="h-5 w-5 text-neon-purple" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Flyers</p>
-                    <p className="text-lg font-bold text-foreground">{flyerCount}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group p-3 bg-gradient-to-br from-neon-pink/5 to-neon-pink/10 rounded-xl border border-neon-pink/20 hover:border-neon-pink/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-pink/10 rounded-lg group-hover:bg-neon-pink/20 transition-colors">
-                    <Calendar className="h-5 w-5 text-neon-pink" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Joined</p>
-                    <p className="text-xs font-medium">
-                      {joinedDate ? format(new Date(joinedDate), "MMM yyyy") : "N/A"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group p-3 bg-gradient-to-br from-neon-green/5 to-neon-green/10 rounded-xl border border-neon-green/20 hover:border-neon-green/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-green/10 rounded-lg group-hover:bg-neon-green/20 transition-colors">
-                    <Clock className="h-5 w-5 text-neon-green" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Last Active</p>
-                    <p className="text-xs font-medium">
-                      {lastActivity ? format(new Date(lastActivity), "MMM dd") : "N/A"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <StatCard
+                icon={Shield}
+                label="Account"
+                colorClass="border-border"
+                value={
+                  <Badge className={`mt-1 capitalize text-xs ${getAccountBadgeStyles()}`}>
+                    {accountType === "pro" && <Sparkles className="h-3 w-3 mr-1" />}
+                    {accountType}
+                  </Badge>
+                }
+              />
+              <StatCard
+                icon={Image}
+                label="Flyers"
+                colorClass="border-border"
+                value={<p className="text-lg font-bold text-foreground">{flyerCount}</p>}
+              />
+              <StatCard
+                icon={Calendar}
+                label="Joined"
+                colorClass="border-border"
+                value={
+                  <p className="text-xs font-medium">
+                    {joinedDate ? format(new Date(joinedDate), "MMM yyyy") : "N/A"}
+                  </p>
+                }
+              />
+              <StatCard
+                icon={Clock}
+                label="Last Active"
+                colorClass="border-border"
+                value={
+                  <p className="text-xs font-medium">
+                    {lastActivity ? format(new Date(lastActivity), "MMM dd") : "N/A"}
+                  </p>
+                }
+              />
             </div>
 
             {/* Security Status */}
-            <div className="p-4 bg-gradient-to-r from-background to-muted/30 rounded-xl border border-border/50">
+            <div className="p-4 bg-muted/30 rounded-xl border border-border">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                <Shield className="h-4 w-4 text-neon-cyan" />
+                <Shield className="h-4 w-4 text-primary" />
                 Account Security
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">
                   {userEmail ? (
-                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-muted-foreground" />
                   )}
@@ -386,7 +375,7 @@ const Profile = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   {userPhone ? (
-                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-muted-foreground" />
                   )}
@@ -400,7 +389,7 @@ const Profile = () => {
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50"></span>
+                <span className="w-full border-t border-border"></span>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-3 text-muted-foreground">Profile Details</span>
@@ -414,16 +403,16 @@ const Profile = () => {
                   control={form.control}
                   name="full_name"
                   render={({ field }) => (
-                    <FormItem className="group">
+                    <FormItem>
                       <FormLabel className="text-sm font-medium flex items-center gap-2">
-                        <User className="h-4 w-4 text-neon-cyan" />
+                        <User className="h-4 w-4 text-primary" />
                         Full Name
                       </FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter your full name" 
                           {...field} 
-                          className="h-12 bg-background/50 border-border/50 focus:border-neon-cyan/50 focus:ring-neon-cyan/20 transition-all duration-300 placeholder:text-muted-foreground/50"
+                          placeholder="Enter your full name"
+                          className="bg-background border-border focus:border-primary"
                         />
                       </FormControl>
                       <FormMessage />
@@ -431,93 +420,32 @@ const Profile = () => {
                   )}
                 />
 
-                {/* Phone Number (read-only, if user has one) */}
-                {userPhone && (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-neon-green" />
-                      Phone Number
-                      <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                    </FormLabel>
-                    <Input 
-                      value={formatPhoneNumber(userPhone)}
-                      disabled 
-                      className="h-12 bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed" 
-                    />
-                  </FormItem>
-                )}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    type="submit"
+                    disabled={updating}
+                    className="flex-1 bg-primary hover:bg-primary/90"
+                  >
+                    {updating ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                    ) : showSuccess ? (
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                    ) : null}
+                    {showSuccess ? "Saved!" : "Save Changes"}
+                  </Button>
 
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-neon-purple" />
-                        Email Address
-                        {userEmail ? (
-                          <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                            Verified
-                          </Badge>
-                        ) : (
-                          <span className="text-xs text-neon-cyan ml-auto">(Optional)</span>
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          type="email"
-                          placeholder={userEmail ? "" : "Add your email for account recovery"}
-                          disabled={!!userEmail}
-                          className={`h-12 transition-all duration-300 ${
-                            userEmail 
-                              ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
-                              : "bg-background/50 border-border/50 focus:border-neon-purple/50 focus:ring-neon-purple/20 placeholder:text-muted-foreground/50"
-                          }`}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 text-base font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] border border-neon-cyan/30 transition-all duration-300 hover:shadow-[0_0_40px_-5px_hsl(var(--neon-purple)/0.6)] hover:scale-[1.02] active:scale-[0.98]" 
-                  disabled={updating}
-                >
-                  {updating ? (
-                    <span className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      Updating...
-                    </span>
-                  ) : showSuccess ? (
-                    <span className="flex items-center gap-2">
-                      <Check className="h-5 w-5" />
-                      Updated!
-                    </span>
-                  ) : (
-                    "Update Profile"
-                  )}
-                </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleLogout}
+                    className="flex-1 sm:flex-none"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
               </form>
             </Form>
-
-            {/* Logout Button */}
-            <div className="pt-4 border-t border-border/30">
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="w-full h-12 text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
-              >
-                <LogOut className="h-5 w-5 mr-2" />
-                Sign Out
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </main>

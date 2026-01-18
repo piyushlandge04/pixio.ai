@@ -1,25 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { memo } from 'react';
 
 interface PageTransitionProps {
   children: React.ReactNode;
 }
 
-export const PageTransition = ({ children }: PageTransitionProps) => {
-  const location = useLocation();
-  const [transitionStage, setTransitionStage] = useState('page-enter-active');
+// Simplified page transition - no animation overhead
+export const PageTransition = memo(({ children }: PageTransitionProps) => {
+  return <>{children}</>;
+});
 
-  useEffect(() => {
-    setTransitionStage('page-enter');
-    const timeout = setTimeout(() => {
-      setTransitionStage('page-enter-active');
-    }, 50);
-    return () => clearTimeout(timeout);
-  }, [location.pathname]);
-
-  return (
-    <div className={transitionStage}>
-      {children}
-    </div>
-  );
-};
+PageTransition.displayName = "PageTransition";
