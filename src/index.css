@@ -1,4 +1,6 @@
 @tailwind base;
+
+/* Add neon-green CSS variable */
 @tailwind components;
 @tailwind utilities;
 
@@ -42,6 +44,7 @@ All colors MUST be HSL.
     --neon-pink: 330 100% 60%;
     --neon-purple: 270 100% 60%;
     --neon-blue: 210 100% 60%;
+    --neon-green: 145 100% 50%;
     
     --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(213 94% 68%));
     --gradient-accent: linear-gradient(135deg, hsl(330 81% 60%), hsl(262 83% 58%));
