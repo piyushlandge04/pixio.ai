@@ -13,6 +13,9 @@
   <link rel="preconnect" href="https://khdqwqghvctmvckwnjcl.supabase.co" crossorigin />
   <link rel="dns-prefetch" href="https://khdqwqghvctmvckwnjcl.supabase.co" />
 
+  <!-- Preload critical assets -->
+  <link rel="modulepreload" href="/src/main.tsx" />
+
   <meta property="og:title" content="PIYUSH.AI" />
   <meta property="og:description"
     content="Generate professional flyers instantly using AI. Transform your ideas into beautiful designs with just a text prompt." />
@@ -20,7 +23,13 @@
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="google-adsense-account" content="ca-pub-2620565507380926">
- 
+
+  <!-- Optimize rendering -->
+  <style>
+    /* Critical CSS - prevent FOUC */
+    body { margin: 0; background: #0a0614; }
+    #root { min-height: 100vh; }
+  </style>
 </head>
 
 <body>
