@@ -21,6 +21,8 @@ const OptimizedImage = memo(({ src, alt, className }: { src: string; alt: string
   />
 ));
 
+OptimizedImage.displayName = "OptimizedImage";
+
 interface FlyerHistoryItem {
   id: string;
   prompt: string;
@@ -30,6 +32,42 @@ interface FlyerHistoryItem {
 }
 
 const ITEMS_PER_PAGE = 12;
+
+// Memoized flyer card
+const FlyerCard = memo(({ item, onView, onDownload }: {
+  item: FlyerHistoryItem;
+  onView: () => void;
+  onDownload: () => void;
+}) => (
+  <Card className="overflow-hidden bg-card border hover:border-primary/50 transition-colors group">
+    <div className="aspect-[3/4] bg-muted relative cursor-pointer" onClick={onView}>
+      <OptimizedImage
+        src={item.image_url}
+        alt="Generated flyer"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+        <Button size="icon" variant="secondary" className="rounded-full" onClick={(e) => { e.stopPropagation(); onView(); }}>
+          <Eye className="w-5 h-5" />
+        </Button>
+        <Button size="icon" variant="secondary" className="rounded-full" onClick={(e) => { e.stopPropagation(); onDownload(); }}>
+          <Download className="w-5 h-5" />
+        </Button>
+      </div>
+    </div>
+    <CardContent className="p-3 sm:p-4">
+      <div className="flex flex-wrap items-center gap-2 mb-2">
+        <Badge variant="secondary" className="text-xs">{item.style}</Badge>
+        <span className="text-xs text-muted-foreground">
+          {new Date(item.created_at).toLocaleDateString()}
+        </span>
+      </div>
+      <p className="text-xs sm:text-sm line-clamp-2">{item.prompt}</p>
+    </CardContent>
+  </Card>
+));
+
+FlyerCard.displayName = "FlyerCard";
 
 const History = () => {
   const navigate = useNavigate();
@@ -87,32 +125,29 @@ const History = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative bg-background">
-      {/* Simplified background - static gradient for performance */}
-      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-muted/10 pointer-events-none" />
-      
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="relative pt-20 px-4 pb-8 sm:pb-12">
+      <div className="pt-20 px-4 pb-8 sm:pb-12">
         <div className="container max-w-6xl mx-auto">
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">Your Flyer History</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Your Flyer History</h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               {history?.count || 0} flyer{history?.count !== 1 ? "s" : ""} generated
             </p>
           </div>
 
           {!history?.data?.length ? (
-            <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30">
+            <Card className="bg-card border">
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground mb-4">No flyers generated yet</p>
-                <a href="/generate" className="text-neon-cyan hover:text-neon-purple transition-colors">
+                <a href="/generate" className="text-primary hover:underline">
                   Create your first flyer
                 </a>
               </CardContent>
@@ -121,52 +156,12 @@ const History = () => {
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {history.data.map((item) => (
-                  <Card key={item.id} className="overflow-hidden bg-card border border-border hover:border-primary/50 transition-colors duration-200 group">
-                    <div 
-                      className="aspect-[3/4] bg-muted relative cursor-pointer"
-                      onClick={() => setSelectedFlyer(item)}
-                    >
-                      <OptimizedImage
-                        src={item.image_url}
-                        alt="Generated flyer"
-                        className="w-full h-full object-cover"
-                      />
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedFlyer(item);
-                          }}
-                        >
-                          <Eye className="w-5 h-5" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDownload(item.image_url, item.prompt);
-                          }}
-                        >
-                          <Download className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    </div>
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <Badge variant="secondary" className="text-xs">{item.style}</Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(item.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm line-clamp-2">{item.prompt}</p>
-                    </CardContent>
-                  </Card>
+                  <FlyerCard
+                    key={item.id}
+                    item={item}
+                    onView={() => setSelectedFlyer(item)}
+                    onDownload={() => handleDownload(item.image_url, item.prompt)}
+                  />
                 ))}
               </div>
 
@@ -176,7 +171,6 @@ const History = () => {
                     variant="outline"
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="border-neon-cyan/30 hover:border-neon-cyan"
                   >
                     Previous
                   </Button>
@@ -187,7 +181,6 @@ const History = () => {
                     variant="outline"
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="border-neon-cyan/30 hover:border-neon-cyan"
                   >
                     Next
                   </Button>
@@ -200,11 +193,11 @@ const History = () => {
 
       {/* Flyer Preview Modal */}
       <Dialog open={!!selectedFlyer} onOpenChange={() => setSelectedFlyer(null)}>
-        <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] overflow-auto p-0 bg-card/95 backdrop-blur-xl border-neon-purple/50">
+        <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] overflow-auto p-0 bg-card border">
           <DialogHeader className="p-4 sm:p-6 pb-0">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <DialogTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
+                <DialogTitle className="text-lg sm:text-xl font-bold">
                   Flyer Preview
                 </DialogTitle>
                 {selectedFlyer && (
@@ -237,7 +230,7 @@ const History = () => {
                 
                 <Button
                   onClick={() => handleDownload(selectedFlyer.image_url, selectedFlyer.prompt)}
-                  className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:opacity-90"
+                  className="w-full bg-primary hover:bg-primary/90"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download Flyer

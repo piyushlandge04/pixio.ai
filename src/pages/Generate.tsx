@@ -28,19 +28,16 @@ const Generate = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative bg-background">
-      {/* Simplified static background for performance */}
-      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-muted/10 pointer-events-none" />
-      
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="relative pt-16">
+      <div className="pt-16">
         <FlyerGenerator />
       </div>
     </div>
