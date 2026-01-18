@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
@@ -6,9 +6,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, Download, X, Eye } from "lucide-react";
+import { Loader2, Download, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
+
+// Optimized image component with lazy loading
+const OptimizedImage = memo(({ src, alt, className }: { src: string; alt: string; className?: string }) => (
+  <img
+    src={src}
+    alt={alt}
+    className={className}
+    loading="lazy"
+    decoding="async"
+  />
+));
 
 interface FlyerHistoryItem {
   id: string;
@@ -83,13 +94,9 @@ const History = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-      
-      {/* Animated Glowing Orbs */}
-      <div className="fixed top-20 left-1/4 w-80 h-80 bg-neon-purple/10 rounded-full blur-[120px] animate-float pointer-events-none"></div>
-      <div className="fixed bottom-20 right-1/4 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: "2s" }}></div>
+    <div className="min-h-screen relative bg-background">
+      {/* Simplified background - static gradient for performance */}
+      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-muted/10 pointer-events-none" />
       
       <Navbar />
       <div className="relative pt-20 px-4 pb-8 sm:pb-12">
@@ -114,12 +121,12 @@ const History = () => {
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {history.data.map((item) => (
-                  <Card key={item.id} className="overflow-hidden bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 hover:-translate-y-2 group">
+                  <Card key={item.id} className="overflow-hidden bg-card border border-border hover:border-primary/50 transition-colors duration-200 group">
                     <div 
                       className="aspect-[3/4] bg-muted relative cursor-pointer"
                       onClick={() => setSelectedFlyer(item)}
                     >
-                      <img
+                      <OptimizedImage
                         src={item.image_url}
                         alt="Generated flyer"
                         className="w-full h-full object-cover"
