@@ -1,37 +1,40 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PIYUSH.AI - AI Flyer Generator</title>
-  <meta name="description" content="Generate professional flyers instantly using AI. Transform your ideas into beautiful designs with just a text prompt." />
+  <title>PIYUSH.AI</title>
+  <meta name="description"
+    content="Generate professional flyers instantly using AI. Transform your ideas into beautiful designs with just a text prompt." />
   <meta name="author" content="PIYUSH.AI" />
 
-  <!-- Preconnect for faster resource loading -->
+  <!-- Preconnect to external origins for faster resource loading -->
   <link rel="preconnect" href="https://khdqwqghvctmvckwnjcl.supabase.co" crossorigin />
   <link rel="dns-prefetch" href="https://khdqwqghvctmvckwnjcl.supabase.co" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="PIYUSH.AI - AI Flyer Generator" />
-  <meta property="og:description" content="Generate professional flyers instantly using AI." />
+  <!-- Preload critical assets -->
+  <link rel="modulepreload" href="/src/main.tsx" />
+
+  <meta property="og:title" content="PIYUSH.AI" />
+  <meta property="og:description"
+    content="Generate professional flyers instantly using AI. Transform your ideas into beautiful designs with just a text prompt." />
   <meta property="og:type" content="website" />
+
   <meta name="twitter:card" content="summary_large_image" />
-  
-  <!-- Ads -->
   <meta name="google-adsense-account" content="ca-pub-2620565507380926">
 
-  <!-- Critical CSS - inline for fastest render -->
+  <!-- Optimize rendering -->
   <style>
-    *,*::before,*::after{box-sizing:border-box}
-    html{-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed}
-    body{margin:0;font-family:system-ui,-apple-system,sans-serif}
-    #root{min-height:100vh}
-    .dark body,body{background:#0a0614;color:#fafaff}
-    :root body{background:#faf8ff;color:#1a0a2e}
+    /* Critical CSS - prevent FOUC */
+    body { margin: 0; background: #0a0614; }
+    #root { min-height: 100vh; }
   </style>
 </head>
+
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
+
 </html>

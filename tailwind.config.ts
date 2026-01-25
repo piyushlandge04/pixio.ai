@@ -72,17 +72,63 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(var(--neon-cyan) / 0.5), 0 0 40px hsl(var(--neon-cyan) / 0.3)",
+          },
+          "50%": {
+            boxShadow: "0 0 30px hsl(var(--neon-purple) / 0.6), 0 0 60px hsl(var(--neon-purple) / 0.4)",
+          },
+        },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-20px)",
+          },
+        },
+        "slide-in-up": {
+          "0%": {
+            transform: "translateY(50px)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
+        "neon-glow": {
+          "0%, 100%": {
+            filter: "drop-shadow(0 0 8px hsl(var(--neon-cyan))) drop-shadow(0 0 20px hsl(var(--neon-cyan) / 0.5))",
+          },
+          "50%": {
+            filter: "drop-shadow(0 0 12px hsl(var(--neon-purple))) drop-shadow(0 0 30px hsl(var(--neon-purple) / 0.6))",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "float": "float 6s ease-in-out infinite",
+        "slide-in-up": "slide-in-up 0.5s ease-out",
+        "neon-glow": "neon-glow 2s ease-in-out infinite",
       },
     },
   },

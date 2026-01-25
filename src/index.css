@@ -1,36 +1,60 @@
 @tailwind base;
+
+/* Add neon-green CSS variable */
 @tailwind components;
 @tailwind utilities;
 
-/* Optimized Design System - Performance First */
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
 @layer base {
   :root {
     --background: 250 100% 98%;
     --foreground: 260 90% 10%;
+
     --card: 0 0% 100%;
     --card-foreground: 260 90% 10%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 260 90% 10%;
+
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
+
     --secondary: 213 94% 68%;
     --secondary-foreground: 260 90% 10%;
+
     --muted: 250 60% 96%;
     --muted-foreground: 260 20% 50%;
+
     --accent: 330 81% 60%;
     --accent-foreground: 0 0% 100%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
+
     --border: 250 40% 90%;
     --input: 250 40% 90%;
     --ring: 262 83% 58%;
+
     --radius: 0.75rem;
+
     --neon-cyan: 180 100% 50%;
     --neon-pink: 330 100% 60%;
     --neon-purple: 270 100% 60%;
     --neon-blue: 210 100% 60%;
     --neon-green: 145 100% 50%;
     
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(213 94% 68%));
+    --gradient-accent: linear-gradient(135deg, hsl(330 81% 60%), hsl(262 83% 58%));
+    --gradient-neon: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-purple)));
+    --shadow-glow: 0 8px 32px -8px hsl(262 83% 58% / 0.3);
+    --shadow-card: 0 4px 24px -4px hsl(260 90% 10% / 0.08);
+    --shadow-neon-cyan: 0 0 20px hsl(var(--neon-cyan) / 0.5), 0 0 40px hsl(var(--neon-cyan) / 0.3);
+    --shadow-neon-purple: 0 0 20px hsl(var(--neon-purple) / 0.5), 0 0 40px hsl(var(--neon-purple) / 0.3);
+    --shadow-neon-pink: 0 0 20px hsl(var(--neon-pink) / 0.5), 0 0 40px hsl(var(--neon-pink) / 0.3);
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -39,32 +63,56 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 262 83% 58%;
+    
+    /* Transition system */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 500ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
     --background: 260 90% 6%;
     --foreground: 250 100% 98%;
+
     --card: 260 70% 10%;
     --card-foreground: 250 100% 98%;
+
     --popover: 260 70% 10%;
     --popover-foreground: 250 100% 98%;
+
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
+
     --secondary: 260 60% 20%;
     --secondary-foreground: 250 100% 98%;
+
     --muted: 260 60% 15%;
     --muted-foreground: 250 40% 70%;
+
     --accent: 330 81% 60%;
     --accent-foreground: 0 0% 100%;
+
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
+
     --border: 260 50% 20%;
     --input: 260 50% 20%;
     --ring: 262 83% 58%;
+
     --neon-cyan: 180 100% 50%;
     --neon-pink: 330 100% 60%;
     --neon-purple: 270 100% 60%;
     --neon-blue: 210 100% 60%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(213 94% 68%));
+    --gradient-accent: linear-gradient(135deg, hsl(330 81% 60%), hsl(262 83% 58%));
+    --gradient-neon: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-purple)));
+    --shadow-glow: 0 8px 32px -8px hsl(262 83% 58% / 0.4);
+    --shadow-card: 0 4px 24px -4px hsl(262 83% 58% / 0.15);
+    --shadow-neon-cyan: 0 0 30px hsl(var(--neon-cyan) / 0.6), 0 0 60px hsl(var(--neon-cyan) / 0.4);
+    --shadow-neon-purple: 0 0 30px hsl(var(--neon-purple) / 0.6), 0 0 60px hsl(var(--neon-purple) / 0.4);
+    --shadow-neon-pink: 0 0 30px hsl(var(--neon-pink) / 0.6), 0 0 60px hsl(var(--neon-pink) / 0.4);
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -82,85 +130,144 @@
     @apply border-border;
   }
 
+  /* Smooth theme transitions for all color properties */
   html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeSpeed;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Apply smooth transitions to common elements */
+  .theme-transition,
+  .bg-background,
+  .bg-card,
+  .bg-muted,
+  .bg-popover,
+  .text-foreground,
+  .text-muted-foreground,
+  .border-border {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   }
 }
 
 @layer utilities {
-  /* Minimal page transition */
+  /* Smooth transition utilities */
+  .transition-smooth {
+    transition: all var(--transition-smooth);
+  }
+  
+  .transition-base {
+    transition: all var(--transition-base);
+  }
+  
+  .transition-fast {
+    transition: all var(--transition-fast);
+  }
+  
+  /* Page transition classes */
   .page-enter {
     opacity: 0;
+    transform: translateY(5px);
   }
   
   .page-enter-active {
     opacity: 1;
-    transition: opacity 150ms ease-out;
+    transform: translateY(0);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
   }
 
-  /* Glass effect - simplified */
+  /* Glass morphism effect */
   .glass {
-    @apply bg-card/80 border border-border;
+    @apply backdrop-blur-xl bg-card/60 border border-white/10;
   }
 
-  /* Neon glow effects - performant */
-  .neon-glow-purple {
-    box-shadow: 0 0 10px hsl(var(--neon-purple) / 0.5), 0 0 20px hsl(var(--neon-purple) / 0.3);
-  }
-  
-  .neon-glow-cyan {
-    box-shadow: 0 0 10px hsl(var(--neon-cyan) / 0.5), 0 0 20px hsl(var(--neon-cyan) / 0.3);
-  }
-  
-  .neon-glow-pink {
-    box-shadow: 0 0 10px hsl(var(--neon-pink) / 0.5), 0 0 20px hsl(var(--neon-pink) / 0.3);
+  .glass-strong {
+    @apply backdrop-blur-2xl bg-card/80 border border-white/20;
   }
 
-  .neon-text-purple {
-    text-shadow: 0 0 10px hsl(var(--neon-purple) / 0.8), 0 0 20px hsl(var(--neon-purple) / 0.5);
-  }
-  
-  .neon-text-cyan {
-    text-shadow: 0 0 10px hsl(var(--neon-cyan) / 0.8), 0 0 20px hsl(var(--neon-cyan) / 0.5);
-  }
-  
-  .neon-text-pink {
-    text-shadow: 0 0 10px hsl(var(--neon-pink) / 0.8), 0 0 20px hsl(var(--neon-pink) / 0.5);
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-purple)), hsl(var(--neon-pink))) border-box;
+    border: 2px solid transparent;
   }
 
-  .neon-border {
-    border: 1px solid hsl(var(--neon-purple) / 0.5);
-    box-shadow: 0 0 8px hsl(var(--neon-purple) / 0.3), inset 0 0 8px hsl(var(--neon-purple) / 0.1);
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
   }
 
-  .neon-border-cyan {
-    border: 1px solid hsl(var(--neon-cyan) / 0.5);
-    box-shadow: 0 0 8px hsl(var(--neon-cyan) / 0.3), inset 0 0 8px hsl(var(--neon-cyan) / 0.1);
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
-  .neon-border-pink {
-    border: 1px solid hsl(var(--neon-pink) / 0.5);
-    box-shadow: 0 0 8px hsl(var(--neon-pink) / 0.3), inset 0 0 8px hsl(var(--neon-pink) / 0.1);
+  /* Floating animation */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Pulse glow animation */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { 
+      box-shadow: 0 0 20px hsl(var(--neon-cyan) / 0.4), 0 0 40px hsl(var(--neon-purple) / 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 30px hsl(var(--neon-cyan) / 0.6), 0 0 60px hsl(var(--neon-purple) / 0.4);
+    }
+  }
+
+  /* Gradient text animation */
+  .animate-gradient-text {
+    background-size: 200% auto;
+    animation: gradient-shift 3s linear infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
   }
 }
 
-/* Performance: Only add transitions to interactive elements */
-a, button, [role="button"] {
-  transition: color 150ms, background-color 150ms, border-color 150ms, opacity 150ms;
+/* Optimize rendering performance */
+* {
+  /* Removed global transitions for better performance - apply selectively */
 }
 
-/* Theme transition - only on html element */
-html {
-  transition: background-color 300ms ease;
+/* Add transitions only where needed */
+a, button, input, textarea, select {
+  transition-property: background-color, border-color, color, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
-/* Optimize images globally */
+/* GPU acceleration for fixed elements */
+.fixed {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Optimize images */
 img {
   content-visibility: auto;
 }
