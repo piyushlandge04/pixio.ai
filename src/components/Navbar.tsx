@@ -123,13 +123,13 @@ export const Navbar = memo(() => {
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border neon-border">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-          <div className="p-2 bg-primary rounded-lg">
+          <div className="p-2 bg-primary rounded-lg neon-glow-purple">
             <Wand2 className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent neon-text-purple">
             PIYUSH.AI
           </span>
         </Link>
@@ -149,7 +149,7 @@ export const Navbar = memo(() => {
             <>
               <ThemeToggle />
               <Link to="/auth">
-                <Button size="sm" className="bg-primary hover:bg-primary/90">
+                <Button size="sm" className="bg-primary hover:bg-primary/90 neon-glow-purple">
                   Login
                 </Button>
               </Link>
@@ -166,13 +166,13 @@ export const Navbar = memo(() => {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-background border-l border-border">
+            <SheetContent side="right" className="w-[280px] bg-background border-l neon-border">
               <div className="flex flex-col h-full pt-8">
                 <div className="flex items-center gap-2 mb-8 px-4">
-                  <div className="p-2 bg-primary rounded-lg">
+                  <div className="p-2 bg-primary rounded-lg neon-glow-purple">
                     <Wand2 className="w-5 h-5 text-primary-foreground" />
                   </div>
-                  <span className="font-bold text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                  <span className="font-bold text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent neon-text-purple">
                     PIYUSH.AI
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export const Navbar = memo(() => {
                     </Button>
                   ) : (
                     <Link to="/auth" onClick={closeSheet}>
-                      <Button className="w-full bg-primary hover:bg-primary/90">
+                      <Button className="w-full bg-primary hover:bg-primary/90 neon-glow-purple">
                         Login
                       </Button>
                     </Link>
