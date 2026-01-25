@@ -12,8 +12,8 @@ const FeatureCard = memo(({ icon: Icon, title, description, colorClass }: {
   description: string;
   colorClass: string;
 }) => (
-  <Card className={`p-6 sm:p-8 bg-card border-2 ${colorClass} hover:shadow-md transition-shadow duration-200`}>
-    <div className={`w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-xl flex items-center justify-center mb-4 sm:mb-6`}>
+  <Card className={`p-6 sm:p-8 bg-card/90 border ${colorClass} hover:neon-glow-purple transition-shadow duration-200`}>
+    <div className={`w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-xl flex items-center justify-center mb-4 sm:mb-6 neon-border`}>
       <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
     </div>
     <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{title}</h3>
@@ -31,12 +31,12 @@ const Landing = () => {
       {/* Hero Section - No heavy backgrounds */}
       <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4">
         <div className="container max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-primary/10 rounded-full mb-4 sm:mb-6 border border-primary/30">
+          <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-primary/10 rounded-full mb-4 sm:mb-6 neon-border">
             <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
           </div>
           
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-4 sm:mb-6">
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent neon-text-purple">
               Design Flyers
             </span>
             <br />
@@ -49,13 +49,13 @@ const Landing = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4">
-            <Button asChild size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90">
+            <Button asChild size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 neon-glow-purple">
               <Link to="/generate">
                 <Wand2 className="mr-2 h-5 w-5" />
                 Start Creating
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6">
+            <Button asChild variant="outline" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 neon-border-cyan hover:neon-glow-cyan">
               <Link to="/about">
                 Learn More
               </Link>
@@ -98,14 +98,14 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t px-4 py-6 sm:py-8">
+      <footer className="border-t border-border/50 px-4 py-6 sm:py-8">
         <div className="container max-w-6xl mx-auto">
           <div className="flex flex-col items-center gap-4 sm:gap-6 text-center md:flex-row md:justify-between md:text-left">
             <div className="flex items-center gap-2 font-bold text-xl">
-              <div className="p-2 bg-primary rounded-lg">
+              <div className="p-2 bg-primary rounded-lg neon-glow-purple">
                 <Wand2 className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent neon-text-purple">
                 PIYUSH.AI
               </span>
             </div>
