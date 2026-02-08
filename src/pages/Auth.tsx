@@ -153,12 +153,18 @@ const Auth = () => {
       {/* Animated Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
       
+      {/* RGB Light Strips */}
+      <div className="absolute top-0 left-0 right-0 h-1 animate-rgb"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 animate-rgb" style={{ animationDirection: "reverse" }}></div>
+      <div className="absolute top-0 left-0 bottom-0 w-1 animate-rgb-slow" style={{ background: "linear-gradient(180deg, hsl(0 100% 60%), hsl(60 100% 55%), hsl(120 100% 50%), hsl(180 100% 50%), hsl(240 100% 60%), hsl(300 100% 60%), hsl(360 100% 60%))", backgroundSize: "100% 400%" }}></div>
+      <div className="absolute top-0 right-0 bottom-0 w-1 animate-rgb-slow" style={{ background: "linear-gradient(180deg, hsl(180 100% 50%), hsl(240 100% 60%), hsl(300 100% 60%), hsl(0 100% 60%), hsl(60 100% 55%), hsl(120 100% 50%), hsl(180 100% 50%))", backgroundSize: "100% 400%", animationDirection: "reverse" }}></div>
+
       {/* Animated Glowing Orbs */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-neon-cyan/20 rounded-full blur-[120px] animate-float"></div>
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-neon-pink/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
       
-      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/80 border-2 border-border/50 animate-slide-in-up shadow-[0_0_50px_-12px_hsl(var(--neon-cyan)/0.3)] mx-4">
+      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/80 border-2 border-border/50 animate-slide-in-up animate-rgb-glow mx-4">
         <CardHeader className="text-center space-y-3 sm:space-y-4 pb-6 sm:pb-8">
           <div className="flex justify-center mb-2">
             <div className="p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-2xl border-2 border-neon-cyan/30 animate-glow-pulse">
