@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wand2, Sparkles, Zap, Download, Palette } from "lucide-react";
+import { Wand2, Sparkles, Download, Palette } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 
 const Landing = () => {
@@ -62,18 +62,7 @@ const Landing = () => {
             Powerful features that make flyer design effortless
           </p>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-            <Card className="p-6 sm:p-8 bg-card/80 border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6 border border-neon-cyan/30">
-                <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-neon-cyan" />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Lightning Fast</h3>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Generate professional flyers in seconds. No design experience needed, 
-                just describe your vision and watch it come to life.
-              </p>
-            </Card>
-
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-8 max-w-4xl mx-auto">
             <Card className="p-6 sm:p-8 bg-card/80 border-2 border-neon-purple/30 hover:border-neon-purple hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6 border border-neon-purple/30">
                 <Palette className="w-6 h-6 sm:w-7 sm:h-7 text-neon-purple" />
@@ -85,7 +74,7 @@ const Landing = () => {
               </p>
             </Card>
 
-            <Card className="p-6 sm:p-8 bg-card/80 border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-lg transition-all duration-200 hover:-translate-y-1 sm:col-span-2 lg:col-span-1">
+            <Card className="p-6 sm:p-8 bg-card/80 border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-pink/20 to-neon-cyan/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6 border border-neon-pink/30">
                 <Download className="w-6 h-6 sm:w-7 sm:h-7 text-neon-pink" />
               </div>
