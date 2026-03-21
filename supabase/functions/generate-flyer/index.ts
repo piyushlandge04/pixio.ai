@@ -7,26 +7,26 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Valid styles for flyer generation
+
 const VALID_STYLES = ['modern', 'vibrant', 'elegant', 'creative', 'minimal', 'bold'] as const;
 type ValidStyle = typeof VALID_STYLES[number];
 
-// Input validation constants
+
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 1000;
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const RATE_LIMIT_WINDOW_MS = 60000; 
 const RATE_LIMIT_MAX_REQUESTS = 10;
 
-// Sanitize user input to prevent injection attacks
+
 const sanitizePrompt = (prompt: string): string => {
   return prompt
     .trim()
-    .replace(/[<>]/g, '') // Remove HTML-like characters
-    .replace(/[\x00-\x1F\x7F]/g, '') // Remove control characters
+    .replace(/[<>]/g, '') 
+    .replace(/[\x00-\x1F\x7F]/g, '') 
     .slice(0, MAX_PROMPT_LENGTH);
 };
 
-// Validate prompt content
+
 const validatePrompt = (prompt: unknown): { valid: boolean; error?: string; sanitized?: string } => {
   if (typeof prompt !== 'string') {
     return { valid: false, error: 'Prompt must be a string' };
@@ -46,7 +46,7 @@ const validatePrompt = (prompt: unknown): { valid: boolean; error?: string; sani
   return { valid: true, sanitized };
 };
 
-// Validate style parameter
+
 const validateStyle = (style: unknown): { valid: boolean; error?: string; value?: ValidStyle } => {
   if (style === undefined || style === null) {
     return { valid: true, value: 'modern' };
@@ -63,7 +63,7 @@ const validateStyle = (style: unknown): { valid: boolean; error?: string; value?
   return { valid: true, value: style as ValidStyle };
 };
 
-// Validate action parameter
+
 const validateAction = (action: unknown): { valid: boolean; error?: string; value?: string } => {
   if (action === undefined || action === null) {
     return { valid: true, value: 'generate' };
@@ -87,7 +87,7 @@ serve(async (req) => {
   }
 
   try {
-    // Verify authentication header exists
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       console.error('Missing or invalid authorization header');
@@ -97,7 +97,7 @@ serve(async (req) => {
       );
     }
 
-    // Initialize Supabase client and validate JWT
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
 
@@ -113,7 +113,7 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    // Validate JWT token and get user
+
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
 
@@ -128,7 +128,7 @@ serve(async (req) => {
     const userId = claimsData.claims.sub as string;
     console.log('Authenticated user:', userId);
 
-    // Parse and validate request body
+  
     let requestBody;
     try {
       requestBody = await req.json();
@@ -141,7 +141,7 @@ serve(async (req) => {
 
     const { prompt: rawPrompt, style: rawStyle, action: rawAction } = requestBody;
 
-    // Validate action
+    
     const actionValidation = validateAction(rawAction);
     if (!actionValidation.valid) {
       return new Response(
@@ -151,7 +151,7 @@ serve(async (req) => {
     }
     const action = actionValidation.value!;
 
-    // Validate style
+
     const styleValidation = validateStyle(rawStyle);
     if (!styleValidation.valid) {
       return new Response(
@@ -161,7 +161,6 @@ serve(async (req) => {
     }
     const style = styleValidation.value!;
 
-    // Validate and sanitize prompt
     const promptValidation = validatePrompt(rawPrompt);
     if (!promptValidation.valid) {
       return new Response(
@@ -171,7 +170,7 @@ serve(async (req) => {
     }
     const prompt = promptValidation.sanitized!;
 
-    // Rate limiting check using flyer_history table
+    
     const rateLimitTime = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
     const { count: recentRequestCount, error: countError } = await supabaseClient
       .from('flyer_history')
@@ -181,7 +180,7 @@ serve(async (req) => {
 
     if (countError) {
       console.error('Rate limit check failed:', countError);
-      // Continue anyway - don't block user due to rate limit check failure
+      
     } else if (recentRequestCount && recentRequestCount >= RATE_LIMIT_MAX_REQUESTS) {
       console.warn(`Rate limit exceeded for user ${userId}: ${recentRequestCount} requests in last minute`);
       return new Response(
@@ -199,7 +198,7 @@ serve(async (req) => {
       );
     }
 
-    // Handle smart suggestions
+
     if (action === 'suggest') {
       console.log('Generating smart suggestions for user:', userId, 'prompt:', prompt.substring(0, 50));
       
@@ -240,7 +239,7 @@ serve(async (req) => {
       const content = suggestionData.choices?.[0]?.message?.content || '[]';
       
       try {
-        // Extract JSON array from response
+     
         const jsonMatch = content.match(/\[[\s\S]*\]/);
         const suggestions = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
         return new Response(
@@ -256,10 +255,10 @@ serve(async (req) => {
       }
     }
 
-    // Handle image generation
+
     console.log('Generating flyer for user:', userId, 'prompt:', prompt.substring(0, 50), 'style:', style);
 
-    // Enhanced style guides with more detailed instructions for better quality
+
     const styleGuides: Record<string, string> = {
       modern: 'sleek contemporary design with bold sans-serif typography, geometric shapes, clean lines, and a sophisticated color palette',
       vibrant: 'high-energy design with saturated bold colors, dynamic diagonal compositions, eye-catching gradients, and playful typography',
@@ -271,7 +270,7 @@ serve(async (req) => {
 
     const styleGuide = styleGuides[style] || styleGuides.modern;
 
-    // Professional enhanced prompt for maximum quality
+
     const enhancedPrompt = `Create a stunning professional marketing flyer with ${styleGuide}. 
     
 The flyer should feature: ${prompt}
