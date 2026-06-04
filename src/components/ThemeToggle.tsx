@@ -26,44 +26,28 @@ export const ThemeToggle = () => {
       variant="ghost"
       size="sm"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative w-10 h-10 p-0 rounded-full overflow-hidden group hover:bg-accent/50 transition-all duration-300"
+      className="w-10 h-10 p-0 rounded-lg hover:bg-secondary transition-colors"
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
-      {/* Background glow effect */}
-      <div 
-        className={`absolute inset-0 rounded-full transition-all duration-500 ${
-          isDark 
-            ? "bg-gradient-to-br from-neon-purple/20 to-neon-blue/20" 
-            : "bg-gradient-to-br from-amber-200/30 to-orange-200/30"
-        }`}
-      />
-      
-      {/* Sun icon */}
-      <Sun 
-        className={`absolute h-5 w-5 transition-all duration-500 ease-out ${
-          isDark 
-            ? "rotate-90 scale-0 opacity-0" 
-            : "rotate-0 scale-100 opacity-100 text-amber-500"
-        }`}
-      />
-      
-      {/* Moon icon */}
-      <Moon 
-        className={`absolute h-5 w-5 transition-all duration-500 ease-out ${
-          isDark 
-            ? "rotate-0 scale-100 opacity-100 text-neon-purple" 
-            : "-rotate-90 scale-0 opacity-0"
-        }`}
-      />
-      
-      {/* Hover glow ring */}
-      <div 
-        className={`absolute inset-0 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 ${
-          isDark 
-            ? "ring-2 ring-neon-purple/50 shadow-[0_0_15px_hsl(var(--neon-purple)/0.3)]" 
-            : "ring-2 ring-amber-400/50 shadow-[0_0_15px_hsl(45_100%_50%/0.3)]"
-        }`}
-      />
+      <div className="relative w-full h-full flex items-center justify-center">
+        {/* Sun icon */}
+        <Sun 
+          className={`h-5 w-5 transition-all duration-300 ${
+            isDark 
+              ? "rotate-90 scale-0 opacity-0" 
+              : "rotate-0 scale-100 opacity-100 text-amber-500"
+          }`}
+        />
+        
+        {/* Moon icon */}
+        <Moon 
+          className={`absolute h-5 w-5 transition-all duration-300 ${
+            isDark 
+              ? "rotate-0 scale-100 opacity-100 text-indigo-400" 
+              : "-rotate-90 scale-0 opacity-0"
+          }`}
+        />
+      </div>
     </Button>
   );
 };

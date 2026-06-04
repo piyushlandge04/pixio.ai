@@ -94,36 +94,33 @@ const History = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-background">
-      {/* Simplified background - static gradient for performance */}
-      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-muted/10 pointer-events-none" />
-      
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="relative pt-20 px-4 pb-8 sm:pb-12">
+      <div className="pt-24 px-4 pb-12">
         <div className="container max-w-6xl mx-auto">
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">Your Flyer History</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
+          <div className="mb-8">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-1.5">Your Flyer History</h1>
+            <p className="text-sm text-muted-foreground">
               {history?.count || 0} flyer{history?.count !== 1 ? "s" : ""} generated
             </p>
           </div>
 
           {!history?.data?.length ? (
-            <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30">
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground mb-4">No flyers generated yet</p>
-                <a href="/generate" className="text-neon-cyan hover:text-neon-purple transition-colors">
-                  Create your first flyer
-                </a>
+            <Card className="bg-card border border-border shadow-sm rounded-2xl">
+              <CardContent className="py-16 text-center space-y-3">
+                <p className="text-muted-foreground text-sm">No flyers generated yet</p>
+                <Button asChild variant="outline" size="sm" className="rounded-lg">
+                  <a href="/generate">Create your first flyer</a>
+                </Button>
               </CardContent>
             </Card>
           ) : (
             <>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {history.data.map((item) => (
-                  <Card key={item.id} className="overflow-hidden bg-card border border-border hover:border-primary/50 transition-colors duration-200 group">
+                  <Card key={item.id} className="overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300 rounded-2xl group hover:-translate-y-0.5 hover:shadow-sm">
                     <div 
-                      className="aspect-[3/4] bg-muted relative cursor-pointer"
+                      className="aspect-[3/4] bg-secondary relative cursor-pointer"
                       onClick={() => setSelectedFlyer(item)}
                     >
                       <OptimizedImage
@@ -131,63 +128,63 @@ const History = () => {
                         alt="Generated flyer"
                         className="w-full h-full object-cover"
                       />
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                         <Button
                           size="icon"
                           variant="secondary"
-                          className="rounded-full"
+                          className="rounded-full h-10 w-10 hover:bg-secondary/80 border border-border"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedFlyer(item);
                           }}
                         >
-                          <Eye className="w-5 h-5" />
+                          <Eye className="w-4 h-4 text-foreground" />
                         </Button>
                         <Button
                           size="icon"
                           variant="secondary"
-                          className="rounded-full"
+                          className="rounded-full h-10 w-10 hover:bg-secondary/80 border border-border"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDownload(item.image_url, item.prompt);
                           }}
                         >
-                          <Download className="w-5 h-5" />
+                          <Download className="w-4 h-4 text-foreground" />
                         </Button>
                       </div>
                     </div>
-                    <CardContent className="p-3 sm:p-4">
+                    <CardContent className="p-4">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <Badge variant="secondary" className="text-xs">{item.style}</Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(item.created_at).toLocaleDateString()}
+                        <Badge variant="secondary" className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-md">{item.style}</Badge>
+                        <span className="text-[11px] text-muted-foreground">
+                          {new Date(item.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm line-clamp-2">{item.prompt}</p>
+                      <p className="text-xs sm:text-sm text-foreground/90 font-medium line-clamp-2 leading-relaxed">{item.prompt}</p>
                     </CardContent>
                   </Card>
                 ))}
               </div>
 
               {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 mt-8">
+                <div className="flex justify-center items-center gap-4 mt-12">
                   <Button
                     variant="outline"
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="border-neon-cyan/30 hover:border-neon-cyan"
+                    className="hover:bg-secondary rounded-lg text-xs px-3 h-9"
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-xs text-muted-foreground font-medium">
                     Page {page} of {totalPages}
                   </span>
                   <Button
                     variant="outline"
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="border-neon-cyan/30 hover:border-neon-cyan"
+                    className="hover:bg-secondary rounded-lg text-xs px-3 h-9"
                   >
                     Next
                   </Button>
@@ -200,18 +197,18 @@ const History = () => {
 
       {/* Flyer Preview Modal */}
       <Dialog open={!!selectedFlyer} onOpenChange={() => setSelectedFlyer(null)}>
-        <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] overflow-auto p-0 bg-card/95 backdrop-blur-xl border-neon-purple/50">
-          <DialogHeader className="p-4 sm:p-6 pb-0">
+        <DialogContent className="max-w-xl w-[95vw] max-h-[90vh] overflow-y-auto p-0 bg-card border border-border rounded-2xl shadow-lg">
+          <DialogHeader className="p-5 pb-0">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <DialogTitle className="text-lg sm:text-xl font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">
-                  Flyer Preview
+                <DialogTitle className="text-lg font-bold text-foreground">
+                  Flyer Details
                 </DialogTitle>
                 {selectedFlyer && (
                   <div className="flex flex-wrap items-center gap-2 mt-2">
-                    <Badge variant="secondary">{selectedFlyer.style}</Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(selectedFlyer.created_at).toLocaleDateString()}
+                    <Badge variant="secondary" className="text-[10px] font-semibold uppercase">{selectedFlyer.style}</Badge>
+                    <span className="text-[11px] text-muted-foreground">
+                      Generated on {new Date(selectedFlyer.created_at).toLocaleDateString(undefined, { dateStyle: 'long' })}
                     </span>
                   </div>
                 )}
@@ -220,27 +217,27 @@ const History = () => {
           </DialogHeader>
           
           {selectedFlyer && (
-            <div className="p-4 sm:p-6 pt-4 space-y-4">
-              <div className="relative rounded-lg overflow-hidden border border-border">
+            <div className="p-5 pt-4 space-y-4">
+              <div className="relative rounded-xl overflow-hidden border border-border">
                 <img
                   src={selectedFlyer.image_url}
                   alt="Generated flyer"
-                  className="w-full h-auto max-h-[60vh] object-contain bg-muted"
+                  className="w-full h-auto max-h-[50vh] object-contain bg-secondary/50"
                 />
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-4 pt-1">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Prompt</p>
-                  <p className="text-sm">{selectedFlyer.prompt}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Prompt</p>
+                  <p className="text-sm text-foreground/90 leading-relaxed font-medium bg-secondary/30 p-3 rounded-xl border border-border/40">{selectedFlyer.prompt}</p>
                 </div>
                 
                 <Button
                   onClick={() => handleDownload(selectedFlyer.image_url, selectedFlyer.prompt)}
-                  className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:opacity-90"
+                  className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold h-11 rounded-xl shadow-sm"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download Flyer
+                  Download High-Res Flyer
                 </Button>
               </div>
             </div>

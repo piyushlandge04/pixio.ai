@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Download, Sparkles, Wand2, Plus, X, FileImage, Image as ImageIcon, Move, Maximize2, Lightbulb } from "lucide-react";
+import { Loader2, Download, Sparkles, Wand2, X, Image as ImageIcon, Move, Maximize2, Lightbulb } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -176,8 +176,11 @@ const flyerStyles = [
   { id: 'bold', name: 'Bold', description: 'Powerful & striking', icon: '💥' },
 ];
 
+import { useSearchParams } from "react-router-dom";
+
 export const FlyerGenerator = () => {
-  const [prompt, setPrompt] = useState("");
+  const [searchParams] = useSearchParams();
+  const [prompt, setPrompt] = useState(searchParams.get("prompt") || "");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState('modern');
@@ -396,7 +399,7 @@ export const FlyerGenerator = () => {
       link.download = `flyer-${Date.now()}.png`;
       link.href = canvas.toDataURL();
       link.click();
-      toast.success("Flyer downloaded with logos!");
+      toast.success("Flyer downloaded!");
     };
     
     img.src = generatedImage;
@@ -456,49 +459,51 @@ export const FlyerGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen py-6 sm:py-12 px-4 relative overflow-hidden">
-      {/* Background decorations */}
+    <div className="min-h-screen py-12 px-4 relative overflow-hidden bg-background">
+      {/* Premium subtle background meshes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-neon-purple/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-neon-cyan/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute -bottom-40 right-1/4 w-72 h-72 bg-neon-pink/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute -top-30 -right-30 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -left-30 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container max-w-6xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 animate-fade-in">
-          <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 via-neon-purple/20 to-neon-pink/20 rounded-2xl mb-4 sm:mb-6 border border-neon-cyan/30 animate-pulse-glow">
-            <Wand2 className="w-8 h-8 sm:w-10 sm:h-10 text-neon-cyan" />
+        {/* Header Section */}
+        <div className="text-center mb-12 animate-slide-in-up">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-4">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium text-primary">AI flyer designer v2</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent animate-gradient-text bg-[length:200%_auto]">
-            AI Flyer Generator
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 text-foreground">
+            Generate Stunning Flyers
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2 leading-relaxed">
-            Transform your ideas into stunning professional flyers with AI magic
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Describe your event and watch AI instantly design a premium, high-converting flyer.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
-          {/* Input Section */}
-          <Card className="p-5 sm:p-8 space-y-5 sm:space-y-6 glass-strong rounded-2xl shadow-2xl animate-fade-in border-neon-cyan/20 hover:border-neon-purple/40 transition-all duration-500">
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          {/* Input Section - 7 Columns on Large Screens */}
+          <Card className="lg:col-span-7 p-6 sm:p-8 space-y-6 bg-card border border-border shadow-sm rounded-2xl animate-slide-in-up">
             <div className="space-y-5">
-              <div className="flex items-center gap-3 pb-4 border-b border-border/50">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20">
-                  <Sparkles className="w-5 h-5 text-neon-cyan" />
+              <div className="flex items-center gap-3 pb-4 border-b border-border/80">
+                <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                  <Wand2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Design Your Flyer</h3>
-                  <p className="text-xs text-muted-foreground">Fill in the details below</p>
+                  <h3 className="text-lg font-bold text-foreground">Design Details</h3>
+                  <p className="text-xs text-muted-foreground">Describe your design preferences below</p>
                 </div>
               </div>
               
-              {/* Structured Input Fields */}
-              <div className="space-y-4 p-4 sm:p-5 rounded-xl bg-gradient-to-br from-neon-cyan/5 via-transparent to-neon-purple/5 border border-border/50">
+              {/* Structured Inputs */}
+              <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-neon-cyan mb-2 block flex items-center gap-2">
-                    <span>Event Type</span>
-                    <span className="text-neon-pink text-xs">*required</span>
-                  </label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="text-sm font-semibold text-foreground/90">
+                      Event Type
+                    </label>
+                    <span className="text-accent text-xs font-medium">*required</span>
+                  </div>
                   <Input
                     placeholder="e.g., Summer Music Festival, Business Conference, Yoga Retreat"
                     value={promptDetails.eventType}
@@ -507,29 +512,29 @@ export const FlyerGenerator = () => {
                       setPromptDetails({ ...promptDetails, eventType: value });
                       fetchSmartSuggestions(value);
                     }}
-                    className="h-11 border-2 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                    className="h-11 border-border focus-visible:ring-primary bg-background/50 rounded-xl"
                     disabled={isGenerating}
                   />
                 </div>
 
-                {/* AI Smart Suggestions */}
+                {/* AI Suggestions Box */}
                 {(smartSuggestions.length > 0 || isLoadingSuggestions) && (
-                  <div className="space-y-3 p-4 bg-gradient-to-br from-neon-purple/10 via-neon-pink/5 to-transparent rounded-xl border border-neon-purple/30 animate-fade-in">
+                  <div className="space-y-3 p-4 bg-secondary/50 rounded-xl border border-border animate-fade-in">
                     <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-neon-purple/20">
-                        <Lightbulb className="w-4 h-4 text-neon-purple" />
+                      <div className="p-1 rounded-md bg-primary/10 text-primary">
+                        <Lightbulb className="w-4 h-4" />
                       </div>
-                      <span className="text-sm font-bold text-neon-purple">AI Smart Suggestions</span>
-                      {isLoadingSuggestions && <Loader2 className="w-3 h-3 animate-spin text-neon-purple ml-auto" />}
+                      <span className="text-xs font-bold text-foreground">AI Prompt Suggestions</span>
+                      {isLoadingSuggestions && <Loader2 className="w-3 h-3 animate-spin text-primary ml-auto" />}
                     </div>
                     {smartSuggestions.length > 0 && (
-                      <div className="grid gap-2">
+                      <div className="grid gap-1.5">
                         {smartSuggestions.map((suggestion, index) => (
                           <button
                             key={index}
                             onClick={() => setPrompt(suggestion)}
                             disabled={isGenerating}
-                            className="text-left text-xs p-3 rounded-lg bg-background/50 hover:bg-neon-purple/20 border border-neon-purple/20 hover:border-neon-purple/50 transition-all disabled:opacity-50 hover:scale-[1.01]"
+                            className="text-left text-xs p-2.5 rounded-lg bg-background hover:bg-primary/5 border border-border hover:border-primary/30 transition-colors disabled:opacity-50"
                           >
                             {suggestion}
                           </button>
@@ -541,85 +546,82 @@ export const FlyerGenerator = () => {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-neon-purple mb-2 block">
+                    <label className="text-sm font-semibold text-foreground/90 mb-1.5 block">
                       Color Scheme
                     </label>
                     <Input
-                      placeholder="Blues and purples, Black and gold..."
+                      placeholder="e.g., Blues and purples, Black and gold"
                       value={promptDetails.colors}
                       onChange={(e) => setPromptDetails({ ...promptDetails, colors: e.target.value })}
-                      className="h-11 border-2 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                      className="h-11 border-border focus-visible:ring-primary bg-background/50 rounded-xl"
                       disabled={isGenerating}
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-neon-pink mb-2 block">
-                      Vibe/Mood
+                    <label className="text-sm font-semibold text-foreground/90 mb-1.5 block">
+                      Vibe / Mood
                     </label>
                     <Input
-                      placeholder="Energetic, Professional, Calm..."
+                      placeholder="e.g., Energetic, Professional, Calm"
                       value={promptDetails.vibe}
                       onChange={(e) => setPromptDetails({ ...promptDetails, vibe: e.target.value })}
-                      className="h-11 border-2 border-neon-pink/30 focus:border-neon-pink focus:ring-neon-pink/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-pink)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                      className="h-11 border-border focus-visible:ring-primary bg-background/50 rounded-xl"
                       disabled={isGenerating}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-neon-blue mb-2 block">
+                  <label className="text-sm font-semibold text-foreground/90 mb-1.5 block">
                     Key Visual Elements
                   </label>
                   <Input
                     placeholder="e.g., Musical instruments, City skyline, Nature imagery"
                     value={promptDetails.keyElements}
                     onChange={(e) => setPromptDetails({ ...promptDetails, keyElements: e.target.value })}
-                    className="h-11 border-2 border-neon-blue/30 focus:border-neon-blue focus:ring-neon-blue/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-blue)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
+                    className="h-11 border-border focus-visible:ring-primary bg-background/50 rounded-xl"
+                    disabled={isGenerating}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-foreground/90 mb-1.5 block">
+                    Additional Details (Optional)
+                  </label>
+                  <Textarea
+                    placeholder="Provide any other text content, sponsor names, or style cues..."
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="min-h-[90px] text-sm resize-none border-border focus-visible:ring-primary bg-background/50 rounded-xl"
                     disabled={isGenerating}
                   />
                 </div>
               </div>
-
-              {/* Additional Details */}
-              <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Additional Details (Optional)
-                </label>
-                <Textarea
-                  placeholder="Any other specific requirements or creative ideas..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[80px] text-base resize-none border-2 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/50 focus:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] bg-background/50 transition-all duration-300 rounded-xl"
-                  disabled={isGenerating}
-                />
-              </div>
             </div>
 
-            {/* Style Selection */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-bold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">
-                  Choose a Style
-                </label>
-              </div>
+            {/* Style Selector */}
+            <div className="space-y-3">
+              <label className="text-sm font-semibold text-foreground/90 block">
+                Choose a Design Style
+              </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {flyerStyles.map((style) => (
                   <button
                     key={style.id}
                     onClick={() => setSelectedStyle(style.id)}
                     disabled={isGenerating}
-                    className={`p-4 rounded-xl border-2 transition-all text-left hover:scale-[1.02] group ${
+                    className={`p-3.5 rounded-xl border transition-all text-left ${
                       selectedStyle === style.id
-                        ? 'border-neon-cyan bg-gradient-to-br from-neon-cyan/15 to-neon-purple/10 shadow-[0_0_25px_-5px_hsl(var(--neon-cyan)/0.6)]'
-                        : 'border-border/50 hover:border-neon-purple/50 hover:bg-neon-purple/5 bg-background/30'
+                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                        : 'border-border hover:border-primary/40 hover:bg-secondary/40 bg-background/30'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-2xl group-hover:scale-110 transition-transform">{style.icon}</span>
-                      <span className="font-bold text-sm">{style.name}</span>
+                      <span className="text-lg">{style.icon}</span>
+                      <span className="font-semibold text-xs text-foreground">{style.name}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{style.description}</span>
+                    <span className="text-[10px] text-muted-foreground leading-snug block">{style.description}</span>
                   </button>
                 ))}
               </div>
@@ -629,26 +631,26 @@ export const FlyerGenerator = () => {
               onClick={handleGenerate}
               disabled={isGenerating || (!promptDetails.eventType && !prompt.trim())}
               size="lg"
-              className="w-full h-14 text-lg font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink hover:opacity-90 shadow-[0_0_40px_-5px_hsl(var(--neon-cyan)/0.5)] border-0 rounded-xl hover:shadow-[0_0_50px_-5px_hsl(var(--neon-purple)/0.7)] transition-all duration-300 hover:scale-[1.02] animate-pulse-glow"
+              className="w-full h-12 text-sm font-bold bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl transition-all shadow-sm"
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Generating Magic...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating Flyer (Estimated 30s)...
                 </>
               ) : (
                 <>
-                  <Wand2 className="mr-2 h-5 w-5" />
-                  Generate Flyer
+                  <Wand2 className="mr-2 h-4 w-4" />
+                  Generate Flyer Design
                 </>
               )}
             </Button>
 
-            {/* Example Prompts - Collapsible */}
+            {/* Examples list */}
             {relevantPrompts.length > 0 && !smartSuggestions.length && (
-              <div className="space-y-3 pt-2">
-                <p className="text-sm font-semibold text-muted-foreground">
-                  {prompt.trim() ? "💡 Related ideas:" : "✨ Try these examples:"}
+              <div className="space-y-2 pt-1 border-t border-border/50">
+                <p className="text-xs font-semibold text-muted-foreground">
+                  {prompt.trim() ? "💡 Related Ideas:" : "✨ Sample Prompts:"}
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2">
                   {relevantPrompts.slice(0, 4).map((example, index) => (
@@ -656,7 +658,7 @@ export const FlyerGenerator = () => {
                       key={index}
                       onClick={() => useExamplePrompt(example)}
                       disabled={isGenerating}
-                      className="text-left text-xs p-3 rounded-xl bg-muted/30 hover:bg-neon-purple/10 transition-all border border-border/30 hover:border-neon-purple/40 disabled:opacity-50 line-clamp-2"
+                      className="text-left text-xs p-2.5 rounded-xl bg-secondary/50 hover:bg-secondary border border-border transition-colors disabled:opacity-50 line-clamp-2"
                     >
                       {example}
                     </button>
@@ -666,17 +668,17 @@ export const FlyerGenerator = () => {
             )}
           </Card>
 
-          {/* Preview Section */}
-          <Card className="p-5 sm:p-8 glass-strong rounded-2xl shadow-2xl animate-fade-in border-neon-purple/20 hover:border-neon-cyan/40 transition-all duration-500 sticky top-6" style={{ animationDelay: "100ms" }}>
+          {/* Preview Section - 5 Columns */}
+          <Card className="lg:col-span-5 p-6 bg-card border border-border shadow-sm rounded-2xl lg:sticky lg:top-24 animate-slide-in-up">
             <div className="space-y-5">
-              <div className="flex items-center justify-between pb-4 border-b border-border/50">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-neon-purple/20 to-neon-pink/20">
-                    <ImageIcon className="w-5 h-5 text-neon-purple" />
+              <div className="flex items-center justify-between pb-4 border-b border-border/80">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                    <ImageIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">Preview</h3>
-                    <p className="text-xs text-muted-foreground">Your flyer will appear here</p>
+                    <h3 className="text-lg font-bold text-foreground">Preview Canvas</h3>
+                    <p className="text-xs text-muted-foreground font-medium">Visual output</p>
                   </div>
                 </div>
                 {generatedImage && !isEditMode && (
@@ -684,29 +686,28 @@ export const FlyerGenerator = () => {
                     onClick={() => setIsEditMode(true)}
                     variant="outline"
                     size="sm"
-                    className="border-neon-purple/50 hover:bg-neon-purple/10 hover:border-neon-purple rounded-xl"
+                    className="hover:bg-secondary rounded-lg text-xs"
                   >
-                    Edit Text
+                    Overlay Text
                   </Button>
                 )}
               </div>
               
               <div 
                 ref={containerRef}
-                className="aspect-[3/4] bg-gradient-to-br from-neon-cyan/5 via-background to-neon-purple/5 rounded-xl border-2 border-dashed border-border/50 overflow-hidden flex items-center justify-center relative hover:border-neon-purple/40 transition-all duration-300"
+                className="aspect-[3/4] bg-secondary/35 rounded-xl border border-dashed border-border/80 overflow-hidden flex items-center justify-center relative hover:border-primary/30 transition-colors"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
                 {isGenerating ? (
-                  <div className="text-center space-y-6 animate-fade-in">
-                    <div className="relative">
-                      <div className="w-20 h-20 rounded-full border-4 border-neon-cyan/30 border-t-neon-cyan animate-spin mx-auto" />
-                      <Wand2 className="w-8 h-8 text-neon-purple absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  <div className="text-center space-y-4 animate-fade-in">
+                    <div className="relative flex justify-center">
+                      <Loader2 className="w-10 h-10 animate-spin text-primary" />
                     </div>
                     <div>
-                      <p className="text-foreground font-bold text-lg">Creating your flyer...</p>
-                      <p className="text-muted-foreground text-sm">This may take 30-60 seconds</p>
+                      <p className="text-foreground font-semibold text-sm">Drafting Flyer...</p>
+                      <p className="text-muted-foreground text-xs">AI is compositing elements</p>
                     </div>
                   </div>
                 ) : generatedImage ? (
@@ -722,7 +723,7 @@ export const FlyerGenerator = () => {
                       <div
                         key={logo.id}
                         className={`absolute cursor-move group ${
-                          selectedLogo === logo.id ? 'ring-2 ring-primary' : ''
+                          selectedLogo === logo.id ? 'ring-1 ring-primary' : ''
                         }`}
                         style={{
                           left: `${logo.x}%`,
@@ -738,121 +739,123 @@ export const FlyerGenerator = () => {
                           className="w-full h-full object-contain pointer-events-none"
                         />
                         {selectedLogo === logo.id && (
-                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 rounded-lg px-3 py-1.5 flex items-center gap-2 whitespace-nowrap">
+                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-popover border border-border shadow-md rounded-lg p-1 flex items-center gap-1.5 whitespace-nowrap">
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                resizeLogo(logo.id, -10);
+                                  e.stopPropagation();
+                                  resizeLogo(logo.id, -10);
                               }}
-                              className="h-6 w-6 p-0 text-white hover:text-neon-cyan"
+                              className="h-6 w-6 p-0 hover:bg-secondary"
                             >
-                              <Maximize2 className="h-3 w-3 rotate-180" />
+                              <Maximize2 className="h-3.5 w-3.5 rotate-180 text-foreground" />
                             </Button>
-                            <span className="text-xs text-white">
-                              <Move className="h-3 w-3" />
+                            <span className="text-[10px] text-muted-foreground">
+                              <Move className="h-3 w-3 inline mr-0.5" /> Move
                             </span>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                resizeLogo(logo.id, 10);
+                                  e.stopPropagation();
+                                  resizeLogo(logo.id, 10);
                               }}
-                              className="h-6 w-6 p-0 text-white hover:text-neon-cyan"
+                              className="h-6 w-6 p-0 hover:bg-secondary"
                             >
-                              <Maximize2 className="h-3 w-3" />
+                              <Maximize2 className="h-3.5 w-3.5 text-foreground" />
                             </Button>
+                            <div className="w-[1px] h-4 bg-border" />
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                removeLogo(logo.id);
+                                  e.stopPropagation();
+                                  removeLogo(logo.id);
                               }}
-                              className="h-6 w-6 p-0 text-white hover:text-destructive"
+                              className="h-6 w-6 p-0 hover:bg-destructive/10 text-destructive"
                             >
-                              <X className="h-3 w-3" />
+                              <X className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         )}
                       </div>
                     ))}
                     
+                    {/* Text overlays editing */}
                     {isEditMode && (
-                      <div className="absolute inset-0 bg-black/20">
-                        <div className="absolute top-8 left-0 right-0 px-4 space-y-3">
+                      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm p-4 overflow-y-auto">
+                        <div className="space-y-4 max-w-sm mx-auto pt-4">
                           <div className="space-y-1">
-                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                            <label className="text-xs font-semibold text-foreground/85">
                               Headline
                             </label>
-                            <input
+                            <Input
                               type="text"
                               value={editableText.headline}
                               onChange={(e) => setEditableText({ ...editableText, headline: e.target.value })}
-                              className="w-full text-xl font-bold text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
+                              className="w-full text-sm font-semibold bg-background"
                               placeholder="Event Title"
                             />
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1">
-                              <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded block">
+                              <label className="text-xs font-semibold text-foreground/85">
                                 Date
                               </label>
-                              <input
+                              <Input
                                 type="text"
                                 value={editableText.date}
                                 onChange={(e) => setEditableText({ ...editableText, date: e.target.value })}
-                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
+                                className="w-full text-xs bg-background"
                                 placeholder="Date"
                               />
                             </div>
                             
                             <div className="space-y-1">
-                              <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded block">
+                              <label className="text-xs font-semibold text-foreground/85">
                                 Time
                               </label>
-                              <input
+                              <Input
                                 type="text"
                                 value={editableText.time}
                                 onChange={(e) => setEditableText({ ...editableText, time: e.target.value })}
-                                className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-2 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
+                                className="w-full text-xs bg-background"
                                 placeholder="Time"
                               />
                             </div>
                           </div>
                           
                           <div className="space-y-1">
-                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                            <label className="text-xs font-semibold text-foreground/85">
                               Location
                             </label>
-                            <input
+                            <Input
                               type="text"
                               value={editableText.location}
                               onChange={(e) => setEditableText({ ...editableText, location: e.target.value })}
-                              className="w-full text-base text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-1.5 focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
+                              className="w-full text-sm bg-background"
                               placeholder="Location"
                             />
                           </div>
                           
                           <div className="space-y-1">
-                            <label className="text-xs font-semibold text-white bg-black/70 px-2 py-1 rounded">
+                            <label className="text-xs font-semibold text-foreground/85">
                               Description
                             </label>
-                            <textarea
+                            <Textarea
                               value={editableText.description}
                               onChange={(e) => setEditableText({ ...editableText, description: e.target.value })}
-                              className="w-full text-sm text-white text-center bg-black/60 border-2 border-white/70 rounded px-3 py-2 h-20 resize-none focus:outline-none focus:border-neon-cyan focus:bg-black/80 transition-all"
+                              className="w-full text-xs h-16 bg-background resize-none"
                               placeholder="Description"
                             />
                           </div>
                           
                           <Button
                             onClick={() => setIsEditMode(false)}
-                            size="lg"
-                            className="w-full mt-2 bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.6)] border border-neon-cyan/50 transition-all duration-300"
+                            size="sm"
+                            className="w-full bg-primary text-primary-foreground font-semibold h-9 rounded-lg"
                           >
                             Done Editing
                           </Button>
@@ -861,13 +864,15 @@ export const FlyerGenerator = () => {
                     )}
                   </>
                 ) : (
-                  <div className="text-center space-y-4 p-8 animate-fade-in">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-cyan/10 to-neon-purple/10 flex items-center justify-center mx-auto border border-neon-cyan/20">
-                      <Sparkles className="w-10 h-10 text-neon-cyan/50 animate-float" />
+                  <div className="text-center space-y-3 p-8 animate-fade-in">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center mx-auto border border-primary/10">
+                      <Sparkles className="w-6 h-6 text-primary/45" />
                     </div>
                     <div>
-                      <p className="text-foreground font-medium">No flyer yet</p>
-                      <p className="text-muted-foreground text-sm">Fill in the details and click Generate</p>
+                      <p className="text-foreground font-semibold text-sm">No flyer generated</p>
+                      <p className="text-muted-foreground text-xs leading-relaxed max-w-[200px] mx-auto">
+                        Fill out details on the left to see the generated design.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -877,14 +882,14 @@ export const FlyerGenerator = () => {
                 <Button
                   onClick={handleDownload}
                   size="lg"
-                  className="w-full h-12 font-bold bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.5)] rounded-xl transition-all duration-300 hover:scale-[1.02]"
+                  className="w-full h-11 text-xs font-bold bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl shadow-sm"
                 >
-                  <Download className="mr-2 h-5 w-5" />
+                  <Download className="mr-2 h-4 w-4" />
                   {logoOverlays.length > 0 
                     ? "Download with Logos" 
                     : isEditMode 
                     ? "Download with Edits" 
-                    : "Download Flyer"}
+                    : "Download Flyer Image"}
                 </Button>
               )}
             </div>

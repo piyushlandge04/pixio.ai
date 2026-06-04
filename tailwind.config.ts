@@ -89,10 +89,10 @@ export default {
         },
         "glow-pulse": {
           "0%, 100%": {
-            boxShadow: "0 0 20px hsl(var(--neon-cyan) / 0.5), 0 0 40px hsl(var(--neon-cyan) / 0.3)",
+            boxShadow: "0 4px 16px hsl(var(--primary) / 0.06), 0 0 0 1px hsl(var(--primary) / 0.1)",
           },
           "50%": {
-            boxShadow: "0 0 30px hsl(var(--neon-purple) / 0.6), 0 0 60px hsl(var(--neon-purple) / 0.4)",
+            boxShadow: "0 4px 24px hsl(var(--primary) / 0.12), 0 0 0 1px hsl(var(--primary) / 0.2)",
           },
         },
         "float": {
@@ -100,12 +100,12 @@ export default {
             transform: "translateY(0px)",
           },
           "50%": {
-            transform: "translateY(-20px)",
+            transform: "translateY(-6px)",
           },
         },
         "slide-in-up": {
           "0%": {
-            transform: "translateY(50px)",
+            transform: "translateY(16px)",
             opacity: "0",
           },
           "100%": {
@@ -115,20 +115,20 @@ export default {
         },
         "neon-glow": {
           "0%, 100%": {
-            filter: "drop-shadow(0 0 8px hsl(var(--neon-cyan))) drop-shadow(0 0 20px hsl(var(--neon-cyan) / 0.5))",
+            filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.15))",
           },
           "50%": {
-            filter: "drop-shadow(0 0 12px hsl(var(--neon-purple))) drop-shadow(0 0 30px hsl(var(--neon-purple) / 0.6))",
+            filter: "drop-shadow(0 4px 12px hsl(var(--accent) / 0.25))",
           },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
-        "float": "float 6s ease-in-out infinite",
-        "slide-in-up": "slide-in-up 0.5s ease-out",
-        "neon-glow": "neon-glow 2s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 4s ease-in-out infinite",
+        "float": "float 8s ease-in-out infinite",
+        "slide-in-up": "slide-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        "neon-glow": "neon-glow 4s ease-in-out infinite",
       },
     },
   },

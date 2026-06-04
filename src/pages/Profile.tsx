@@ -209,18 +209,15 @@ const Profile = () => {
   const getAccountBadgeStyles = () => {
     switch (accountType) {
       case "pro":
-        return "bg-gradient-to-r from-neon-cyan to-neon-purple text-white border-0";
+        return "bg-primary text-primary-foreground border-0";
       case "premium":
-        return "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0";
+        return "bg-amber-600 text-white border-0";
       default:
-        return "bg-muted text-muted-foreground";
+        return "bg-secondary text-secondary-foreground border-border";
     }
   };
 
   const formatPhoneNumber = (phone: string) => {
-    if (phone.startsWith('+')) {
-      return phone;
-    }
     return phone;
   };
 
@@ -228,23 +225,22 @@ const Profile = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-          <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-          <main className="relative container mx-auto px-4 pt-24 pb-8 max-w-2xl">
-            <Card className="bg-card/80 backdrop-blur-sm border-2 border-border/50">
+        <div className="min-h-screen bg-background">
+          <main className="container mx-auto px-4 pt-28 pb-8 max-w-2xl">
+            <Card className="bg-card border border-border shadow-sm">
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
-                  <Skeleton className="h-28 w-28 rounded-full" />
+                  <Skeleton className="h-24 w-24 rounded-full" />
                 </div>
-                <Skeleton className="h-8 w-48 mx-auto mb-2" />
-                <Skeleton className="h-4 w-64 mx-auto" />
+                <Skeleton className="h-7 w-40 mx-auto mb-2" />
+                <Skeleton className="h-4 w-60 mx-auto" />
               </CardHeader>
               <CardContent className="space-y-6">
-                <Skeleton className="h-20 w-full rounded-xl" />
+                <Skeleton className="h-16 w-full rounded-xl" />
                 <div className="space-y-4">
                   <Skeleton className="h-10 w-full" />
                   <Skeleton className="h-10 w-full" />
-                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-11 w-full" />
                 </div>
               </CardContent>
             </Card>
@@ -255,39 +251,31 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-      
-      {/* Animated Glowing Orbs */}
-      <div className="fixed top-20 right-20 w-80 h-80 bg-neon-cyan/10 rounded-full blur-[120px] animate-float pointer-events-none"></div>
-      <div className="fixed bottom-20 left-20 w-96 h-96 bg-neon-purple/10 rounded-full blur-[120px] animate-float pointer-events-none" style={{ animationDelay: "2s" }}></div>
-      
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="relative container mx-auto px-4 pt-24 pb-8 max-w-2xl">
+      <main className="container mx-auto px-4 pt-28 pb-12 max-w-2xl">
         {/* Profile Card */}
-        <Card className="bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 shadow-[0_0_40px_-10px_hsl(var(--neon-purple)/0.4)] transition-all duration-500 hover:shadow-[0_0_60px_-10px_hsl(var(--neon-purple)/0.5)] animate-slide-in-up">
+        <Card className="bg-card border border-border shadow-sm rounded-2xl animate-slide-in-up">
           <CardHeader className="text-center pb-2">
             {/* Avatar Section */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-4">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink rounded-full opacity-75 blur-sm group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Avatar className="h-28 w-28 relative border-4 border-background">
+                <Avatar className="h-24 w-24 border-2 border-border ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt="Profile picture" className="object-cover" />}
-                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 text-foreground">
-                    {form.watch("full_name") ? getInitials(form.watch("full_name")) : <User className="h-10 w-10" />}
+                  <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
+                    {form.watch("full_name") ? getInitials(form.watch("full_name")) : <User className="h-8 w-8" />}
                   </AvatarFallback>
                 </Avatar>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer scale-95 group-hover:scale-100"
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                 >
                   {uploading ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                   ) : (
-                    <Camera className="h-7 w-7 text-white" />
+                    <Camera className="h-6 w-6 text-white" />
                   )}
                 </button>
                 <input
@@ -300,66 +288,58 @@ const Profile = () => {
               </div>
             </div>
             
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent animate-glow-pulse">
+            <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
               {form.watch("full_name") || "Your Profile"}
             </CardTitle>
-            <CardDescription className="text-muted-foreground/80 mt-2">
-              Manage your account settings and preferences
+            <CardDescription className="text-xs">
+              Manage your personal details and app settings
             </CardDescription>
           </CardHeader>
           
           <CardContent className="space-y-6 pt-4">
-            {/* Stats Grid - 4 columns */}
+            {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="group p-3 bg-gradient-to-br from-neon-cyan/5 to-neon-cyan/10 rounded-xl border border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-cyan/10 rounded-lg group-hover:bg-neon-cyan/20 transition-colors">
-                    <Shield className="h-5 w-5 text-neon-cyan" />
-                  </div>
+              <div className="p-3 bg-secondary/50 rounded-xl border border-border/80">
+                <div className="flex flex-col items-center text-center gap-1.5">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Account</p>
-                    <Badge className={`mt-1 capitalize text-xs ${getAccountBadgeStyles()}`}>
-                      {accountType === "pro" && <Sparkles className="h-3 w-3 mr-1" />}
+                    <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Account</p>
+                    <Badge className={`mt-1 capitalize text-[10px] py-0 px-2 rounded-md ${getAccountBadgeStyles()}`}>
+                      {accountType === "pro" && <Sparkles className="h-2.5 w-2.5 mr-0.5" />}
                       {accountType}
                     </Badge>
                   </div>
                 </div>
               </div>
               
-              <div className="group p-3 bg-gradient-to-br from-neon-purple/5 to-neon-purple/10 rounded-xl border border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-purple/10 rounded-lg group-hover:bg-neon-purple/20 transition-colors">
-                    <Image className="h-5 w-5 text-neon-purple" />
-                  </div>
+              <div className="p-3 bg-secondary/50 rounded-xl border border-border/80">
+                <div className="flex flex-col items-center text-center gap-1.5">
+                  <Image className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Flyers</p>
-                    <p className="text-lg font-bold text-foreground">{flyerCount}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Flyers</p>
+                    <p className="text-sm font-bold text-foreground mt-0.5">{flyerCount}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="group p-3 bg-gradient-to-br from-neon-pink/5 to-neon-pink/10 rounded-xl border border-neon-pink/20 hover:border-neon-pink/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-pink/10 rounded-lg group-hover:bg-neon-pink/20 transition-colors">
-                    <Calendar className="h-5 w-5 text-neon-pink" />
-                  </div>
+              <div className="p-3 bg-secondary/50 rounded-xl border border-border/80">
+                <div className="flex flex-col items-center text-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Joined</p>
-                    <p className="text-xs font-medium">
+                    <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Joined</p>
+                    <p className="text-xs font-semibold text-foreground/90 mt-0.5">
                       {joinedDate ? format(new Date(joinedDate), "MMM yyyy") : "N/A"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="group p-3 bg-gradient-to-br from-neon-green/5 to-neon-green/10 rounded-xl border border-neon-green/20 hover:border-neon-green/40 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="p-2 bg-neon-green/10 rounded-lg group-hover:bg-neon-green/20 transition-colors">
-                    <Clock className="h-5 w-5 text-neon-green" />
-                  </div>
+              <div className="p-3 bg-secondary/50 rounded-xl border border-border/80">
+                <div className="flex flex-col items-center text-center gap-1.5">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Last Active</p>
-                    <p className="text-xs font-medium">
+                    <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Last Active</p>
+                    <p className="text-xs font-semibold text-foreground/90 mt-0.5">
                       {lastActivity ? format(new Date(lastActivity), "MMM dd") : "N/A"}
                     </p>
                   </div>
@@ -368,30 +348,30 @@ const Profile = () => {
             </div>
 
             {/* Security Status */}
-            <div className="p-4 bg-gradient-to-r from-background to-muted/30 rounded-xl border border-border/50">
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                <Shield className="h-4 w-4 text-neon-cyan" />
-                Account Security
+            <div className="p-4 bg-secondary/30 rounded-xl border border-border/60 space-y-2.5">
+              <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Shield className="h-4 w-4 text-primary" />
+                Account Security Status
               </h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div className="flex items-center gap-2">
                   {userEmail ? (
-                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-muted-foreground" />
                   )}
-                  <span className={`text-sm ${userEmail ? "text-foreground" : "text-muted-foreground"}`}>
-                    Email {userEmail ? "Verified" : "Not Set"}
+                  <span className="text-xs text-foreground/80">
+                    Email: {userEmail ? "Verified" : "Not Set"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {userPhone ? (
-                    <CheckCircle2 className="h-4 w-4 text-neon-green" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-muted-foreground" />
                   )}
-                  <span className={`text-sm ${userPhone ? "text-foreground" : "text-muted-foreground"}`}>
-                    Phone {userPhone ? "Verified" : "Not Set"}
+                  <span className="text-xs text-foreground/80">
+                    Phone: {userPhone ? "Verified" : "Not Set"}
                   </span>
                 </div>
               </div>
@@ -400,30 +380,30 @@ const Profile = () => {
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50"></span>
+                <span className="w-full border-t border-border/60"></span>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-3 text-muted-foreground">Profile Details</span>
+              <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-wider">
+                <span className="bg-card px-3 text-muted-foreground">Profile Information</span>
               </div>
             </div>
 
             {/* Form */}
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
                   name="full_name"
                   render={({ field }) => (
-                    <FormItem className="group">
-                      <FormLabel className="text-sm font-medium flex items-center gap-2">
-                        <User className="h-4 w-4 text-neon-cyan" />
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <User className="h-4 w-4 text-muted-foreground" />
                         Full Name
                       </FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter your full name" 
+                          placeholder="Your full name" 
                           {...field} 
-                          className="h-12 bg-background/50 border-border/50 focus:border-neon-cyan/50 focus:ring-neon-cyan/20 transition-all duration-300 placeholder:text-muted-foreground/50"
+                          className="h-11 bg-background border-border focus-visible:ring-primary rounded-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -434,18 +414,17 @@ const Profile = () => {
                 {/* Phone Number (read-only, if user has one) */}
                 {userPhone && (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-neon-green" />
+                    <FormLabel className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
                       Phone Number
-                      <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        Verified
+                      <Badge variant="outline" className="ml-auto text-[10px] text-emerald-600 border-emerald-200">
+                        <CheckCircle2 className="h-3 w-3 mr-0.5" /> Verified
                       </Badge>
                     </FormLabel>
                     <Input 
                       value={formatPhoneNumber(userPhone)}
                       disabled 
-                      className="h-12 bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed" 
+                      className="h-11 bg-muted/40 border-border/80 text-muted-foreground cursor-not-allowed rounded-xl" 
                     />
                   </FormItem>
                 )}
@@ -455,16 +434,15 @@ const Profile = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-neon-purple" />
+                      <FormLabel className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
                         Email Address
                         {userEmail ? (
-                          <Badge variant="outline" className="ml-auto text-xs text-neon-green border-neon-green/30">
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                            Verified
+                          <Badge variant="outline" className="ml-auto text-[10px] text-emerald-600 border-emerald-200">
+                            <CheckCircle2 className="h-3 w-3 mr-0.5" /> Verified
                           </Badge>
                         ) : (
-                          <span className="text-xs text-neon-cyan ml-auto">(Optional)</span>
+                          <span className="text-[10px] text-muted-foreground ml-auto">(Optional)</span>
                         )}
                       </FormLabel>
                       <FormControl>
@@ -473,10 +451,10 @@ const Profile = () => {
                           type="email"
                           placeholder={userEmail ? "" : "Add your email for account recovery"}
                           disabled={!!userEmail}
-                          className={`h-12 transition-all duration-300 ${
+                          className={`h-11 rounded-xl ${
                             userEmail 
-                              ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
-                              : "bg-background/50 border-border/50 focus:border-neon-purple/50 focus:ring-neon-purple/20 placeholder:text-muted-foreground/50"
+                              ? "bg-muted/40 border-border/80 text-muted-foreground cursor-not-allowed"
+                              : "bg-background border-border focus-visible:ring-primary"
                           }`}
                         />
                       </FormControl>
@@ -487,35 +465,35 @@ const Profile = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-base font-semibold bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] border border-neon-cyan/30 transition-all duration-300 hover:shadow-[0_0_40px_-5px_hsl(var(--neon-purple)/0.6)] hover:scale-[1.02] active:scale-[0.98]" 
+                  className="w-full h-11 text-sm font-bold bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl shadow-sm transition-all" 
                   disabled={updating}
                 >
                   {updating ? (
                     <span className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      Updating...
+                      <Loader2 className="animate-spin h-4 w-4" />
+                      Updating Profile...
                     </span>
                   ) : showSuccess ? (
                     <span className="flex items-center gap-2">
-                      <Check className="h-5 w-5" />
-                      Updated!
+                      <Check className="h-4 w-4" />
+                      Profile Updated
                     </span>
                   ) : (
-                    "Update Profile"
+                    "Save Changes"
                   )}
                 </Button>
               </form>
             </Form>
 
             {/* Logout Button */}
-            <div className="pt-4 border-t border-border/30">
+            <div className="pt-4 border-t border-border/60">
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
-                className="w-full h-12 text-base font-medium border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
+                className="w-full h-11 text-sm font-semibold border-destructive/20 text-destructive hover:bg-destructive/5 hover:border-destructive/40 rounded-xl"
               >
-                <LogOut className="h-5 w-5 mr-2" />
-                Sign Out
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out of Account
               </Button>
             </div>
           </CardContent>

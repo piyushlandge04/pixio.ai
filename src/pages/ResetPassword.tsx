@@ -63,20 +63,25 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Wand2 className="w-8 h-8 text-primary" />
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background p-4">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px]" />
+      </div>
+
+      <Card className="w-full max-w-md bg-card border border-border shadow-lg rounded-2xl animate-slide-in-up">
+        <CardHeader className="text-center space-y-3 pb-6">
+          <div className="flex justify-center mb-1">
+            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+              <Wand2 className="w-8 h-8" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">Reset Password</CardTitle>
+          <CardDescription className="text-sm">Enter your new password below</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pb-6">
           <form onSubmit={handlePasswordUpdate} className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="password">New Password</Label>
               <Input
                 id="password"
@@ -84,10 +89,11 @@ const ResetPassword = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="confirm-password">Confirm Password</Label>
               <Input
                 id="confirm-password"
@@ -95,11 +101,16 @@ const ResetPassword = () => {
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Updating..." : "Update Password"}
+            <Button 
+              type="submit" 
+              className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold h-11 rounded-xl shadow-sm transition-all mt-2" 
+              disabled={isLoading}
+            >
+              {isLoading ? "Updating Password..." : "Reset Password"}
             </Button>
           </form>
         </CardContent>

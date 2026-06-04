@@ -27,6 +27,7 @@ const Auth = () => {
   const [signupData, setSignupData] = useState({ email: "", password: "", fullName: "" });
   const [resetEmail, setResetEmail] = useState("");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -50,7 +51,7 @@ const Auth = () => {
     try {
       loginSchema.parse(loginData);
       setIsLoading(true);
-
+ 
       const { error } = await supabase.auth.signInWithPassword({
         email: loginData.email,
         password: loginData.password,
@@ -147,79 +148,73 @@ const Auth = () => {
     }
   };
 
-
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 p-4">
-      {/* Animated Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background p-4">
+      {/* Background radial gradient decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]" />
+      </div>
       
-
-
-      {/* Animated Glowing Orbs */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-neon-cyan/20 rounded-full blur-[120px] animate-float"></div>
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-neon-pink/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
-      
-      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/80 border-2 border-border/50 animate-slide-in-up animate-rgb-glow mx-4">
-        <CardHeader className="text-center space-y-3 sm:space-y-4 pb-6 sm:pb-8">
-          <div className="flex justify-center mb-2">
-            <div className="p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-2xl border-2 border-neon-cyan/30 animate-glow-pulse">
-              <Wand2 className="w-8 h-8 sm:w-10 sm:h-10 text-neon-cyan animate-neon-glow" />
+      <Card className="w-full max-w-md bg-card border border-border shadow-lg rounded-2xl animate-slide-in-up">
+        <CardHeader className="text-center space-y-3 pb-6">
+          <div className="flex justify-center mb-1">
+            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+              <Wand2 className="w-8 h-8" />
             </div>
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
             Welcome to PIYUSH.AI
           </CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            Sign in to create amazing flyers with AI-powered magic ✨
+          <CardDescription className="text-sm">
+            Sign in to start designing premium flyers with AI.
           </CardDescription>
         </CardHeader>
-        <CardContent className="pb-8">
+        <CardContent className="pb-6">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 backdrop-blur-sm border border-neon-cyan/20">
+            <TabsList className="grid w-full grid-cols-2 bg-secondary p-1 rounded-xl">
               <TabsTrigger 
                 value="login" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-neon-cyan/20 data-[state=active]:to-neon-purple/20 data-[state=active]:text-neon-cyan data-[state=active]:shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.5)] data-[state=active]:border data-[state=active]:border-neon-cyan/30 transition-all duration-300"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-lg font-medium text-xs py-2 transition-all duration-200"
               >
                 Login
               </TabsTrigger>
               <TabsTrigger 
                 value="signup"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-neon-purple/20 data-[state=active]:to-neon-pink/20 data-[state=active]:text-neon-purple data-[state=active]:shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.5)] data-[state=active]:border data-[state=active]:border-neon-purple/30 transition-all duration-300"
+                className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-lg font-medium text-xs py-2 transition-all duration-200"
               >
                 Sign Up
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="login" className="mt-6">
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-foreground/90">Email</Label>
+            <TabsContent value="login" className="mt-5 space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-email">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="name@example.com"
                     value={loginData.email}
                     onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                    className="bg-background/50 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-cyan)/0.5)]"
+                    className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-foreground/90">Password</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-password">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
                     placeholder="••••••••"
                     value={loginData.password}
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                    className="bg-background/50 border-neon-cyan/30 focus:border-neon-cyan focus:ring-neon-cyan/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-cyan)/0.5)]"
+                    className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                     required
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-neon-cyan to-neon-purple hover:from-neon-cyan/90 hover:to-neon-purple/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-cyan)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.8)] transition-all duration-300 border border-neon-cyan/50" 
+                  className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold h-11 rounded-xl shadow-sm transition-all" 
                   disabled={isLoading}
                 >
                   {isLoading ? "Logging in..." : "Login"}
@@ -227,33 +222,33 @@ const Auth = () => {
 
                 <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button type="button" variant="link" className="w-full text-neon-cyan hover:text-neon-purple transition-colors">
+                    <Button type="button" variant="link" className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors mt-2">
                       Forgot Password?
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-card/95 backdrop-blur-md border-2 border-neon-purple/30">
+                  <DialogContent className="bg-card border border-border max-w-sm rounded-2xl">
                     <DialogHeader>
-                      <DialogTitle className="text-2xl bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Reset Password</DialogTitle>
-                      <DialogDescription>
-                        Enter your email address and we'll send you a link to reset your password.
+                      <DialogTitle className="text-xl font-bold tracking-tight text-foreground">Reset Password</DialogTitle>
+                      <DialogDescription className="text-xs">
+                        Enter your email address and we'll send you a password reset link.
                       </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handlePasswordReset} className="space-y-4">
-                      <div className="space-y-2">
+                    <form onSubmit={handlePasswordReset} className="space-y-4 pt-2">
+                      <div className="space-y-1.5">
                         <Label htmlFor="reset-email">Email</Label>
                         <Input
                           id="reset-email"
                           type="email"
-                          placeholder="you@example.com"
+                          placeholder="name@example.com"
                           value={resetEmail}
                           onChange={(e) => setResetEmail(e.target.value)}
-                          className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300"
+                          className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                           required
                         />
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] border border-neon-purple/50" 
+                        className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold rounded-xl h-10 shadow-sm" 
                         disabled={isLoading}
                       >
                         {isLoading ? "Sending..." : "Send Reset Link"}
@@ -264,47 +259,47 @@ const Auth = () => {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup" className="mt-6">
-              <form onSubmit={handleSignup} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="text-foreground/90">Full Name</Label>
+            <TabsContent value="signup" className="mt-5 space-y-4">
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="signup-name">Full Name</Label>
                   <Input
                     id="signup-name"
                     type="text"
                     placeholder="John Doe"
                     value={signupData.fullName}
                     onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                    className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-purple)/0.5)]"
+                    className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-foreground/90">Email</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="name@example.com"
                     value={signupData.email}
                     onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                    className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-purple)/0.5)]"
+                    className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-foreground/90">Password</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
                     placeholder="••••••••"
                     value={signupData.password}
                     onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                    className="bg-background/50 border-neon-purple/30 focus:border-neon-purple focus:ring-neon-purple/50 transition-all duration-300 focus:shadow-[0_0_15px_-3px_hsl(var(--neon-purple)/0.5)]"
+                    className="bg-background/50 border-border focus-visible:ring-primary rounded-xl"
                     required
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 text-white font-semibold shadow-[0_0_20px_-5px_hsl(var(--neon-purple)/0.6)] hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.8)] transition-all duration-300 border border-neon-purple/50" 
+                  className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold h-11 rounded-xl shadow-sm transition-all" 
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating account..." : "Sign Up"}

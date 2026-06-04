@@ -1,139 +1,203 @@
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Target, Users, Rocket } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { 
+  Sparkles, Target, Rocket, Github, Twitter, Globe, Heart
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
 
 const About = () => {
+  const milestones = [
+    {
+      year: "Q1 2025",
+      title: "The Conception",
+      description: "Observed that small business owners and community organizers lacked design resources, inspiring a text-to-flyer generation solution."
+    },
+    {
+      year: "Q3 2025",
+      title: "AI Engine Alpha",
+      description: "Integrated the first text-to-image AI pipeline and established basic text overlay rendering to handle flyer typography."
+    },
+    {
+      year: "Q1 2026",
+      title: "Going Public",
+      description: "Launched PIYUSH.AI v1.0. Welcomed over 10,000 active creators and handled over 50,000 successful exports."
+    },
+    {
+      year: "Q2 2026",
+      title: "Redesign v2.0",
+      description: "Overhauled the platform aesthetics and generation speeds with Gemini AI Flash integrations, introducing clean layout controls."
+    }
+  ];
+
+  const techStack = [
+    {
+      title: "Gemini 1.5 Flash",
+      role: "AI Core",
+      desc: "Handles prompt parsing, semantic color analysis, layout suggestions, and structured text composition."
+    },
+    {
+      title: "Supabase DB & Auth",
+      role: "Database & Security",
+      desc: "Manages encrypted user authentication, profile storage, and user generation histories."
+    },
+    {
+      title: "Vite & React 18",
+      role: "Frontend Engine",
+      desc: "Drives high-performance clientside page rendering and real-time canvas preview updates."
+    },
+    {
+      title: "Tailwind CSS",
+      role: "Style System",
+      desc: "Powers our fluid dark-first UI design system and responsive grid structures."
+    }
+  ];
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Animated Background Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)] opacity-20"></div>
-      
-      {/* Animated Glowing Orbs */}
-      <div className="fixed top-20 left-20 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-float"></div>
-      <div className="fixed bottom-20 right-20 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "2s" }}></div>
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-neon-pink/5 rounded-full blur-[100px] animate-float" style={{ animationDelay: "4s" }}></div>
-      
+    <div className="min-h-screen relative overflow-hidden bg-background">
+      {/* Background radial gradients for ambient lighting */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px]" />
+      </div>
+
       <Navbar />
-      
-      <div className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4">
-        <div className="container max-w-4xl mx-auto">
+
+      <div className="relative pt-28 sm:pt-36 pb-20 px-4">
+        <div className="container max-w-4xl mx-auto space-y-16">
           {/* Header */}
-          <div className="text-center mb-10 sm:mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-full mb-4 sm:mb-6 border-2 border-neon-cyan/30 animate-glow-pulse">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-neon-cyan animate-neon-glow" />
+          <div className="text-center space-y-4 animate-slide-in-up">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-semibold text-primary">Behind the Magic</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6">
-              <span className="bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
-                About PIYUSH.AI
-              </span>
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground">
+              Democratizing Visual Design
             </h1>
-            <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-              Empowering everyone to create stunning flyers with the power of artificial intelligence
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              We build tools that translate text prompts directly into high-fidelity, print-ready marketing assets.
             </p>
           </div>
 
-          {/* Mission Section */}
-          <Card className="p-6 sm:p-8 md:p-12 mb-8 sm:mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-100">
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-cyan/30">
-                <Target className="w-6 h-6 sm:w-7 sm:h-7 text-neon-cyan" />
-              </div>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Our Mission</h2>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed mb-3 sm:mb-4">
-                  At PIYUSH.AI, we believe that great design should be accessible to everyone, 
-                  regardless of their technical skills or design experience. Our mission is to 
-                  democratize flyer creation by leveraging cutting-edge AI technology.
-                </p>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-                  We're committed to helping small businesses, event organizers, students, and 
-                  creative individuals bring their ideas to life through beautiful, professional 
-                  flyers that capture attention and drive results.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Story Section */}
-          <Card className="p-6 sm:p-8 md:p-12 mb-8 sm:mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-purple/30 hover:border-neon-purple hover:shadow-[0_0_30px_-5px_hsl(var(--neon-purple)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-purple/30">
-                <Rocket className="w-6 h-6 sm:w-7 sm:h-7 text-neon-purple" />
-              </div>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Our Story</h2>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed mb-3 sm:mb-4">
-                  PIYUSH.AI was born from a simple observation: creating eye-catching flyers 
-                  shouldn't require hours of work or expensive design software. We saw how 
-                  many talented individuals struggled to promote their events and businesses 
-                  simply because they lacked design resources.
-                </p>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-                  By combining advanced AI image generation with an intuitive interface, 
-                  we've made it possible for anyone to create professional-quality flyers 
-                  in minutes. What used to take hours now takes seconds, and what used to 
-                  cost hundreds of dollars is now accessible to all.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Values Section */}
-          <Card className="p-6 sm:p-8 md:p-12 mb-8 sm:mb-12 bg-card/80 backdrop-blur-sm border-2 border-neon-pink/30 hover:border-neon-pink hover:shadow-[0_0_30px_-5px_hsl(var(--neon-pink)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-neon-pink/20 to-neon-cyan/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-neon-pink/30">
-                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-neon-pink" />
-              </div>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Our Values</h2>
-                <div className="space-y-4 sm:space-y-6">
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">Accessibility</h3>
-                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      We believe powerful design tools should be available to everyone, 
-                      not just professional designers.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">Innovation</h3>
-                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      We continuously push the boundaries of what's possible with AI to 
-                      deliver better results for our users.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">Simplicity</h3>
-                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      Complex technology should have a simple interface. We focus on 
-                      making the creation process as intuitive as possible.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-foreground">Quality</h3>
-                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      Every flyer generated through our platform meets professional 
-                      standards and is ready for real-world use.
-                    </p>
-                  </div>
+          {/* Founder Section */}
+          <Card className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden animate-slide-in-up">
+            <div className="grid md:grid-cols-12">
+              <div className="md:col-span-4 bg-secondary/50 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-border">
+                <div className="h-24 w-24 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-2xl mb-4 border border-primary/20 shadow-inner">
+                  PL
+                </div>
+                <div className="text-center">
+                  <h3 className="text-base font-bold text-foreground">Piyush Landge</h3>
+                  <p className="text-xs text-muted-foreground">Founder & Lead Architect</p>
+                </div>
+                <div className="flex gap-3 mt-4">
+                  <a href="https://github.com" target="_blank" rel="noreferrer" className="p-1.5 hover:bg-secondary text-muted-foreground hover:text-foreground rounded-lg transition-colors">
+                    <Github className="h-4 w-4" />
+                  </a>
+                  <a href="https://twitter.com" target="_blank" rel="noreferrer" className="p-1.5 hover:bg-secondary text-muted-foreground hover:text-foreground rounded-lg transition-colors">
+                    <Twitter className="h-4 w-4" />
+                  </a>
+                  <a href="#" className="p-1.5 hover:bg-secondary text-muted-foreground hover:text-foreground rounded-lg transition-colors">
+                    <Globe className="h-4 w-4" />
+                  </a>
                 </div>
               </div>
+              <div className="md:col-span-8 p-6 sm:p-8 flex flex-col justify-center text-left space-y-4">
+                <div className="p-2.5 bg-primary/5 rounded-xl text-primary w-fit border border-primary/10">
+                  <Heart className="h-5 w-5 fill-current" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">A Note from the Founder</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed italic">
+                  &ldquo;Design shouldn't be a privilege limited to those who have hours to spare or large marketing budgets. It should be a fluid, instant translation of ideas. We created PIYUSH.AI to bridge that gap, giving everyone a personal design studio in their browser.&rdquo;
+                </p>
+              </div>
             </div>
           </Card>
 
-          {/* Technology Section */}
-          <Card className="p-6 sm:p-8 md:p-12 bg-card/80 backdrop-blur-sm border-2 border-neon-cyan/30 bg-gradient-to-br from-neon-cyan/5 via-neon-purple/5 to-neon-pink/5 hover:border-neon-cyan hover:shadow-[0_0_30px_-5px_hsl(var(--neon-cyan)/0.5)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Powered by Advanced AI</h2>
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed mb-3 sm:mb-4">
-              PIYUSH.AI uses state-of-the-art artificial intelligence models trained on 
-              millions of design examples. Our technology understands design principles, 
-              color theory, typography, and visual hierarchy to create flyers that not 
-              only look great but also effectively communicate your message.
-            </p>
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              Every prompt you write is enhanced and optimized by our AI to ensure the 
-              best possible results. We're constantly improving our models and adding 
-              new features to give you even more creative control.
-            </p>
+          {/* Mission & Vision Cards */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="p-6 bg-card border border-border shadow-sm rounded-2xl text-left space-y-3.5">
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
+                <Target className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Our Core Mission</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                To simplify creation workflows. By leveraging advanced generative AI models, we remove technical barriers to graphic design, empowering small businesses, local promoters, and creators to export visual assets instantly.
+              </p>
+            </Card>
+
+            <Card className="p-6 bg-card border border-border shadow-sm rounded-2xl text-left space-y-3.5">
+              <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center text-accent border border-accent/20">
+                <Rocket className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Our Platform Vision</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                To build an adaptive canvas environment where natural language is the primary input. We aim to constantly optimize our rendering pipeline, producing highly tailored, print-ready digital flyers without setup times.
+              </p>
+            </Card>
+          </div>
+
+          {/* Timeline / Milestones */}
+          <div className="space-y-8">
+            <div className="text-center max-w-xl mx-auto space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight">Our Platform Journey</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">Tracing the development timeline of PIYUSH.AI.</p>
+            </div>
+            
+            <div className="relative border-l border-border/80 pl-6 ml-2 space-y-8 text-left">
+              {milestones.map((stone, idx) => (
+                <div key={idx} className="relative">
+                  {/* Timeline bullet dot */}
+                  <div className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full bg-primary ring-4 ring-background" />
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{stone.year}</span>
+                    <h4 className="text-base font-bold text-foreground">{stone.title}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">{stone.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tech Stack Breakdown */}
+          <div className="space-y-8">
+            <div className="text-center max-w-xl mx-auto space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight">Engineered for Performance</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">The modern tech stack driving our real-time composition canvas.</p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-left">
+              {techStack.map((tech, idx) => (
+                <Card key={idx} className="p-5 bg-card border border-border shadow-sm rounded-xl space-y-2.5">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-bold uppercase tracking-wider bg-secondary px-2 py-0.5 rounded text-muted-foreground">
+                      {tech.role}
+                    </span>
+                    <h4 className="text-sm font-bold text-foreground pt-1">{tech.title}</h4>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-normal">{tech.desc}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA / Action Card */}
+          <Card className="p-8 sm:p-10 bg-secondary/35 border border-border/85 rounded-2xl shadow-sm text-center space-y-5">
+            <div className="max-w-xl mx-auto space-y-3">
+              <h3 className="text-xl sm:text-2xl font-bold">Ready to build your next design?</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Experience our custom prompt engine. Select a template or write your requirements from scratch.
+              </p>
+            </div>
+            <div className="flex justify-center gap-3">
+              <Button asChild size="sm" className="bg-primary hover:bg-primary/95 text-primary-foreground font-bold px-5 h-10 rounded-lg">
+                <Link to="/generate">Create Flyer</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="hover:bg-secondary px-5 h-10 rounded-lg border-border">
+                <Link to="/">Go Home</Link>
+              </Button>
+            </div>
           </Card>
         </div>
       </div>
