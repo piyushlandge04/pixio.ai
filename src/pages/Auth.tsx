@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Wand2 } from "lucide-react";
 import { z } from "zod";
+import { LogoMark } from "@/components/Logo";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -158,15 +158,13 @@ const Auth = () => {
       <Card className="w-full max-w-md bg-card border border-border shadow-lg rounded-2xl animate-slide-in-up">
         <CardHeader className="text-center space-y-3 pb-6">
           <div className="flex justify-center mb-1">
-            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-              <Wand2 className="w-8 h-8" />
-            </div>
+            <LogoMark className="w-14 h-14" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-            Welcome to PIYUSH.AI
+            Welcome to PIXIO
           </CardTitle>
           <CardDescription className="text-sm">
-            Sign in to start designing premium flyers with AI.
+            Sign in to start designing with PIXIO.
           </CardDescription>
         </CardHeader>
         <CardContent className="pb-6">

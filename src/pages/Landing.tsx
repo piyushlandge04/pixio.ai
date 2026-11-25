@@ -1,762 +1,630 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { 
-  Wand2, Sparkles, Download, Palette, ArrowRight, Layers, 
-  FileText, Check, HelpCircle, Star, MessageSquare, Shield, 
-  Clock, Zap, CheckCircle2, AlertCircle, Laptop, Settings, Lock
+  Wand2, 
+  Sparkles, 
+  ArrowRight, 
+  Layers, 
+  Palette, 
+  Zap, 
+  Flame,
+  Target,
+  Rocket,
+  Github,
+  Twitter,
+  Globe,
+  Cpu,
+  Database,
+  Code2,
+  Quote,
+  Download,
+  RefreshCw,
+  Printer,
+  ShieldCheck
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [heroPrompt, setHeroPrompt] = useState("");
-  const [activeTab, setActiveTab] = useState("ai");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [prompt, setPrompt] = useState("");
 
-  const promptChips = [
-    { label: "🎸 Concert", prompt: "A vintage jazz concert flyer in dark mahogany tones, with gold typography and detailed saxophone illustration" },
-    { label: "🥗 Brunch", prompt: "A modern organic restaurant brunch flyer, featuring fresh leaf decorations, light cream background, and clean layout" },
-    { label: "💪 Fitness", prompt: "An energetic fitness gym promotion flyer with high-contrast black and electric green colors, bold sans-serif fonts, and abstract action shapes" },
-    { label: "🏢 Tech Summit", prompt: "A sleek minimalist tech business summit flyer with slate grey colors, clean grid lines, and professional text layouts" },
+  const workflowSteps = [
+    {
+      step: "01",
+      title: "Describe Your Vision",
+      desc: "Type a natural language prompt describing your event, brand, or mood. Enhance it with one click for richer creative detail.",
+      icon: Wand2,
+    },
+    {
+      step: "02",
+      title: "Instant AI Synthesis",
+      desc: "Our multi-pass engine composes balanced layout geometry, typography, and high-resolution graphics in seconds.",
+      icon: Sparkles,
+    },
+    {
+      step: "03",
+      title: "Refine & Export",
+      desc: "Not satisfied? Request natural language revisions and download your final flyer in 300 DPI print-ready quality.",
+      icon: Download,
+    },
   ];
 
-  const handleHeroSubmit = (e: React.FormEvent) => {
+  const milestones = [
+    {
+      year: "Q1 2025",
+      title: "The Conception",
+      description: "Observed that small business owners and community organizers lacked design resources, inspiring a text-to-flyer generation solution."
+    },
+    {
+      year: "Q3 2025",
+      title: "AI Engine Alpha",
+      description: "Integrated the first text-to-image AI pipeline and established direct prompt-to-flyer generation."
+    },
+    {
+      year: "Q1 2026",
+      title: "Going Public",
+      description: "Launched PIXIO v1.0. Welcomed over 10,000 active creators and handled over 50,000 successful exports."
+    },
+    {
+      year: "Q2 2026",
+      title: "Redesign v2.0",
+      description: "Overhauled the platform aesthetics and generation speeds with Gemini AI integrations, introducing streamlined prompt-to-design controls."
+    }
+  ];
+
+  const techStack = [
+    {
+      title: "Gemini AI Models",
+      role: "AI Core",
+      desc: "Handles prompt enhancement, semantic color analysis, layout composition, and high-resolution flyer rendering.",
+      icon: Cpu,
+    },
+    {
+      title: "Supabase DB & Auth",
+      role: "Database & Security",
+      desc: "Manages encrypted user authentication, profile storage, and user generation histories.",
+      icon: Database,
+    },
+    {
+      title: "Vite & React 18",
+      role: "Frontend Engine",
+      desc: "Drives high-performance client-side page rendering and instant design preview updates.",
+      icon: Code2,
+    },
+    {
+      title: "Tailwind CSS",
+      role: "Style System",
+      desc: "Powers our fluid dark-first UI design system and responsive grid structures.",
+      icon: Palette,
+    }
+  ];
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (heroPrompt.trim()) {
-      navigate(`/generate?prompt=${encodeURIComponent(heroPrompt.trim())}`);
+    if (prompt.trim()) {
+      navigate(`/generate?prompt=${encodeURIComponent(prompt.trim())}`);
     } else {
       navigate("/generate");
     }
   };
 
-  const handleUsePrompt = (promptText: string) => {
-    navigate(`/generate?prompt=${encodeURIComponent(promptText)}`);
-  };
-
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
-  // Sample templates for interactive gallery
-  const demoTemplates = [
-    {
-      title: "Cyberpunk DJ Night",
-      style: "Vibrant",
-      prompt: "A cyberpunk DJ concert flyer with glowing purple and cyan accents, retro grids, and a DJ silhouette",
-      bgGradient: "from-purple-950 via-slate-900 to-indigo-950",
-      textColor: "text-purple-300",
-      badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-      mockContent: (
-        <div className="w-full h-full flex flex-col justify-between p-4 bg-gradient-to-br from-indigo-950 via-slate-950 to-purple-950 rounded-xl relative overflow-hidden border border-purple-500/20">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-xl" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl" />
-          <div className="flex justify-between items-center z-10">
-            <span className="text-[9px] font-bold tracking-widest text-cyan-400 uppercase">DJ SESSION</span>
-            <span className="text-[9px] font-bold text-muted-foreground">06.25</span>
-          </div>
-          <div className="my-auto text-center z-10 space-y-1">
-            <h4 className="text-lg font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 uppercase">NEON BEATS</h4>
-            <p className="text-[8px] text-muted-foreground uppercase tracking-wider">Live Electronic performance</p>
-          </div>
-          <div className="flex justify-between items-end z-10 pt-2 border-t border-purple-500/10">
-            <div className="text-[7px] text-left text-purple-300">
-              <p className="font-semibold">THE GRID CLUB</p>
-              <p className="text-[6px] text-muted-foreground">10:00 PM - LATE</p>
-            </div>
-            <span className="text-[7px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-bold">18+ ONLY</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Organic Brew Coffee",
-      style: "Minimal",
-      prompt: "A minimalist coffee shop flyer with warm cream background, leaf illustrations, and elegant serif font",
-      bgGradient: "from-amber-50 to-stone-100",
-      textColor: "text-amber-800",
-      badgeColor: "bg-amber-600/10 text-amber-700 border-amber-600/20",
-      mockContent: (
-        <div className="w-full h-full flex flex-col justify-between p-4 bg-stone-50 rounded-xl relative overflow-hidden border border-amber-800/10">
-          <div className="absolute -top-6 -right-6 w-20 h-20 bg-amber-100 rounded-full blur-lg" />
-          <div className="flex justify-between items-center z-10">
-            <span className="text-[9px] font-bold tracking-widest text-amber-800 uppercase">ROASTERS</span>
-            <span className="text-[9px] font-bold text-stone-500">EST. 2026</span>
-          </div>
-          <div className="my-auto space-y-1.5 z-10">
-            <h4 className="text-base font-bold text-amber-900 tracking-tight leading-tight">ARTISANAL BLENDS</h4>
-            <p className="text-[8px] text-stone-600 leading-relaxed">Sustainably sourced single-origin coffee, roasted locally in small batches.</p>
-          </div>
-          <div className="flex justify-between items-end z-10 pt-2 border-t border-amber-800/10">
-            <div className="text-[7px] text-left text-amber-800">
-              <p className="font-semibold">GRAND OPENING</p>
-              <p className="text-[6px] text-stone-500">Saturday, June 20</p>
-            </div>
-            <span className="text-[7px] border border-amber-800/20 text-amber-800 px-1.5 py-0.5 rounded font-bold">FREE TASTING</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Tech Summit 2026",
-      style: "Modern",
-      prompt: "A modern corporate tech summit flyer with slate grey background, clean borders, and premium typography",
-      bgGradient: "from-slate-900 to-zinc-950",
-      textColor: "text-blue-300",
-      badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-      mockContent: (
-        <div className="w-full h-full flex flex-col justify-between p-4 bg-zinc-950 rounded-xl relative overflow-hidden border border-zinc-800">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl" />
-          <div className="flex justify-between items-center z-10">
-            <span className="text-[9px] font-bold tracking-widest text-blue-400 uppercase">TECH SUMMIT</span>
-            <span className="text-[9px] font-bold text-zinc-500">2026</span>
-          </div>
-          <div className="my-auto z-10 space-y-1">
-            <h4 className="text-base font-extrabold tracking-tight text-white uppercase">SHAPING THE FUTURE</h4>
-            <p className="text-[8px] text-zinc-400 leading-relaxed">Join industry leaders discussing AI advancements, automation, and tech ethics.</p>
-          </div>
-          <div className="flex justify-between items-end z-10 pt-2 border-t border-zinc-900">
-            <div className="text-[7px] text-left text-zinc-400">
-              <p className="font-semibold text-white">CONVENTION CENTER</p>
-              <p className="text-[6px] text-zinc-500">KEYNOTE AT 9:00 AM</p>
-            </div>
-            <span className="text-[7px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-bold">RSVP NOW</span>
-          </div>
-        </div>
-      )
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah Jenkins",
-      role: "Event Director, Velo Media",
-      quote: "Using PIYUSH.AI, we generated 15 event flyers for our summer series in less than an hour. The speed is mind-blowing, and the layout quality is top-tier.",
-      stars: 5,
-      avatar: "SJ"
-    },
-    {
-      name: "Marcus Thorne",
-      role: "Co-Founder, Brew & Bound",
-      quote: "I have no design experience, but this tool made me look like an expert. The text overlay editor is incredibly simple and the vector-like export was ready for print.",
-      stars: 5,
-      avatar: "MT"
-    },
-    {
-      name: "Alisha Patel",
-      role: "Marketing Head, GrowthGym",
-      quote: "We spent thousands on local designers every quarter. Now we draft variations in seconds. The prompt suggestions feature is like having a copywriter on standby.",
-      stars: 5,
-      avatar: "AP"
-    }
-  ];
-
-  const faqs = [
-    {
-      q: "How does the AI flyer generator work?",
-      a: "Our generator processes your text parameters (event types, styles, palettes, and descriptions) and utilizes state-of-the-art generative models to build a custom visual template. You can then layer headers, timings, descriptions, and custom brand logos directly over the generated template."
-    },
-    {
-      q: "Can I upload my own company logos?",
-      a: "Yes! In the generation canvas, you can easily overlay logo files, resize them, reposition them on the grid, and download them embedded into the final high-resolution PNG export."
-    },
-    {
-      q: "What design styles can I choose from?",
-      a: "Currently we support six core design philosophies: Modern (clean and contemporary), Vibrant (bold and energetic), Elegant (sophisticated and refined), Creative (artistic and unique), Minimal (simple and clean), and Bold (striking and high-contrast)."
-    },
-    {
-      q: "Are the final downloads ready for commercial use?",
-      a: "Absolutely. All flyers generated on PIYUSH.AI are fully royalty-free and export at high resolutions (300 DPI layout density equivalent) suitable for digital campaigns or physical printing."
-    }
-  ];
-
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[650px] h-[650px] bg-primary/5 rounded-full blur-[140px]" />
-        <div className="absolute top-[400px] left-1/4 w-[550px] h-[550px] bg-accent/5 rounded-full blur-[120px]" />
-      </div>
-
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between relative overflow-x-hidden">
+      {/* Fixed Modern Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-16 px-4">
-        <div className="container max-w-5xl mx-auto text-center space-y-8">
-          {/* AI Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full animate-slide-in-up">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary">Gemini 1.5 Powered Studio</span>
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION (XM Aesthetic + Command Bar + Floating 3D Tiles)          */}
+      {/* ========================================================================= */}
+      <section className="relative min-h-[92vh] flex flex-col items-center justify-center pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+        {/* Subtle dot grid map background */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.4] dark:opacity-[0.18]"
+          style={{
+            backgroundImage: `radial-gradient(currentColor 1.2px, transparent 1.2px)`,
+            backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(ellipse 65% 55% at 50% 45%, #000 60%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 65% 55% at 50% 45%, #000 60%, transparent 100%)',
+          }}
+        />
+
+        {/* Ambient radial glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[400px] bg-primary/5 rounded-full blur-[130px] pointer-events-none" />
+
+        {/* Floating 3D Tiles - Left Group */}
+        <div className="hidden lg:flex absolute left-8 xl:left-24 top-[38%] -translate-y-1/2 flex-col items-center z-10">
+          <div 
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-card/95 backdrop-blur-sm border border-border/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.14)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] flex items-center justify-center p-5 transform -rotate-12 hover:-rotate-6 transition-all duration-500 hover:scale-105 cursor-pointer animate-float"
+            onClick={() => navigate("/generate")}
+          >
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-inner text-white">
+              <Flame className="w-9 h-9 fill-current" />
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden lg:flex absolute left-20 xl:left-44 top-[18%] flex-col items-center z-10">
+          <div 
+            className="w-20 h-20 rounded-2xl bg-card/95 backdrop-blur-sm border border-border/80 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.12)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.45)] flex items-center justify-center p-3 transform rotate-6 hover:rotate-12 transition-all duration-500 hover:scale-105 cursor-pointer animate-float"
+            style={{ animationDelay: '1.2s' }}
+            onClick={() => navigate("/generate")}
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-inner">
+              <Wand2 className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden xl:flex absolute left-48 top-[10%] opacity-75 pointer-events-none">
+          <div className="w-12 h-12 rounded-xl bg-card border border-border/60 shadow-md flex items-center justify-center transform -rotate-12">
+            <Sparkles className="w-5 h-5 text-amber-500" />
+          </div>
+        </div>
+
+        {/* Floating 3D Tiles - Right Group */}
+        <div className="hidden lg:flex absolute right-8 xl:right-24 top-[38%] -translate-y-1/2 flex-col items-center z-10">
+          <div 
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-card/95 backdrop-blur-sm border border-border/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.14)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] flex items-center justify-center p-5 transform rotate-12 hover:rotate-6 transition-all duration-500 hover:scale-105 cursor-pointer animate-float"
+            style={{ animationDelay: '0.6s' }}
+            onClick={() => navigate("/generate")}
+          >
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 flex items-center justify-center shadow-inner text-white">
+              <Layers className="w-8 h-8" />
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden lg:flex absolute right-20 xl:right-44 top-[18%] flex-col items-center z-10">
+          <div 
+            className="w-20 h-20 rounded-2xl bg-card/95 backdrop-blur-sm border border-border/80 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.12)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.45)] flex items-center justify-center p-3 transform -rotate-8 hover:-rotate-12 transition-all duration-500 hover:scale-105 cursor-pointer animate-float"
+            style={{ animationDelay: '1.8s' }}
+            onClick={() => navigate("/generate")}
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center text-white shadow-inner">
+              <Palette className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden xl:flex absolute right-48 top-[10%] opacity-75 pointer-events-none">
+          <div className="w-12 h-12 rounded-xl bg-card border border-border/60 shadow-md flex items-center justify-center transform rotate-12">
+            <Zap className="w-5 h-5 text-rose-500" />
+          </div>
+        </div>
+
+        {/* Center Content Section */}
+        <div className="max-w-3xl mx-auto text-center z-10 space-y-7 pt-2 sm:pt-6">
+          {/* Announcement Pill */}
+          <Link 
+            to="/generate" 
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/80 bg-card/90 backdrop-blur-sm text-xs font-semibold text-foreground shadow-2xs hover:border-foreground/40 transition-all group"
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>PIXIO Studio v2.4 · 300 DPI Print-Ready</span>
+            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+
+          <div className="space-y-2 sm:space-y-3">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]">
+              Discover
+              <span className="block mt-1 font-black">AI Flyer & Design</span>
+            </h1>
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-xl mx-auto pt-2 leading-relaxed">
+              Generate complete, print-ready marketing flyers directly from text prompts with unparalleled AI precision.
+            </p>
           </div>
 
-          {/* Heading */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.08] animate-slide-in-up">
-            Design professional flyers <br />
-            <span className="bg-gradient-to-r from-primary via-indigo-500 to-accent bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-text">
-              with AI precision
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-slide-in-up">
-            Describe your event and watch AI instantly design a premium, print-ready flyer. Customize details, overlay text, and add logos instantly.
-          </p>
-
-          {/* Active Prompt Form */}
-          <div className="max-w-2xl mx-auto space-y-3.5 animate-slide-in-up">
-            <form onSubmit={handleHeroSubmit} className="p-1.5 bg-card border border-border rounded-2xl shadow-md flex flex-col sm:flex-row items-center gap-2">
-              <Input
-                type="text"
-                placeholder="e.g., A vintage music concert flyer, mahogany tones, elegant fonts..."
-                value={heroPrompt}
-                onChange={(e) => setHeroPrompt(e.target.value)}
-                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground/60 h-12 flex-1 pl-4 text-sm"
-              />
-              <Button 
-                type="submit" 
-                className="w-full sm:w-auto h-11 px-6 bg-primary hover:bg-primary/95 text-primary-foreground font-semibold rounded-xl shrink-0 gap-1.5"
-              >
-                <Wand2 className="h-4 w-4" />
-                Generate Now
-              </Button>
+          {/* Action Buttons & Command Bar */}
+          <div className="pt-2 flex flex-col items-center gap-4 w-full max-w-xl mx-auto">
+            {/* Elevated AI Command Bar Input */}
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <div className="relative flex items-center p-1.5 rounded-2xl border border-border/90 bg-card/95 backdrop-blur-md shadow-[0_12px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_35px_rgba(0,0,0,0.4)] focus-within:border-foreground/40 transition-all">
+                <Sparkles className="w-4 h-4 text-primary ml-3 shrink-0" />
+                <Input
+                  type="text"
+                  placeholder="Describe the flyer you want to create..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="h-11 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-xs sm:text-sm px-3"
+                />
+                <Button
+                  type="submit"
+                  className="h-10 px-5 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-bold text-xs sm:text-sm shrink-0 shadow-sm gap-1.5"
+                >
+                  <span>Generate</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
             </form>
 
-            {/* Prompt Chips */}
-            <div className="flex flex-wrap justify-center gap-2 pt-1">
-              {promptChips.map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setHeroPrompt(chip.prompt)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-border bg-card/60 hover:bg-secondary hover:text-foreground text-muted-foreground transition-all"
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-9 px-5 rounded-xl border-border/80 bg-card/80 hover:bg-secondary text-xs font-semibold gap-1.5"
+              >
+                <Link to="/generate">
+                  <Wand2 className="w-3.5 h-3.5" />
+                  Open Full Studio
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="h-9 px-4 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground"
+              >
+                <a href="#workflow">
+                  How It Works
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Clean Performance Metrics Strip */}
+        <ScrollReveal variant="fade-up" delay={120} className="w-full max-w-4xl mx-auto pt-14 z-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 sm:p-6 rounded-3xl border border-border/70 bg-card/70 backdrop-blur-md shadow-2xs text-center">
+            <div className="space-y-1">
+              <div className="text-xl sm:text-2xl font-black tracking-tight text-foreground">50k+</div>
+              <div className="text-[11px] font-medium text-muted-foreground">Flyers Generated</div>
+            </div>
+            <div className="space-y-1 sm:border-l border-border/60">
+              <div className="text-xl sm:text-2xl font-black tracking-tight text-foreground">300 DPI</div>
+              <div className="text-[11px] font-medium text-muted-foreground">Print-Ready Quality</div>
+            </div>
+            <div className="space-y-1 sm:border-l border-border/60">
+              <div className="text-xl sm:text-2xl font-black tracking-tight text-foreground">&lt; 15s</div>
+              <div className="text-[11px] font-medium text-muted-foreground">Average Render</div>
+            </div>
+            <div className="space-y-1 sm:border-l border-border/60">
+              <div className="text-xl sm:text-2xl font-black tracking-tight text-foreground">100%</div>
+              <div className="text-[11px] font-medium text-muted-foreground">Commercial Ready</div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 2. WORKFLOW & CAPABILITIES SECTION (Clean SaaS Bento Grid)                */}
+      {/* ========================================================================= */}
+      <section id="workflow" className="relative py-24 sm:py-28 px-4 border-t border-border/70 bg-secondary/15 scroll-mt-16 overflow-hidden">
+        <div className="container max-w-5xl mx-auto space-y-16 relative z-10">
+          
+          {/* Workflow Header */}
+          <ScrollReveal variant="fade-up" className="text-center space-y-4 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-border/80 bg-card/90 text-xs font-semibold text-foreground shadow-2xs">
+              <Zap className="w-3.5 h-3.5 text-primary" />
+              <span>Zero-Friction Studio</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-foreground">
+              From Prompt to Print in Seconds
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              No complex layers, no manual canvas dragging. Just describe what you need and refine it in plain language.
+            </p>
+          </ScrollReveal>
+
+          {/* 3-Step Workflow Cards */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {workflowSteps.map((item, idx) => {
+              const IconComp = item.icon;
+              return (
+                <ScrollReveal key={idx} variant="fade-up" delay={idx * 120} className="h-full">
+                  <div className="group h-full p-7 bg-card/90 backdrop-blur-sm border border-border/80 rounded-3xl shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-6">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-2xl bg-background border border-border/80 shadow-xs flex items-center justify-center text-foreground group-hover:scale-105 transition-transform">
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-muted-foreground/70 bg-secondary px-2.5 py-1 rounded-full">
+                        {item.step}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-extrabold text-foreground">{item.title}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+
+          {/* Core Capabilities Bento Highlights */}
+          <ScrollReveal variant="fade-up" delay={150}>
+            <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-6 bg-card/80 border border-border/70 rounded-2xl flex items-start gap-4">
+              <div className="p-2.5 rounded-xl bg-background border border-border/80 text-foreground shrink-0">
+                <RefreshCw className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-foreground">Iterative AI Revisions</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Request specific tweaks in plain text and compare revision snapshots side-by-side.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 bg-card/80 border border-border/70 rounded-2xl flex items-start gap-4">
+              <div className="p-2.5 rounded-xl bg-background border border-border/80 text-foreground shrink-0">
+                <Printer className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-foreground">300 DPI Print Standard</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Engineered in 3:4 vertical poster orientation ready for social media or commercial printing.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 bg-card/80 border border-border/70 rounded-2xl flex items-start gap-4">
+              <div className="p-2.5 rounded-xl bg-background border border-border/80 text-foreground shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-foreground">Encrypted Archive</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Every generated flyer and prompt history is securely stored in your personal Supabase vault.
+                </p>
+              </div>
+            </div>
+          </div>
+          </ScrollReveal>
+
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 3. ABOUT SECTION ("Behind the Magic" Matched with Hero Aesthetic)         */}
+      {/* ========================================================================= */}
+      <section id="about" className="relative py-28 sm:py-36 px-4 border-t border-border/70 bg-background scroll-mt-16 overflow-hidden">
+        {/* Subtle dot-grid map background matching Hero */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.35] dark:opacity-[0.16]"
+          style={{
+            backgroundImage: `radial-gradient(currentColor 1.2px, transparent 1.2px)`,
+            backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(ellipse 65% 55% at 50% 35%, #000 60%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 65% 55% at 50% 35%, #000 60%, transparent 100%)',
+          }}
+        />
+
+        {/* Ambient soft glow orbs */}
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="container max-w-5xl mx-auto space-y-20 relative z-10">
+          
+          {/* Section Header */}
+          <ScrollReveal variant="fade-up" className="text-center space-y-5 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/80 bg-card/90 backdrop-blur-sm text-xs font-semibold text-foreground shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span>Behind the Magic</span>
+            </div>
+            
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1]">
+              Democratizing Visual Design
+            </h2>
+            
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              We build tools that translate text prompts directly into high-fidelity, print-ready marketing assets without complex manual canvas editing.
+            </p>
+          </ScrollReveal>
+
+          {/* Mission & Vision Cards */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+            <ScrollReveal variant="fade-up" delay={0} className="h-full">
+              <div className="group h-full relative p-7 sm:p-9 bg-card/90 backdrop-blur-sm border border-border/80 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 text-left space-y-5">
+                <div className="flex items-center justify-between">
+                  <div className="w-14 h-14 rounded-2xl bg-background border border-border/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-foreground transition-transform duration-300 group-hover:scale-110">
+                    <Target className="w-6 h-6 text-foreground" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-secondary/80 border border-border/60 text-muted-foreground">
+                    Workflow Optimization
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+                    Our Core Mission
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    To simplify creation workflows. By leveraging advanced generative AI models, we remove technical barriers to graphic design, empowering small businesses, promoters, and creators to export visual assets instantly.
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal variant="fade-up" delay={150} className="h-full">
+              <div className="group h-full relative p-7 sm:p-9 bg-card/90 backdrop-blur-sm border border-border/80 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 text-left space-y-5">
+                <div className="flex items-center justify-between">
+                  <div className="w-14 h-14 rounded-2xl bg-background border border-border/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-foreground transition-transform duration-300 group-hover:scale-110">
+                    <Rocket className="w-6 h-6 text-foreground" />
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-secondary/80 border border-border/60 text-muted-foreground">
+                    Adaptive AI Pipeline
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+                    Our Platform Vision
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    To build an adaptive prompt-to-design environment where natural language is the primary input. We aim to constantly optimize our rendering pipeline, producing highly tailored, print-ready digital flyers without setup times.
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          {/* Founder Section */}
+          <ScrollReveal variant="zoom-in" delay={100}>
+            <div className="relative p-7 sm:p-10 bg-card/90 backdrop-blur-sm border border-border/80 rounded-3xl shadow-[0_16px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.3)] overflow-hidden">
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-4 flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-border/70">
+                <div 
+                  className="w-24 h-24 rounded-3xl bg-background border border-border/80 flex items-center justify-center font-black text-2xl text-foreground mb-4 shadow-[0_18px_36px_rgba(0,0,0,0.12)] transition-transform duration-300 hover:scale-105"
+                  style={{
+                    transform: 'perspective(700px) rotateY(-10deg) rotateX(6deg)',
+                  }}
                 >
-                  {chip.label}
-                </button>
+                  PL
+                </div>
+                <h4 className="text-base font-extrabold text-foreground">Piyush Landge</h4>
+                <p className="text-xs text-muted-foreground font-medium mt-0.5">Founder & Lead Architect</p>
+                <div className="flex gap-2.5 mt-4">
+                  <a 
+                    href="https://github.com" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="w-8 h-8 rounded-lg border border-border/80 bg-background flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                    aria-label="GitHub"
+                  >
+                    <Github className="h-3.5 w-3.5" />
+                  </a>
+                  <a 
+                    href="https://twitter.com" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="w-8 h-8 rounded-lg border border-border/80 bg-background flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                    aria-label="Twitter"
+                  >
+                    <Twitter className="h-3.5 w-3.5" />
+                  </a>
+                  <Link 
+                    to="/" 
+                    className="w-8 h-8 rounded-lg border border-border/80 bg-background flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                    aria-label="Website"
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="md:col-span-8 text-left space-y-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/80 border border-border/60 text-xs font-semibold text-foreground">
+                  <Quote className="w-3.5 h-3.5 text-primary" />
+                  <span>A Note from the Founder</span>
+                </div>
+                <blockquote className="text-base sm:text-lg text-foreground/90 font-medium leading-relaxed italic border-l-2 border-foreground/30 pl-4 py-1">
+                  &ldquo;Design shouldn't be a privilege limited to those who have hours to spare or large marketing budgets. It should be a fluid, instant translation of ideas. We created PIXIO to bridge that gap, giving everyone a personal design studio in their browser.&rdquo;
+                </blockquote>
+              </div>
+            </div>
+          </div>
+          </ScrollReveal>
+
+          {/* Platform Journey */}
+          <div className="space-y-8">
+            <ScrollReveal variant="fade-up" className="text-center max-w-xl mx-auto space-y-2">
+              <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Our Platform Journey
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Tracing the development timeline of PIXIO.
+              </p>
+            </ScrollReveal>
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+              {milestones.map((stone, idx) => (
+                <ScrollReveal key={idx} variant="fade-up" delay={idx * 100} className="h-full">
+                  <div className="group h-full relative p-6 bg-card/80 backdrop-blur-sm border border-border/70 rounded-2xl shadow-2xs hover:shadow-md hover:border-foreground/40 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-foreground text-background shadow-xs">
+                        {stone.year}
+                      </span>
+                      <span className="text-[10px] font-mono text-muted-foreground">
+                        0{idx + 1}
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-base font-bold text-foreground">
+                        {stone.title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {stone.description}
+                      </p>
+                    </div>
+                  </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
 
-          {/* Browser Workspace Mockup */}
-          <div className="pt-8 max-w-4xl mx-auto animate-slide-in-up">
-            <div className="bg-card border border-border shadow-2xl rounded-2xl overflow-hidden relative">
-              {/* Browser bar */}
-              <div className="bg-secondary/60 px-4 py-3 border-b border-border/80 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-destructive/60" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/60" />
-                </div>
-                <div className="bg-background border border-border text-[10px] text-muted-foreground px-8 py-0.5 rounded-md font-medium tracking-wide">
-                  piyush.ai/editor
-                </div>
-                <div className="w-12 h-1" />
-              </div>
-
-              {/* Editor Workspace Mockup */}
-              <div className="grid grid-cols-12 h-[340px] sm:h-[420px] bg-background">
-                {/* Editor Sidebar */}
-                <div className="col-span-4 border-r border-border p-4 bg-card text-left space-y-4 hidden sm:block">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Event Details</p>
-                    <div className="h-8 bg-secondary/65 border border-border rounded-lg flex items-center px-3 text-[11px] font-semibold text-foreground">
-                      Summer Sunset Festival
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Color Harmony</p>
-                    <div className="flex gap-1.5">
-                      <div className="w-5 h-5 rounded-full bg-primary" />
-                      <div className="w-5 h-5 rounded-full bg-accent" />
-                      <div className="w-5 h-5 rounded-full bg-indigo-500" />
-                      <div className="w-5 h-5 rounded-full bg-zinc-200" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Design Style</p>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <div className="h-7 bg-primary/10 border border-primary/30 rounded text-[10px] flex items-center justify-center font-bold text-primary">
-                        ✨ Modern
-                      </div>
-                      <div className="h-7 bg-secondary/40 border border-border rounded text-[10px] flex items-center justify-center font-medium text-muted-foreground">
-                        👑 Elegant
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-2">
-                    <div className="h-9 bg-primary text-primary-foreground text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 shadow-sm">
-                      <Wand2 className="w-3.5 h-3.5" /> Re-Generate
-                    </div>
-                  </div>
-                </div>
-
-                {/* Editor Center Stage */}
-                <div className="col-span-12 sm:col-span-8 p-6 flex items-center justify-center bg-secondary/20">
-                  <div className="w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4] bg-zinc-950 rounded-2xl shadow-lg border border-border/80 p-5 flex flex-col justify-between relative overflow-hidden text-left">
-                    {/* Background glow overlay */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/10 rounded-full blur-2xl" />
-                    
-                    <div className="flex justify-between items-center z-10">
-                      <span className="text-[9px] font-extrabold tracking-widest text-primary uppercase">MUSIC CONCERT</span>
-                      <span className="text-[9px] font-bold text-muted-foreground">JULY 18</span>
-                    </div>
-
-                    <div className="my-auto space-y-1.5 z-10">
-                      <h4 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white leading-none">SUMMER <br />SUNSET</h4>
-                      <p className="text-[9px] text-muted-foreground uppercase font-medium tracking-widest">LIVE AT SANTA MONICA PIER</p>
-                    </div>
-
-                    <div className="flex justify-between items-end z-10 pt-3 border-t border-border/40">
-                      <div className="text-[8px] text-left text-zinc-300">
-                        <p className="font-semibold text-white">THE BEACH STAGE</p>
-                        <p className="text-[7px] text-muted-foreground">5:00 PM TILL MIDNIGHT</p>
-                      </div>
-                      <span className="text-[8px] bg-primary text-primary-foreground px-2 py-0.5 rounded font-bold uppercase tracking-wider">BUY TICKET</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SaaS Statistics Banner */}
-      <section className="border-y border-border/60 bg-secondary/30 py-8 px-4">
-        <div className="container max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="space-y-1">
-            <p className="text-3xl font-extrabold text-foreground">50k+</p>
-            <p className="text-xs text-muted-foreground font-semibold">Designs Generated</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-3xl font-extrabold text-foreground">99.8%</p>
-            <p className="text-xs text-muted-foreground font-semibold">Uptime SLA</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-3xl font-extrabold text-foreground">&lt; 30s</p>
-            <p className="text-xs text-muted-foreground font-semibold">Generation Speed</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-3xl font-extrabold text-foreground">100%</p>
-            <p className="text-xs text-muted-foreground font-semibold">Print Ready Exports</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Feature Tabs */}
-      <section className="py-20 px-4 border-b border-border/50">
-        <div className="container max-w-5xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Fully Loaded Design Studio</h2>
-            <p className="text-base text-muted-foreground">
-              Everything you need to craft high-quality flyer campaigns in one simple workspace.
-            </p>
-          </div>
-
-          <div className="flex justify-center p-1 bg-secondary rounded-xl max-w-md mx-auto">
-            <button
-              onClick={() => setActiveTab("ai")}
-              className={`flex-1 text-xs py-2 rounded-lg font-bold transition-all ${
-                activeTab === "ai" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-              }`}
-            >
-              1. AI Generator
-            </button>
-            <button
-              onClick={() => setActiveTab("edit")}
-              className={`flex-1 text-xs py-2 rounded-lg font-bold transition-all ${
-                activeTab === "edit" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-              }`}
-            >
-              2. Text Overlays
-            </button>
-            <button
-              onClick={() => setActiveTab("brand")}
-              className={`flex-1 text-xs py-2 rounded-lg font-bold transition-all ${
-                activeTab === "brand" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-              }`}
-            >
-              3. Custom Brand
-            </button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto pt-6">
-            <div className="space-y-5 text-left">
-              {activeTab === "ai" && (
-                <>
-                  <div className="p-2.5 bg-primary/10 rounded-xl text-primary w-fit border border-primary/20">
-                    <Wand2 className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Generative Prompt Compositing</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Type structured data or simple descriptive sentences. Our parser translates it directly to color combinations, styles, and background templates matching your mood parameters.
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> 6 custom flyer styles</li>
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> Auto-optimizing prompts</li>
-                  </ul>
-                </>
-              )}
-              {activeTab === "edit" && (
-                <>
-                  <div className="p-2.5 bg-primary/10 rounded-xl text-primary w-fit border border-primary/20">
-                    <FileText className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Layered Custom Text</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Overlay critical event variables like titles, venue location coordinates, schedules, and details. Double-click or open the side drawer to modify parameters instantly.
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> Dynamic layout adjustments</li>
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> Crisp vector text rendering</li>
-                  </ul>
-                </>
-              )}
-              {activeTab === "brand" && (
-                <>
-                  <div className="p-2.5 bg-primary/10 rounded-xl text-primary w-fit border border-primary/20">
-                    <Palette className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-2xl font-bold">Logo Uploads & Branding</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Ensure branding alignment. Drag and drop custom PNG and SVG files to place brand badges, resize them with a visual guide, and save presets for future templates.
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> Drag-and-drop overlay layout</li>
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> Transparency support (PNG/SVG)</li>
-                  </ul>
-                </>
-              )}
-            </div>
-
-            {/* Tab Preview Graphic */}
-            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex items-center justify-center min-h-[260px] relative overflow-hidden">
-              {activeTab === "ai" && (
-                <div className="space-y-4 w-full">
-                  <div className="p-3 bg-secondary rounded-lg text-xs font-mono text-muted-foreground text-left">
-                    Prompt: "Minimal jazz festival poster..."
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="h-8 bg-primary/10 text-primary border border-primary/20 rounded flex items-center justify-center flex-1 text-[11px] font-bold">
-                      Generating Style...
-                    </div>
-                    <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
-                      <Clock className="h-4 w-4 text-muted-foreground animate-pulse" />
-                    </div>
-                  </div>
-                </div>
-              )}
-              {activeTab === "edit" && (
-                <div className="space-y-3 w-full text-left">
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase">Headline</p>
-                    <div className="h-9 bg-secondary border border-border rounded-lg flex items-center px-3 text-xs font-semibold">
-                      Live Indie Showcase
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase">Date</p>
-                      <div className="h-8 bg-secondary border border-border rounded-lg flex items-center px-3 text-xs">
-                        Oct 14
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase">Time</p>
-                      <div className="h-8 bg-secondary border border-border rounded-lg flex items-center px-3 text-xs">
-                        8:00 PM
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {activeTab === "brand" && (
-                <div className="w-full flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-8 bg-secondary/20">
-                  <Palette className="h-8 w-8 text-primary mb-2" />
-                  <p className="text-xs font-bold text-foreground">Upload brand logo</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Drag PNG or SVG file here</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Curated Flyer Gallery */}
-      <section className="py-20 px-4 bg-secondary/10 border-t border-border/60">
-        <div className="container max-w-5xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Explore Styles & Prompts</h2>
-            <p className="text-base text-muted-foreground">
-              Hover over designs to examine the exact prompts used, and edit them directly.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {demoTemplates.map((tmpl, idx) => (
-              <Card key={idx} className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm group relative flex flex-col h-[380px]">
-                {/* Visual Preview */}
-                <div className="p-4 bg-secondary/40 flex-1 flex items-center justify-center">
-                  <div className="w-[180px] aspect-[3/4] rounded-xl shadow">
-                    {tmpl.mockContent}
-                  </div>
-                </div>
-
-                {/* Card Details */}
-                <div className="p-4 border-t border-border flex items-center justify-between bg-card z-10">
-                  <div>
-                    <h4 className="text-sm font-bold text-foreground">{tmpl.title}</h4>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 block">Style: {tmpl.style}</span>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={() => handleUsePrompt(tmpl.prompt)}
-                    className="h-8 text-xs font-semibold rounded-lg hover:bg-secondary border-border"
-                  >
-                    Use Prompt
-                  </Button>
-                </div>
-
-                {/* Slide-up prompt overlay */}
-                <div className="absolute inset-x-0 bottom-0 bg-background/95 backdrop-blur border-t border-border p-5 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20 flex flex-col justify-between h-[180px]">
-                  <div className="space-y-2 text-left">
-                    <p className="text-[10px] font-bold text-primary uppercase tracking-wider">AI Prompt Details</p>
-                    <p className="text-xs text-foreground/80 leading-relaxed italic">
-                      "{tmpl.prompt}"
-                    </p>
-                  </div>
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-semibold h-9 text-xs rounded-lg mt-3"
-                    onClick={() => handleUsePrompt(tmpl.prompt)}
-                  >
-                    Generate with this Prompt
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 px-4 border-t border-border/50">
-        <div className="container max-w-5xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Loved by Event Creators</h2>
-            <p className="text-base text-muted-foreground">
-              See what creators and marketing teams are saying about our generation speeds.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {testimonials.map((test, idx) => (
-              <Card key={idx} className="bg-card border border-border p-6 shadow-sm rounded-2xl flex flex-col justify-between">
-                <div className="space-y-3">
-                  <div className="flex gap-0.5 text-amber-500">
-                    {[...Array(test.stars)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-foreground/85 leading-relaxed italic">"{test.quote}"</p>
-                </div>
-                <div className="flex items-center gap-3 pt-6">
-                  <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                    {test.avatar}
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-foreground">{test.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{test.role}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SaaS Pricing Section */}
-      <section className="py-20 px-4 bg-secondary/15 border-t border-border/50">
-        <div className="container max-w-5xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Flexible Pricing Plans</h2>
-            <p className="text-base text-muted-foreground">
-              Generate templates for free or upgrade to custom branding assets.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-4">
-            {/* Starter Plan */}
-            <Card className="bg-card border border-border p-6 shadow-sm rounded-2xl flex flex-col justify-between">
-              <div className="space-y-4 text-left">
-                <div>
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Starter</h4>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-3xl font-extrabold">$0</span>
-                    <span className="text-xs text-muted-foreground">/ month</span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">Perfect for drafting ideas and personal flyers.</p>
-                <div className="w-full h-[1px] bg-border" />
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> 5 generations per day</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Standard image downloads</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Core style templates</li>
-                </ul>
-              </div>
-              <Button asChild variant="outline" className="w-full mt-6 rounded-lg border-border hover:bg-secondary">
-                <Link to="/generate">Get Started</Link>
-              </Button>
-            </Card>
-
-            {/* Pro Plan */}
-            <Card className="bg-card border-2 border-primary p-6 shadow-md rounded-2xl flex flex-col justify-between relative scale-[1.03] z-10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full shadow-sm">
-                Most Popular
-              </div>
-              <div className="space-y-4 text-left">
-                <div>
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-primary">Creator Pro</h4>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-3xl font-extrabold">$19</span>
-                    <span className="text-xs text-muted-foreground">/ month</span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">For business owners, organizers, and promoters.</p>
-                <div className="w-full h-[1px] bg-border" />
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Unlimited AI generation</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> High-res vector exports</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Logo overlays & branding</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Priority generation queue</li>
-                </ul>
-              </div>
-              <Button asChild className="w-full mt-6 bg-primary hover:bg-primary/95 text-primary-foreground font-bold rounded-lg shadow-sm">
-                <Link to="/generate">Go Unlimited</Link>
-              </Button>
-            </Card>
-
-            {/* Enterprise Plan */}
-            <Card className="bg-card border border-border p-6 shadow-sm rounded-2xl flex flex-col justify-between">
-              <div className="space-y-4 text-left">
-                <div>
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Enterprise</h4>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-3xl font-extrabold">Custom</span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">For design agencies and large corporations.</p>
-                <div className="w-full h-[1px] bg-border" />
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Custom AI layout models</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Dedicated GPU priority server</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Bulk creation API</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Dedicated support manager</li>
-                </ul>
-              </div>
-              <Button asChild variant="outline" className="w-full mt-6 rounded-lg border-border hover:bg-secondary">
-                <Link to="/about">Contact Sales</Link>
-              </Button>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQs Section */}
-      <section className="py-20 px-4 border-t border-border/50">
-        <div className="container max-w-4xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
-            <p className="text-base text-muted-foreground">
-              Everything you need to know about PIYUSH.AI.
-            </p>
-          </div>
-
-          <div className="max-w-2xl mx-auto space-y-3.5 pt-4">
-            {faqs.map((faq, idx) => (
-              <div 
-                key={idx} 
-                className="bg-card border border-border rounded-xl p-4 cursor-pointer text-left transition-colors hover:bg-secondary/20"
-                onClick={() => toggleFaq(idx)}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-foreground">{faq.q}</span>
-                  <HelpCircle className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
-                    openFaq === idx ? "rotate-180 text-primary" : ""
-                  }`} />
-                </div>
-                {openFaq === idx && (
-                  <div className="mt-3 text-xs text-muted-foreground leading-relaxed pt-2.5 border-t border-border/40 animate-fade-in">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Box Section */}
-      <section className="py-20 px-4 border-t border-border/50">
-        <div className="container max-w-4xl mx-auto">
-          <div className="p-8 sm:p-12 bg-card border border-border rounded-3xl relative overflow-hidden shadow-xl text-center space-y-6">
-            <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/10 rounded-full blur-[100px]" />
-            <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-accent/10 rounded-full blur-[100px]" />
-            
-            <div className="relative z-10 max-w-xl mx-auto space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Create your next flyer today</h2>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Join thousands of small business owners, promoters, and event creators building premium design assets.
+          {/* Tech Stack Breakdown */}
+          <div className="space-y-8">
+            <ScrollReveal variant="fade-up" className="text-center max-w-xl mx-auto space-y-2">
+              <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Engineered for Performance
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                The modern tech stack driving our direct prompt generation pipeline.
               </p>
-              <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button asChild size="lg" className="bg-primary hover:bg-primary/95 text-primary-foreground font-bold px-8 h-12 rounded-xl">
+            </ScrollReveal>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+              {techStack.map((tech, idx) => {
+                const IconComponent = tech.icon;
+                return (
+                  <ScrollReveal key={idx} variant="fade-up" delay={idx * 100} className="h-full">
+                    <div className="group h-full p-6 bg-card/80 backdrop-blur-sm border border-border/70 rounded-2xl shadow-2xs hover:shadow-md hover:border-foreground/40 transition-all duration-300 space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-xl bg-background border border-border/80 flex items-center justify-center text-foreground group-hover:scale-105 transition-transform">
+                          <IconComponent className="w-5 h-5 text-foreground" />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-secondary/80 px-2 py-0.5 rounded text-muted-foreground border border-border/50">
+                          {tech.role}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-foreground">{tech.title}</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed mt-1">{tech.desc}</p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Final CTA Card */}
+          <ScrollReveal variant="zoom-in" delay={100}>
+            <div className="relative p-8 sm:p-12 bg-card/90 backdrop-blur-sm border border-border/80 rounded-3xl shadow-[0_16px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.3)] text-center space-y-6 overflow-hidden">
+              <div className="absolute -top-16 -right-16 w-56 h-56 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+              
+              <div className="max-w-xl mx-auto space-y-3 relative z-10">
+                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                  Ready to build your next design?
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Experience our direct prompt-to-design engine. Enter what you want to create and get a complete visual design instantly.
+                </p>
+              </div>
+              
+              <div className="flex justify-center relative z-10">
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-foreground text-background hover:bg-foreground/90 font-bold px-8 h-12 rounded-xl shadow-lg hover:scale-105 transition-all text-sm"
+                >
                   <Link to="/generate">
-                    Create Flyer Now <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="hover:bg-secondary px-8 h-12 rounded-xl border-border">
-                  <Link to="/about">
-                    Learn More
+                    Start Designing Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
+
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-12 px-4 border-border bg-card">
-        <div className="container max-w-5xl mx-auto">
-          <div className="flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
-            <Link to="/" className="flex items-center gap-2.5 font-bold text-xl">
-              <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
-                <Wand2 className="w-5 h-5" />
-              </div>
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">
-                PIYUSH.AI
-              </span>
-            </Link>
-            
-            <div className="flex items-center gap-8">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Home
-              </Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                About
-              </Link>
-              <Link to="/generate" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Generate
-              </Link>
-            </div>
-            
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              © {new Date().getFullYear()} PIYUSH.AI. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      {/* Professional Footer */}
+      <Footer />
     </div>
   );
 };

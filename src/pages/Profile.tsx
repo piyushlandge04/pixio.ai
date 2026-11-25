@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone, Image, Clock, CheckCircle2, AlertCircle, LogOut } from "lucide-react";
+import { Camera, Calendar, User, Mail, Shield, Sparkles, Check, Phone, Image, Clock, CheckCircle2, AlertCircle, LogOut, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 const profileSchema = z.object({
@@ -23,8 +24,11 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
+const GUEST_EMAIL = "guest@pixio.ai";
+
 const Profile = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -46,28 +50,7 @@ const Profile = () => {
     },
   });
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    setUserPhone(session.user.phone || null);
-    setUserEmail(session.user.email || null);
-
-    await Promise.all([
-      fetchProfile(session.user.id),
-      fetchFlyerStats(session.user.id),
-    ]);
-  };
-
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -92,9 +75,9 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [form]);
 
-  const fetchFlyerStats = async (userId: string) => {
+  const fetchFlyerStats = useCallback(async (userId: string) => {
     try {
       const { data, error, count } = await supabase
         .from("flyer_history")
@@ -112,7 +95,29 @@ const Profile = () => {
     } catch (error) {
       console.error("Error fetching flyer stats:", error);
     }
-  };
+  }, []);
+
+  const checkUser = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session || session.user.email === GUEST_EMAIL) {
+      toast.info("Please sign in to access your profile");
+      navigate("/auth", { replace: true });
+      return;
+    }
+
+    setUserPhone(session.user.phone || null);
+    setUserEmail(session.user.email || null);
+
+    await Promise.all([
+      fetchProfile(session.user.id),
+      fetchFlyerStats(session.user.id),
+    ]);
+  }, [fetchFlyerStats, fetchProfile, navigate]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -126,8 +131,9 @@ const Profile = () => {
       const fileExt = file.name.split('.').pop();
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session) {
+      if (!session || session.user.email === GUEST_EMAIL) {
         toast.error("You must be logged in to upload an avatar");
+        navigate("/auth");
         return;
       }
 
@@ -165,8 +171,9 @@ const Profile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session) {
+      if (!session || session.user.email === GUEST_EMAIL) {
         toast.error("You must be logged in to update your profile");
+        navigate("/auth");
         return;
       }
 
@@ -193,8 +200,9 @@ const Profile = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/auth");
+    await queryClient.invalidateQueries({ queryKey: ["flyer-history"] });
     toast.success("Logged out successfully");
+    navigate("/auth");
   };
 
   const getInitials = (name: string) => {

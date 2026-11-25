@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
@@ -26,6 +26,8 @@ interface FlyerHistory {
   created_at: string;
 }
 
+const GUEST_EMAIL = "guest@pixio.ai";
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -34,45 +36,7 @@ const AdminDashboard = () => {
   const [recentFlyers, setRecentFlyers] = useState<FlyerHistory[]>([]);
   const [stats, setStats] = useState({ totalUsers: 0, totalFlyers: 0 });
 
-  useEffect(() => {
-    checkAdminAccess();
-  }, []);
-
-  const checkAdminAccess = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error("Please login to access this page");
-        navigate("/auth");
-        return;
-      }
-
-      // Check if user has admin role
-      const { data: roles, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin")
-        .single();
-
-      if (error || !roles) {
-        toast.error("Access denied. Admin privileges required.");
-        navigate("/generate");
-        return;
-      }
-
-      setIsAdmin(true);
-      await fetchDashboardData();
-    } catch (error) {
-      toast.error("Error checking admin access");
-      navigate("/generate");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       // Fetch all profiles
       const { data: profileData, error: profileError } = await supabase
@@ -136,7 +100,45 @@ const AdminDashboard = () => {
       console.error("Error fetching dashboard data:", error);
       toast.error("Failed to load dashboard data");
     }
-  };
+  }, []);
+
+  const checkAdminAccess = useCallback(async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session || session.user.email === GUEST_EMAIL) {
+        toast.error("Please login to access this page");
+        navigate("/auth", { replace: true });
+        return;
+      }
+
+      // Check if user has admin role
+      const { data: roles, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (error || !roles) {
+        toast.error("Access denied. Admin privileges required.");
+        navigate("/generate");
+        return;
+      }
+
+      setIsAdmin(true);
+      await fetchDashboardData();
+    } catch {
+      toast.error("Error checking admin access");
+      navigate("/generate");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchDashboardData, navigate]);
+
+  useEffect(() => {
+    checkAdminAccess();
+  }, [checkAdminAccess]);
 
   if (isLoading) {
     return (

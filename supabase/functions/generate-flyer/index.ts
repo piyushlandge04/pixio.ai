@@ -139,7 +139,7 @@ serve(async (req) => {
       );
     }
 
-    const { prompt: rawPrompt, style: rawStyle, action: rawAction } = requestBody;
+    const { prompt: rawPrompt, style: rawStyle, action: rawAction, dimensions } = requestBody;
 
     
     const actionValidation = validateAction(rawAction);
@@ -270,22 +270,39 @@ serve(async (req) => {
 
     const styleGuide = styleGuides[style] || styleGuides.modern;
 
+    const reqWidth = Number(dimensions?.width) || 1200;
+    const reqHeight = Number(dimensions?.height) || 1600;
+    const ratio = reqWidth / reqHeight;
+
+    let closestAspectRatio = '3:4';
+    if (Math.abs(ratio - 16 / 9) < 0.15) closestAspectRatio = '16:9';
+    else if (Math.abs(ratio - 9 / 16) < 0.1) closestAspectRatio = '9:16';
+    else if (Math.abs(ratio - 1) < 0.1) closestAspectRatio = '1:1';
+    else if (Math.abs(ratio - 4 / 3) < 0.1) closestAspectRatio = '4:3';
+
+    const orientationLabel =
+      reqWidth > reqHeight
+        ? `Wide landscape/horizontal orientation (${reqWidth}x${reqHeight}, ${closestAspectRatio} aspect ratio)`
+        : reqWidth === reqHeight
+          ? `Square orientation (1:1 aspect ratio, ${reqWidth}x${reqHeight})`
+          : `Portrait/vertical orientation (${reqWidth}x${reqHeight}, ${closestAspectRatio} aspect ratio)`;
 
     const enhancedPrompt = `Create a stunning professional marketing flyer with ${styleGuide}. 
     
 The flyer should feature: ${prompt}
 
-Design requirements:
-- Portrait/vertical orientation (3:4 aspect ratio)
+CRITICAL LAYOUT & FRAMING REQUIREMENTS:
+- ${orientationLabel}
+- FULL-BLEED edge-to-edge graphic design that fills 100% of the entire image canvas
+- DO NOT render a physical paper mockup, tilted card, desk surface, or white outer margins/borders
 - Clear visual hierarchy with headline, subheadline, and details areas
 - Professional-grade composition and layout
 - High-contrast readable text areas
 - Cohesive color scheme throughout
 - Ultra high resolution, print-ready quality
-- Modern graphic design principles
 - Eye-catching but not cluttered`;
 
-    console.log('Calling Lovable AI for image generation');
+    console.log('Calling Lovable AI for image generation, aspect ratio:', closestAspectRatio);
     
     const aiResponse = await fetch(
       'https://ai.gateway.lovable.dev/v1/chat/completions',
@@ -303,7 +320,10 @@ Design requirements:
               content: enhancedPrompt
             }
           ],
-          modalities: ['image', 'text']
+          modalities: ['image', 'text'],
+          image_config: {
+            aspect_ratio: closestAspectRatio
+          }
         }),
       }
     );

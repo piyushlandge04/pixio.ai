@@ -1,4 +1,4 @@
-# PIYUSH.AI
+# PIXIO – AI-Powered Flyer Generator
 
 An intelligent AI-powered flyer generator that helps you create stunning, professional flyers in seconds.
 

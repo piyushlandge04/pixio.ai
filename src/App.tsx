@@ -6,20 +6,21 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { PageTransition } from "./components/PageTransition";
 import { lazy, Suspense } from "react";
 
-// Lazy load all route components for code splitting
-const Landing = lazy(() => import("./pages/Landing"));
-const About = lazy(() => import("./pages/About"));
-const Generate = lazy(() => import("./pages/Generate"));
-const Auth = lazy(() => import("./pages/Auth"));
-const History = lazy(() => import("./pages/History"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+import Landing from "./pages/Landing";
+import Generate from "./pages/Generate";
+import History from "./pages/History";
+import About from "./pages/About";
+import Auth from "./pages/Auth";
+
+// Secondary route components
 const Profile = lazy(() => import("./pages/Profile"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
-// Minimal loading fallback to avoid layout shift
+// Minimal loading fallback
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -33,15 +34,31 @@ const AnimatedRoutes = () => {
     <Suspense fallback={<PageLoader />}>
       <PageTransition key={location.pathname}>
         <Routes location={location}>
+          {/* Landing Page: / */}
           <Route path="/" element={<Landing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          
+          {/* Flyer Generator: /generate */}
           <Route path="/generate" element={<Generate />} />
+          
+          {/* Generation History: /history */}
           <Route path="/history" element={<History />} />
+          
+          {/* User Profile: /profile */}
           <Route path="/profile" element={<Profile />} />
+          
+          {/* Authentication: /auth */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* Reset Password: /reset-password */}
+          <Route path="/reset-password" element={<ResetPassword />} />
+          
+          {/* About: /about */}
+          <Route path="/about" element={<About />} />
+          
+          {/* Admin Dashboard: /admin */}
           <Route path="/admin" element={<AdminDashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
+          {/* Not Found: * */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
