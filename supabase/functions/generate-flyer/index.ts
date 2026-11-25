@@ -189,60 +189,93 @@ serve(async (req) => {
       );
     }
 
+    const HF_TOKEN = Deno.env.get('HF_TOKEN');
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
-    if (!GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY is not set');
+    if (!HF_TOKEN && !GEMINI_API_KEY) {
+      console.error('Neither HF_TOKEN nor GEMINI_API_KEY is set');
       return new Response(
-        JSON.stringify({ error: 'Gemini API is not configured. Please set GEMINI_API_KEY in Supabase Edge Function secrets.' }),
+        JSON.stringify({ error: 'AI service is not configured. Please set HF_TOKEN or GEMINI_API_KEY in Supabase Edge Function secrets.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (action === 'suggest') {
-      console.log('Generating smart suggestions via Gemini for user:', userId, 'prompt:', prompt.substring(0, 50));
+      console.log('Generating smart suggestions for user:', userId, 'prompt:', prompt.substring(0, 50));
 
-      const suggestionResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
+      let content = '[]';
+
+      if (HF_TOKEN && !GEMINI_API_KEY) {
+        const hfSuggestRes = await fetch('https://router.huggingface.co/v1/chat/completions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Authorization': `Bearer ${HF_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
-            systemInstruction: {
-              parts: [
-                {
-                  text: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.',
-                },
-              ],
-            },
-            contents: [
+            model: 'Qwen/Qwen2.5-7B-Instruct',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.',
+              },
               {
                 role: 'user',
+                content: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`,
+              },
+            ],
+          }),
+        });
+
+        if (hfSuggestRes.ok) {
+          const hfData = await hfSuggestRes.json();
+          content = hfData.choices?.[0]?.message?.content || '[]';
+        } else {
+          console.error('HF Suggestion API error:', hfSuggestRes.status, await hfSuggestRes.text());
+        }
+      } else if (GEMINI_API_KEY) {
+        const suggestionResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: {
                 parts: [
                   {
-                    text: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`,
+                    text: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.',
                   },
                 ],
               },
-            ],
-            generationConfig: {
-              responseMimeType: 'application/json',
-            },
-          }),
-        }
-      );
-
-      if (!suggestionResponse.ok) {
-        const errorText = await suggestionResponse.text();
-        console.error('Gemini Suggestion API error:', suggestionResponse.status, errorText);
-        return new Response(
-          JSON.stringify({ suggestions: [] }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+              contents: [
+                {
+                  role: 'user',
+                  parts: [
+                    {
+                      text: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`,
+                    },
+                  ],
+                },
+              ],
+              generationConfig: {
+                responseMimeType: 'application/json',
+              },
+            }),
+          }
         );
-      }
 
-      const suggestionData = await suggestionResponse.json();
-      const content = suggestionData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+        if (!suggestionResponse.ok) {
+          const errorText = await suggestionResponse.text();
+          console.error('Gemini Suggestion API error:', suggestionResponse.status, errorText);
+          return new Response(
+            JSON.stringify({ suggestions: [] }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const suggestionData = await suggestionResponse.json();
+        content = suggestionData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+      }
 
       try {
         const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -309,71 +342,144 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
 
     let imageUrl: string | undefined;
 
-    console.log('Calling Google Gemini API directly for image generation, aspect ratio:', closestAspectRatio);
+    if (HF_TOKEN) {
+      console.log('Calling Hugging Face FLUX.1-schnell for image generation, aspect ratio:', closestAspectRatio);
 
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: enhancedPrompt }],
-            },
-          ],
-          generationConfig: {
-            responseModalities: ['TEXT', 'IMAGE'],
-            imageConfig: {
-              aspectRatio: closestAspectRatio,
-            },
+      // Compute FLUX-friendly dimensions (multiples of 64 within 512..1024)
+      const clampDim = (val: number) => Math.max(512, Math.min(1024, Math.round(val / 64) * 64));
+      const scaleFactor = Math.min(1024 / Math.max(reqWidth, reqHeight), 1);
+      const hfWidth = clampDim(reqWidth * scaleFactor);
+      const hfHeight = clampDim(reqHeight * scaleFactor);
+
+      const hfResponse = await fetch(
+        'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${HF_TOKEN}`,
+            'Content-Type': 'application/json',
           },
-        }),
-      }
-    );
-
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error('Gemini Image API error:', geminiResponse.status, errorText);
-
-      let apiMessage = 'Failed to generate image via Gemini API';
-      try {
-        const parsed = JSON.parse(errorText);
-        if (parsed?.error?.message) {
-          apiMessage = parsed.error.message;
+          body: JSON.stringify({
+            inputs: enhancedPrompt,
+            parameters: {
+              width: hfWidth,
+              height: hfHeight,
+            },
+          }),
         }
-      } catch {
-        // keep default message
-      }
+      );
 
-      if (geminiResponse.status === 429) {
+      if (!hfResponse.ok) {
+        const errorText = await hfResponse.text();
+        console.error('Hugging Face Image API error:', hfResponse.status, errorText);
+
+        let hfMessage = 'Failed to generate image via Hugging Face API';
+        try {
+          const parsed = JSON.parse(errorText);
+          if (parsed?.error) {
+            hfMessage = String(parsed.error);
+          }
+        } catch {
+          // keep default message
+        }
+
+        if (hfResponse.status === 503) {
+          return new Response(
+            JSON.stringify({ error: 'Model is warming up on Hugging Face. Please click Generate again in a few seconds.' }),
+            { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        if (hfResponse.status === 429) {
+          return new Response(
+            JSON.stringify({ error: `Hugging Face rate limit exceeded: ${hfMessage}` }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
         return new Response(
-          JSON.stringify({ error: `Gemini rate limit or quota exceeded: ${apiMessage}` }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: hfMessage }),
+          { status: hfResponse.status >= 400 && hfResponse.status < 500 ? hfResponse.status : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      return new Response(
-        JSON.stringify({ error: apiMessage }),
-        { status: geminiResponse.status >= 400 && geminiResponse.status < 500 ? geminiResponse.status : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+      const contentType = hfResponse.headers.get('content-type') || 'image/jpeg';
+      const arrayBuffer = await hfResponse.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = '';
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      }
+      const base64Data = btoa(binary);
+      imageUrl = `data:${contentType};base64,${base64Data}`;
+    } else if (GEMINI_API_KEY) {
+      console.log('Calling Google Gemini API directly for image generation, aspect ratio:', closestAspectRatio);
 
-    const geminiData = await geminiResponse.json();
-    const parts = geminiData.candidates?.[0]?.content?.parts || [];
-    for (const part of parts) {
-      const inline = part?.inlineData || part?.inline_data;
-      if (inline?.data) {
-        const mimeType = inline.mimeType || inline.mime_type || 'image/png';
-        imageUrl = `data:${mimeType};base64,${inline.data}`;
-        break;
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: enhancedPrompt }],
+              },
+            ],
+            generationConfig: {
+              responseModalities: ['TEXT', 'IMAGE'],
+              imageConfig: {
+                aspectRatio: closestAspectRatio,
+              },
+            },
+          }),
+        }
+      );
+
+      if (!geminiResponse.ok) {
+        const errorText = await geminiResponse.text();
+        console.error('Gemini Image API error:', geminiResponse.status, errorText);
+
+        let apiMessage = 'Failed to generate image via Gemini API';
+        try {
+          const parsed = JSON.parse(errorText);
+          if (parsed?.error?.message) {
+            apiMessage = parsed.error.message;
+          }
+        } catch {
+          // keep default message
+        }
+
+        if (geminiResponse.status === 429) {
+          return new Response(
+            JSON.stringify({ error: `Gemini rate limit or quota exceeded: ${apiMessage}` }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ error: apiMessage }),
+          { status: geminiResponse.status >= 400 && geminiResponse.status < 500 ? geminiResponse.status : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const geminiData = await geminiResponse.json();
+      const parts = geminiData.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        const inline = part?.inlineData || part?.inline_data;
+        if (inline?.data) {
+          const mimeType = inline.mimeType || inline.mime_type || 'image/png';
+          imageUrl = `data:${mimeType};base64,${inline.data}`;
+          break;
+        }
       }
     }
 
     if (!imageUrl) {
       console.error('No image URL in response');
       return new Response(
-        JSON.stringify({ error: 'Failed to extract image from Gemini response' }),
+        JSON.stringify({ error: 'Failed to extract image from AI response' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
