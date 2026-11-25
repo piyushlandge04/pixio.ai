@@ -18,7 +18,8 @@ import {
   Maximize2,
   Copy,
   Check,
-  ZoomIn
+  ZoomIn,
+  AlertCircle
 } from "lucide-react";
 import { supabase, ensureSession } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -121,10 +122,28 @@ export const FlyerGenerator = () => {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
-  // Generation phase indicator
+  // Generation phase & error indicator
   const [generationPhase, setGenerationPhase] = useState<string>("Initializing...");
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const isBusy = isGenerating || isRegenerating;
+
+  const extractFunctionError = async (err: unknown): Promise<string> => {
+    if (err && typeof err === "object" && "context" in err) {
+      const ctx = (err as { context?: unknown }).context;
+      if (ctx instanceof Response) {
+        try {
+          const json = await ctx.clone().json();
+          if (json?.error && typeof json.error === "string") {
+            return json.error;
+          }
+        } catch {
+          // fallback to standard Error message
+        }
+      }
+    }
+    return err instanceof Error ? err.message : "Failed to generate design";
+  };
 
   // Handle keyboard shortcut: Cmd+Enter or Ctrl+Enter
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -199,6 +218,7 @@ export const FlyerGenerator = () => {
     }
 
     setIsGenerating(true);
+    setGenerationError(null);
     try {
       const session = await ensureSession();
       if (!session) {
@@ -226,32 +246,37 @@ export const FlyerGenerator = () => {
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
 
-        // Save to Supabase history
-        const { error: dbError } = await supabase.from("flyer_history").insert({
-          user_id: session.user.id,
-          prompt: cleanPrompt,
-          style: selectedStyle,
-          image_url: data.imageUrl,
-        });
-
-        if (dbError) {
-          console.error("Error saving to history:", dbError);
-        } else {
-          queryClient.invalidateQueries({ queryKey: ["flyer-history"] });
-        }
-
+        // Display flyer immediately before background history persistence
         setCurrentImage(data.imageUrl);
         setBasePrompt(cleanPrompt);
         setActivePrompt(cleanPrompt);
         setRevisions([newRevision]);
         setSelectedRevisionIndex(0);
         toast.success("Design rendered in 300 DPI resolution!");
+
+        // Save to Supabase history without blocking UI display
+        supabase
+          .from("flyer_history")
+          .insert({
+            user_id: session.user.id,
+            prompt: cleanPrompt,
+            style: selectedStyle,
+            image_url: data.imageUrl,
+          })
+          .then(({ error: dbError }) => {
+            if (dbError) {
+              console.error("Error saving to history:", dbError);
+            } else {
+              queryClient.invalidateQueries({ queryKey: ["flyer-history"] });
+            }
+          });
       } else {
-        throw new Error("No image was returned from the generator");
+        throw new Error(data?.error || "No image was returned from the generator");
       }
     } catch (err: unknown) {
       console.error("Error generating design:", err);
-      const message = err instanceof Error ? err.message : "Failed to generate design";
+      const message = await extractFunctionError(err);
+      setGenerationError(message);
       toast.error(message);
     } finally {
       setIsGenerating(false);
@@ -263,6 +288,7 @@ export const FlyerGenerator = () => {
     if (!activePrompt) return;
 
     setIsRegenerating(true);
+    setGenerationError(null);
     try {
       const session = await ensureSession();
       if (!session) {
@@ -290,28 +316,32 @@ export const FlyerGenerator = () => {
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
 
-        const { error: dbError } = await supabase.from("flyer_history").insert({
-          user_id: session.user.id,
-          prompt: activePrompt,
-          style: selectedStyle,
-          image_url: data.imageUrl,
-        });
-
-        if (dbError) {
-          console.error("Error saving regenerated design to history:", dbError);
-        } else {
-          queryClient.invalidateQueries({ queryKey: ["flyer-history"] });
-        }
-
         const nextRevisions = [...revisions, newRevision];
         setCurrentImage(data.imageUrl);
         setRevisions(nextRevisions);
         setSelectedRevisionIndex(nextRevisions.length - 1);
         toast.success("New variation generated!");
+
+        supabase
+          .from("flyer_history")
+          .insert({
+            user_id: session.user.id,
+            prompt: activePrompt,
+            style: selectedStyle,
+            image_url: data.imageUrl,
+          })
+          .then(({ error: dbError }) => {
+            if (dbError) {
+              console.error("Error saving regenerated design to history:", dbError);
+            } else {
+              queryClient.invalidateQueries({ queryKey: ["flyer-history"] });
+            }
+          });
       }
     } catch (err: unknown) {
       console.error("Error regenerating:", err);
-      const message = err instanceof Error ? err.message : "Failed to regenerate design";
+      const message = await extractFunctionError(err);
+      setGenerationError(message);
       toast.error(message);
     } finally {
       setIsRegenerating(false);
@@ -728,6 +758,10 @@ export const FlyerGenerator = () => {
                       <img
                         src={currentImage}
                         alt="Generated Design Preview"
+                        onError={() => {
+                          setGenerationError("Failed to render the generated image URL.");
+                          setCurrentImage(null);
+                        }}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
                       />
 
@@ -757,6 +791,31 @@ export const FlyerGenerator = () => {
                           Download
                         </Button>
                       </div>
+                    </div>
+                  ) : generationError ? (
+                    /* Clear Error State Inside Artboard */
+                    <div className="text-center space-y-4 p-8 max-w-xs">
+                      <div className="w-14 h-14 rounded-2xl bg-destructive/10 border border-destructive/30 flex items-center justify-center mx-auto text-destructive">
+                        <AlertCircle className="w-7 h-7" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <p className="text-sm font-extrabold text-foreground">
+                          Generation Failed
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {generationError}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={handleGenerate}
+                        className="rounded-xl text-xs font-semibold gap-1.5"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Try Again
+                      </Button>
                     </div>
                   ) : (
                     /* Empty Artboard Placeholder */

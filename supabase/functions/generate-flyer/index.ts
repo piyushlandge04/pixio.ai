@@ -320,10 +320,7 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
               content: enhancedPrompt
             }
           ],
-          modalities: ['image', 'text'],
-          image_config: {
-            aspect_ratio: closestAspectRatio
-          }
+          modalities: ['image', 'text']
         }),
       }
     );
