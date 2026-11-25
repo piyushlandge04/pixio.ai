@@ -189,13 +189,19 @@ serve(async (req) => {
       );
     }
 
+    const CF_ACCOUNT_ID = Deno.env.get('CLOUDFLARE_ACCOUNT_ID');
+    const CF_API_TOKEN = Deno.env.get('CLOUDFLARE_API_TOKEN');
     const HF_TOKEN = Deno.env.get('HF_TOKEN');
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
-    if (!HF_TOKEN && !GEMINI_API_KEY) {
-      console.error('Neither HF_TOKEN nor GEMINI_API_KEY is set');
+    const hasCloudflare = Boolean(CF_ACCOUNT_ID && CF_API_TOKEN);
+
+    if (!hasCloudflare && !HF_TOKEN && !GEMINI_API_KEY) {
+      console.error('No AI provider secrets configured');
       return new Response(
-        JSON.stringify({ error: 'AI service is not configured. Please set HF_TOKEN or GEMINI_API_KEY in Supabase Edge Function secrets.' }),
+        JSON.stringify({
+          error: 'AI service is not configured. Please set CLOUDFLARE_ACCOUNT_ID + CLOUDFLARE_API_TOKEN (or GEMINI_API_KEY / HF_TOKEN) in Supabase Edge Function secrets.',
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -205,7 +211,37 @@ serve(async (req) => {
 
       let content = '[]';
 
-      if (HF_TOKEN && !GEMINI_API_KEY) {
+      if (hasCloudflare) {
+        const cfSuggestRes = await fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-8b-instruct`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${CF_API_TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: 'system',
+                  content: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.',
+                },
+                {
+                  role: 'user',
+                  content: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`,
+                },
+              ],
+            }),
+          }
+        );
+
+        if (cfSuggestRes.ok) {
+          const cfData = await cfSuggestRes.json();
+          content = cfData.result?.response || '[]';
+        } else {
+          console.error('Cloudflare Suggestion API error:', cfSuggestRes.status, await cfSuggestRes.text());
+        }
+      } else if (HF_TOKEN && !GEMINI_API_KEY) {
         const hfSuggestRes = await fetch('https://router.huggingface.co/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -342,7 +378,62 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
 
     let imageUrl: string | undefined;
 
-    if (HF_TOKEN) {
+    if (hasCloudflare) {
+      console.log('Calling Cloudflare Workers AI FLUX.1-schnell for image generation, aspect ratio:', closestAspectRatio);
+
+      const cfResponse = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CF_API_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: enhancedPrompt,
+            steps: 4,
+          }),
+        }
+      );
+
+      if (!cfResponse.ok) {
+        const errorText = await cfResponse.text();
+        console.error('Cloudflare Workers AI error:', cfResponse.status, errorText);
+
+        let cfMessage = 'Failed to generate image via Cloudflare Workers AI';
+        try {
+          const parsed = JSON.parse(errorText);
+          if (parsed?.errors?.[0]?.message) {
+            cfMessage = parsed.errors[0].message;
+          }
+        } catch {
+          // keep default message
+        }
+
+        return new Response(
+          JSON.stringify({ error: cfMessage }),
+          { status: cfResponse.status >= 400 && cfResponse.status < 500 ? cfResponse.status : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const cfContentType = cfResponse.headers.get('content-type') || '';
+      if (cfContentType.includes('application/json')) {
+        const cfJson = await cfResponse.json();
+        const b64 = cfJson?.result?.image;
+        if (b64) {
+          imageUrl = `data:image/jpeg;base64,${b64}`;
+        }
+      } else {
+        const arrayBuffer = await cfResponse.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        imageUrl = `data:${cfContentType || 'image/png'};base64,${btoa(binary)}`;
+      }
+    } else if (HF_TOKEN) {
       console.log('Calling Hugging Face FLUX.1-schnell for image generation, aspect ratio:', closestAspectRatio);
 
       // Compute FLUX-friendly dimensions (multiples of 64 within 512..1024)
