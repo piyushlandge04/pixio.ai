@@ -352,7 +352,7 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
       const hfHeight = clampDim(reqHeight * scaleFactor);
 
       const hfResponse = await fetch(
-        'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+        'https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-3-medium-diffusers',
         {
           method: 'POST',
           headers: {
