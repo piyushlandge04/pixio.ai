@@ -189,46 +189,52 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      console.error('LOVABLE_API_KEY is not set');
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+
+    if (!GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY is not set');
       return new Response(
-        JSON.stringify({ error: 'AI service is not configured' }),
+        JSON.stringify({ error: 'Gemini API is not configured. Please set GEMINI_API_KEY in Supabase Edge Function secrets.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-
     if (action === 'suggest') {
-      console.log('Generating smart suggestions for user:', userId, 'prompt:', prompt.substring(0, 50));
-      
+      console.log('Generating smart suggestions via Gemini for user:', userId, 'prompt:', prompt.substring(0, 50));
+
       const suggestionResponse = await fetch(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'google/gemini-3-flash-preview',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.'
-              },
+            systemInstruction: {
+              parts: [
+                {
+                  text: 'You are a creative flyer design assistant. Generate 4 unique, specific flyer design suggestions based on the user input. Each suggestion should be detailed and actionable. Return ONLY a JSON array of 4 strings, no other text.',
+                },
+              ],
+            },
+            contents: [
               {
                 role: 'user',
-                content: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`
-              }
-            ]
+                parts: [
+                  {
+                    text: `Generate 4 creative flyer design suggestions for: "${prompt}". Include specific visual elements, color schemes, and design styles. Return as JSON array.`,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              responseMimeType: 'application/json',
+            },
           }),
         }
       );
 
       if (!suggestionResponse.ok) {
         const errorText = await suggestionResponse.text();
-        console.error('Suggestion API error:', suggestionResponse.status, errorText);
+        console.error('Gemini Suggestion API error:', suggestionResponse.status, errorText);
         return new Response(
           JSON.stringify({ suggestions: [] }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -236,10 +242,9 @@ serve(async (req) => {
       }
 
       const suggestionData = await suggestionResponse.json();
-      const content = suggestionData.choices?.[0]?.message?.content || '[]';
-      
+      const content = suggestionData.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+
       try {
-     
         const jsonMatch = content.match(/\[[\s\S]*\]/);
         const suggestions = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
         return new Response(
@@ -302,60 +307,73 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
 - Ultra high resolution, print-ready quality
 - Eye-catching but not cluttered`;
 
-    console.log('Calling Lovable AI for image generation, aspect ratio:', closestAspectRatio);
-    
-    const aiResponse = await fetch(
-      'https://ai.gateway.lovable.dev/v1/chat/completions',
+    let imageUrl: string | undefined;
+
+    console.log('Calling Google Gemini API directly for image generation, aspect ratio:', closestAspectRatio);
+
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'google/gemini-3-pro-image-preview',
-          messages: [
+          contents: [
             {
-              role: 'user',
-              content: enhancedPrompt
-            }
+              parts: [{ text: enhancedPrompt }],
+            },
           ],
-          modalities: ['image', 'text']
+          generationConfig: {
+            responseModalities: ['TEXT', 'IMAGE'],
+            imageConfig: {
+              aspectRatio: closestAspectRatio,
+            },
+          },
         }),
       }
     );
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error('Lovable AI error:', aiResponse.status, errorText);
-      
-      if (aiResponse.status === 429) {
+    if (!geminiResponse.ok) {
+      const errorText = await geminiResponse.text();
+      console.error('Gemini Image API error:', geminiResponse.status, errorText);
+
+      let apiMessage = 'Failed to generate image via Gemini API';
+      try {
+        const parsed = JSON.parse(errorText);
+        if (parsed?.error?.message) {
+          apiMessage = parsed.error.message;
+        }
+      } catch {
+        // keep default message
+      }
+
+      if (geminiResponse.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          JSON.stringify({ error: `Gemini rate limit or quota exceeded: ${apiMessage}` }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      
-      if (aiResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'AI credits depleted. Please add credits to continue.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
+
       return new Response(
-        JSON.stringify({ error: 'Failed to generate image' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: apiMessage }),
+        { status: geminiResponse.status >= 400 && geminiResponse.status < 500 ? geminiResponse.status : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const data = await aiResponse.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    
+    const geminiData = await geminiResponse.json();
+    const parts = geminiData.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      const inline = part?.inlineData || part?.inline_data;
+      if (inline?.data) {
+        const mimeType = inline.mimeType || inline.mime_type || 'image/png';
+        imageUrl = `data:${mimeType};base64,${inline.data}`;
+        break;
+      }
+    }
+
     if (!imageUrl) {
       console.error('No image URL in response');
       return new Response(
-        JSON.stringify({ error: 'Failed to extract image from AI response' }),
+        JSON.stringify({ error: 'Failed to extract image from Gemini response' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
