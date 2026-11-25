@@ -174,7 +174,7 @@ The app runs at `http://localhost:8080`.
 
 ## Author
 
-**Piyush Landge** — Founder & Lead Architect
+**Piyush Landge** 
 
 ## License
 
