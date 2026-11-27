@@ -443,7 +443,7 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
       const hfHeight = clampDim(reqHeight * scaleFactor);
 
       const hfResponse = await fetch(
-        'https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-3-medium-diffusers',
+        'https://router.huggingface.co/fal-ai/fal-ai/flux/schnell',
         {
           method: 'POST',
           headers: {
@@ -451,8 +451,8 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            inputs: enhancedPrompt,
-            parameters: {
+            prompt: enhancedPrompt,
+            image_size: {
               width: hfWidth,
               height: hfHeight,
             },
@@ -495,15 +495,19 @@ CRITICAL LAYOUT & FRAMING REQUIREMENTS:
       }
 
       const contentType = hfResponse.headers.get('content-type') || 'image/jpeg';
-      const arrayBuffer = await hfResponse.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let binary = '';
-      const chunkSize = 0x8000;
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      if (contentType.includes('application/json')) {
+        const hfJson = await hfResponse.json();
+        imageUrl = hfJson?.images?.[0]?.url || hfJson?.image?.url;
+      } else {
+        const arrayBuffer = await hfResponse.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        imageUrl = `data:${contentType};base64,${btoa(binary)}`;
       }
-      const base64Data = btoa(binary);
-      imageUrl = `data:${contentType};base64,${base64Data}`;
     } else if (GEMINI_API_KEY) {
       console.log('Calling Google Gemini API directly for image generation, aspect ratio:', closestAspectRatio);
 
